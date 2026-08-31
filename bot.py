@@ -22,9 +22,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # 1. الإعدادات الأساسية
 # ====================================================================
 
-MAIN_BOT_TOKEN = "8359658192:AAEckbi0ULFykk9eqBdLzKZ_FowqnGKXpJA"
-ADMIN_BOT_TOKEN = "8167271730:AAHxMkkj0ObDCkXBfsU5nYWB0L6YbplnK6A"
-
+MAIN_BOT_TOKEN = os.getenv("MAIN_BOT_TOKEN")
+ADMIN_BOT_TOKEN = os.getenv("ADMIN_BOT_TOKEN")
 OWNER_ID = 7701678114
 ADMIN_ID = OWNER_ID
 DEV_NAME = "月よの川「の川ソ"
