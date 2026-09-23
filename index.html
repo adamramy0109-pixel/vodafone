@@ -179,6 +179,12 @@
             gap: 12px;
         }
 
+        .input-row-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 14px;
@@ -246,19 +252,7 @@
             padding: 15px;
             margin-bottom: 12px;
             border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             transition: all 0.3s;
-        }
-
-        .note-number {
-            font-size: 20px;
-            font-weight: 700;
-            color: #667eea;
-            margin-left: 15px;
-            min-width: 30px;
-            text-align: center;
         }
 
         .note-item:hover {
@@ -266,24 +260,47 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
+        .note-header-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .note-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            min-width: 30px;
+            text-align: center;
+        }
+
         .note-info {
             flex: 1;
+            margin: 0 15px;
+        }
+
+        .note-name-item {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
         }
 
         .note-phone {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 8px;
+            font-size: 15px;
+            color: #666;
             direction: ltr;
             text-align: left;
+            margin-bottom: 8px;
         }
 
         .note-details {
             display: flex;
-            gap: 25px;
+            gap: 20px;
             font-size: 13px;
             color: #666;
+            flex-wrap: wrap;
         }
 
         .detail-item {
@@ -297,26 +314,91 @@
             font-weight: 500;
         }
 
+        .payment-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-status {
+            font-size: 14px;
+            font-weight: 600;
+            color: #856404;
+            flex: 1;
+        }
+
+        .payment-status.paid {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .payment-status.unpaid {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .payment-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .payment-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .payment-btn.paid {
+            background: #28a745;
+            color: white;
+        }
+
+        .payment-btn.paid:hover {
+            background: #218838;
+        }
+
+        .payment-btn.unpaid {
+            background: #dc3545;
+            color: white;
+        }
+
+        .payment-btn.unpaid:hover {
+            background: #c82333;
+        }
+
         .delete-btn {
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 10px 18px;
+            padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 13px;
-            white-space: nowrap;
+            font-size: 12px;
         }
 
         .delete-btn:hover {
             background: #ff5252;
             transform: scale(1.05);
-        }
-
-        .delete-btn:active {
-            transform: scale(0.95);
         }
 
         .empty-message {
@@ -355,14 +437,25 @@
                 width: 100%;
             }
 
-            .input-row {
+            .input-row, .input-row-three {
                 grid-template-columns: 1fr;
             }
 
-            .note-item {
+            .note-header-item {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
+                gap: 10px;
+            }
+
+            .payment-section {
+                flex-direction: column;
+            }
+
+            .payment-buttons {
+                width: 100%;
+            }
+
+            .payment-btn {
+                flex: 1;
             }
 
             .note-phone {
@@ -379,18 +472,80 @@
             }
         }
 
-        .notes-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .notes-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
         }
 
-        .notes-list::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 10px;
+        .modal-content {
+            background-color: white;
+            margin: 50% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            transform: translateY(-50%);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-confirm {
+            background: #28a745;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #218838;
+        }
+
+        .modal-btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #5a6268;
         }
     </style>
 </head>
@@ -439,6 +594,10 @@
             <div class="add-form">
                 <form id="addNoteForm" onsubmit="addNote(event)">
                     <div class="form-group">
+                        <label>الاسم</label>
+                        <input type="text" id="nameInput" placeholder="اسم الشخص" required>
+                    </div>
+                    <div class="form-group">
                         <label>رقم الهاتف</label>
                         <input type="tel" id="phoneInput" placeholder="مثال: 01234567890" required>
                     </div>
@@ -460,7 +619,7 @@
                 <div class="notes-title">الأرقام المحفوظة</div>
                 
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="🔍 ابحث عن رقم..." onkeyup="searchNotes()">
+                    <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم..." onkeyup="searchNotes()">
                 </div>
                 
                 <div id="notesList"></div>
@@ -468,12 +627,25 @@
         </div>
     </div>
 
+    <!-- ===== Modal للسؤال عن المدة ===== -->
+    <div id="daysModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">كم يوم انتظرت؟</div>
+            <input type="number" id="daysInput" class="modal-input" placeholder="عدد الأيام" min="1" required>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="confirmDays()">تأكيد</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeDaysModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentOwner = null;
+        let currentPaymentId = null;
 
-        // تحميل البيانات عند فتح الصفحة
         window.addEventListener('load', () => {
             updateCounts();
+            resetPaymentStatus();
         });
 
         // فتح النوتة
@@ -484,7 +656,7 @@
             document.getElementById('currentNoteName').textContent = name;
             document.getElementById('addNoteForm').reset();
             renderNotes();
-            document.getElementById('phoneInput').focus();
+            document.getElementById('nameInput').focus();
         }
 
         // رجوع للصفحة الرئيسية
@@ -499,16 +671,16 @@
         function addNote(e) {
             e.preventDefault();
 
+            const name = document.getElementById('nameInput').value.trim();
             const phone = document.getElementById('phoneInput').value.trim();
             const gb = parseFloat(document.getElementById('gbInput').value) || 0;
             const minutes = parseFloat(document.getElementById('minutesInput').value) || 0;
 
-            if (!phone) {
-                alert('الرجاء إدخال رقم الهاتف');
+            if (!name || !phone) {
+                alert('الرجاء إدخال الاسم ورقم الهاتف');
                 return;
             }
 
-            // الحصول على البيانات الموجودة
             let data = [];
             const existing = localStorage.getItem(currentOwner);
             if (existing) {
@@ -519,21 +691,22 @@
                 }
             }
 
-            // إضافة الرقم الجديد
             const newNote = {
                 id: Date.now(),
+                name: name,
                 phone: phone,
                 gb: gb,
-                minutes: minutes
+                minutes: minutes,
+                paid: false,
+                waitingDays: 0
             };
 
             data.push(newNote);
             localStorage.setItem(currentOwner, JSON.stringify(data));
 
-            // تحديث العرض
             renderNotes();
             document.getElementById('addNoteForm').reset();
-            document.getElementById('phoneInput').focus();
+            document.getElementById('nameInput').focus();
         }
 
         // حذف رقم
@@ -563,6 +736,91 @@
             renderNotes();
         }
 
+        // تعديل حالة الدفع
+        function togglePayment(id, status) {
+            let data = [];
+            const existing = localStorage.getItem(currentOwner);
+            if (existing) {
+                try {
+                    data = JSON.parse(existing);
+                } catch (e) {
+                    data = [];
+                }
+            }
+
+            const item = data.find(i => i.id === id);
+            if (item) {
+                if (status === 'paid') {
+                    item.paid = true;
+                    item.waitingDays = 0;
+                } else if (status === 'unpaid') {
+                    currentPaymentId = id;
+                    document.getElementById('daysModal').style.display = 'block';
+                    return;
+                }
+            }
+
+            localStorage.setItem(currentOwner, JSON.stringify(data));
+            renderNotes();
+        }
+
+        // تأكيد عدد الأيام
+        function confirmDays() {
+            const days = parseInt(document.getElementById('daysInput').value);
+            if (!days || days < 1) {
+                alert('الرجاء إدخال عدد صحيح من الأيام');
+                return;
+            }
+
+            let data = [];
+            const existing = localStorage.getItem(currentOwner);
+            if (existing) {
+                try {
+                    data = JSON.parse(existing);
+                } catch (e) {
+                    data = [];
+                }
+            }
+
+            const item = data.find(i => i.id === currentPaymentId);
+            if (item) {
+                item.paid = false;
+                item.waitingDays = days;
+            }
+
+            localStorage.setItem(currentOwner, JSON.stringify(data));
+            closeDaysModal();
+            renderNotes();
+        }
+
+        function closeDaysModal() {
+            document.getElementById('daysModal').style.display = 'none';
+            document.getElementById('daysInput').value = '';
+            currentPaymentId = null;
+        }
+
+        // إعادة تعيين حالة الدفع كل 7 من الشهر
+        function resetPaymentStatus() {
+            const today = new Date();
+            if (today.getDate() === 7) {
+                const owners = ['owner7', 'owner11', 'owner25'];
+                owners.forEach(owner => {
+                    let data = [];
+                    const existing = localStorage.getItem(owner);
+                    if (existing) {
+                        try {
+                            data = JSON.parse(existing);
+                            data.forEach(item => {
+                                item.paid = false;
+                                item.waitingDays = 0;
+                            });
+                            localStorage.setItem(owner, JSON.stringify(data));
+                        } catch (e) {}
+                    }
+                });
+            }
+        }
+
         // عرض النوتات
         function renderNotes() {
             let data = [];
@@ -585,23 +843,36 @@
 
             notesList.innerHTML = data.map((item, index) => `
                 <div class="note-item">
-                    <div style="display: flex; align-items: center; flex: 1;">
-                        <div class="note-number">${index + 1}</div>
-                        <div class="note-info">
-                            <div class="note-phone">${item.phone}</div>
-                            <div class="note-details">
-                                <div class="detail-item">
-                                    <span class="detail-label">💾 الجيجابايت:</span>
-                                    <span>${item.gb} GB</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">⏱️ الدقائق:</span>
-                                    <span>${item.minutes} دقيقة</span>
+                    <div class="note-header-item">
+                        <div style="display: flex; align-items: start; flex: 1; gap: 10px;">
+                            <div class="note-number">${index + 1}</div>
+                            <div class="note-info">
+                                <div class="note-name-item">${item.name}</div>
+                                <div class="note-phone">${item.phone}</div>
+                                <div class="note-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">💾 الجيجابايت:</span>
+                                        <span>${item.gb} GB</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">⏱️ الدقائق:</span>
+                                        <span>${item.minutes} دقيقة</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
                     </div>
-                    <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
+                    
+                    <div class="payment-section">
+                        <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
+                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ انتظر ${item.waitingDays} أيام` : '❌ لم يتم الدفع'}
+                        </div>
+                        <div class="payment-buttons">
+                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅ تم الدفع</button>
+                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌ لم يتم</button>
+                        </div>
+                    </div>
                 </div>
             `).join('');
         }
@@ -622,14 +893,13 @@
 
             const notesList = document.getElementById('notesList');
 
-            // إذا كانت خانة البحث فارغة، عرض كل الأرقام
             if (!searchValue) {
                 renderNotes();
                 return;
             }
 
-            // البحث عن الأرقام المطابقة
             const filteredData = data.filter(item => 
+                item.name.toLowerCase().includes(searchValue) ||
                 item.phone.includes(searchValue)
             );
 
@@ -640,23 +910,36 @@
 
             notesList.innerHTML = filteredData.map((item, index) => `
                 <div class="note-item">
-                    <div style="display: flex; align-items: center; flex: 1;">
-                        <div class="note-number">${index + 1}</div>
-                        <div class="note-info">
-                            <div class="note-phone">${item.phone}</div>
-                            <div class="note-details">
-                                <div class="detail-item">
-                                    <span class="detail-label">💾 الجيجابايت:</span>
-                                    <span>${item.gb} GB</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">⏱️ الدقائق:</span>
-                                    <span>${item.minutes} دقيقة</span>
+                    <div class="note-header-item">
+                        <div style="display: flex; align-items: start; flex: 1; gap: 10px;">
+                            <div class="note-number">${index + 1}</div>
+                            <div class="note-info">
+                                <div class="note-name-item">${item.name}</div>
+                                <div class="note-phone">${item.phone}</div>
+                                <div class="note-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">💾 الجيجابايت:</span>
+                                        <span>${item.gb} GB</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">⏱️ الدقائق:</span>
+                                        <span>${item.minutes} دقيقة</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
                     </div>
-                    <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
+                    
+                    <div class="payment-section">
+                        <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
+                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ انتظر ${item.waitingDays} أيام` : '❌ لم يتم الدفع'}
+                        </div>
+                        <div class="payment-buttons">
+                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅ تم الدفع</button>
+                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌ لم يتم</button>
+                        </div>
+                    </div>
                 </div>
             `).join('');
         }
@@ -677,6 +960,14 @@
                 const count = data.length;
                 document.getElementById(`count-${owner}`).textContent = `${count} ${count === 1 ? 'رقم' : 'أرقام'}`;
             });
+        }
+
+        // إغلاق modal عند الضغط خارجها
+        window.onclick = function(event) {
+            const modal = document.getElementById('daysModal');
+            if (event.target === modal) {
+                closeDaysModal();
+            }
         }
     </script>
 </body>
