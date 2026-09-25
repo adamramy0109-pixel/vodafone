@@ -884,7 +884,7 @@
 
         // البحث عن الأرقام
         function searchNotes() {
-            const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+            const searchValue = document.getElementById('searchInput').value.trim();
             
             let data = [];
             const existing = localStorage.getItem(currentOwner);
@@ -898,21 +898,26 @@
 
             const notesList = document.getElementById('notesList');
 
+            // إذا لم يدخل البحث، عرض كل الأرقام
             if (!searchValue) {
                 renderNotes();
                 return;
             }
 
-            const filteredData = data.filter(item => 
-                item.name.toLowerCase().includes(searchValue) ||
-                item.phone.includes(searchValue)
-            );
+            // البحث عن الرقم أو الاسم
+            const filteredData = data.filter(item => {
+                const phoneMatch = item.phone && item.phone.includes(searchValue);
+                const nameMatch = item.name && item.name.toLowerCase().includes(searchValue.toLowerCase());
+                return phoneMatch || nameMatch;
+            });
 
+            // لو ما فيش نتائج
             if (filteredData.length === 0) {
-                notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">🔍</div>لم يتم العثور على أرقام</div>';
+                notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">🔍</div><p style="margin-top: 10px; font-weight: 600;">لم يتم العثور على أرقام</p></div>';
                 return;
             }
 
+            // عرض النتائج
             notesList.innerHTML = filteredData.map((item, index) => `
                 <div class="note-item">
                     <div class="note-header-item">
