@@ -884,7 +884,13 @@
 
         // البحث عن الأرقام
         function searchNotes() {
-            const searchValue = document.getElementById('searchInput').value.trim();
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) {
+                console.log('خانة البحث غير موجودة');
+                return;
+            }
+
+            const searchValue = searchInput.value.trim();
             
             let data = [];
             const existing = localStorage.getItem(currentOwner);
@@ -892,39 +898,40 @@
                 try {
                     data = JSON.parse(existing);
                 } catch (e) {
+                    console.error('خطأ في قراءة البيانات', e);
                     data = [];
                 }
             }
 
             const notesList = document.getElementById('notesList');
 
-            // إذا لم يدخل البحث، عرض كل الأرقام
-            if (!searchValue) {
+            // إذا كانت خانة البحث فارغة، عرض كل الأرقام
+            if (searchValue === '') {
                 renderNotes();
                 return;
             }
 
             // البحث عن الرقم أو الاسم
             const filteredData = data.filter(item => {
-                const phoneMatch = item.phone && item.phone.includes(searchValue);
-                const nameMatch = item.name && item.name.toLowerCase().includes(searchValue.toLowerCase());
+                const phoneMatch = (item.phone && item.phone.toString().includes(searchValue));
+                const nameMatch = (item.name && item.name.toLowerCase().includes(searchValue.toLowerCase()));
                 return phoneMatch || nameMatch;
             });
 
-            // لو ما فيش نتائج
+            // عرض النتائج
             if (filteredData.length === 0) {
                 notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">🔍</div><p style="margin-top: 10px; font-weight: 600;">لم يتم العثور على أرقام</p></div>';
                 return;
             }
 
-            // عرض النتائج
+            // عرض النتائج المطابقة
             notesList.innerHTML = filteredData.map((item, index) => `
                 <div class="note-item">
                     <div class="note-header-item">
                         <div style="display: flex; align-items: start; flex: 1; gap: 10px;">
                             <div class="note-number">${index + 1}</div>
                             <div class="note-info">
-                                <div class="note-name-item">${item.name}</div>
+                                <div class="note-name-item">${item.name || 'بدون اسم'}</div>
                                 <div class="note-phone">${item.phone}</div>
                                 <div class="note-details">
                                     <div class="detail-item">
