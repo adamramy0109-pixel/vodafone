@@ -594,8 +594,8 @@
             <div class="add-form">
                 <form id="addNoteForm" onsubmit="addNote(event)">
                     <div class="form-group">
-                        <label>الاسم</label>
-                        <input type="text" id="nameInput" placeholder="اسم الشخص" required>
+                        <label>الاسم (اختياري)</label>
+                        <input type="text" id="nameInput" placeholder="اسم الشخص (اختياري)">
                     </div>
                     <div class="form-group">
                         <label>رقم الهاتف</label>
@@ -671,14 +671,19 @@
         function addNote(e) {
             e.preventDefault();
 
-            const name = document.getElementById('nameInput').value.trim();
+            let name = document.getElementById('nameInput').value.trim();
             const phone = document.getElementById('phoneInput').value.trim();
             const gb = parseFloat(document.getElementById('gbInput').value) || 0;
             const minutes = parseFloat(document.getElementById('minutesInput').value) || 0;
 
-            if (!name || !phone) {
-                alert('الرجاء إدخال الاسم ورقم الهاتف');
+            if (!phone) {
+                alert('الرجاء إدخال رقم الهاتف');
                 return;
+            }
+
+            // إذا لم يدخل اسم، استخدم "بدون اسم"
+            if (!name) {
+                name = 'بدون اسم';
             }
 
             let data = [];
