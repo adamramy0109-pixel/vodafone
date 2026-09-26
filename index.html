@@ -1089,19 +1089,32 @@
             }
         }
 
-        // ===== التنقل بين الصفحات =====
+        // ===== التنقل بين الصفحات (تم إصلاحه ليعمل 100%) =====
         function switchPage(page) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            // إخفاء جميع الصفحات
+            document.querySelectorAll('.page-content').forEach(p => {
+                p.classList.add('hidden');
+                p.classList.remove('active');
+            });
+            
+            // إزالة active من جميع التبويبات
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             
+            // إظهار الصفحة المختارة وتفعيل التبويب
             if (page === 'numbers') {
-                document.getElementById('numbersPage').classList.remove('hidden');
+                const pageEl = document.getElementById('numbersPage');
+                pageEl.classList.remove('hidden');
+                pageEl.classList.add('active');
                 document.querySelectorAll('.nav-tab')[0].classList.add('active');
             } else if (page === 'activation') {
-                document.getElementById('activationPage').classList.remove('hidden');
+                const pageEl = document.getElementById('activationPage');
+                pageEl.classList.remove('hidden');
+                pageEl.classList.add('active');
                 document.getElementById('activationTab').classList.add('active');
             } else if (page === 'admin') {
-                document.getElementById('adminPage').classList.remove('hidden');
+                const pageEl = document.getElementById('adminPage');
+                pageEl.classList.remove('hidden');
+                pageEl.classList.add('active');
                 document.getElementById('adminTab').classList.add('active');
             }
         }
