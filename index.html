@@ -1075,18 +1075,22 @@
 
         // ===== التنقل بين الصفحات =====
         function switchPage(page) {
+            // إخفاء جميع الصفحات
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            
+            // إزالة active من جميع التبويبات
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             
+            // إظهار الصفحة المختارة وتفعيل التبويب
             if (page === 'numbers') {
                 document.getElementById('numbersPage').classList.remove('hidden');
-                event.target.classList.add('active');
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
             } else if (page === 'activation') {
                 document.getElementById('activationPage').classList.remove('hidden');
-                event.target.classList.add('active');
+                document.getElementById('activationTab').classList.add('active');
             } else if (page === 'admin') {
                 document.getElementById('adminPage').classList.remove('hidden');
-                event.target.classList.add('active');
+                document.getElementById('adminTab').classList.add('active');
             }
         }
 
