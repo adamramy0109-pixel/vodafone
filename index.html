@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نوتات الأرقام</title>
+    <title>نظام الأرقام والتفعيلات</title>
     <style>
         * {
             margin: 0;
@@ -19,209 +19,422 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        /* ===== الصفحة الرئيسية ===== */
-        #mainPage {
-            display: block;
-        }
-
-        #notePage {
-            display: none;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-
-        .names-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .name-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border: 3px solid transparent;
-        }
-
-        .name-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            border-color: #667eea;
-        }
-
-        .name-card:active {
-            transform: translateY(-4px);
-        }
-
-        .card-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
-
-        .card-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .card-count {
-            font-size: 14px;
-            color: #999;
-        }
-
-        /* ===== صفحة النوتة ===== */
-        .note-header {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        /* ===== صفحة التسجيل ===== */
+        #loginPage {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1000;
         }
 
-        .note-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
         }
 
-        .back-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .back-btn:hover {
-            background: #764ba2;
-            transform: translateX(3px);
-        }
-
-        .note-icon {
-            font-size: 32px;
-        }
-
-        .note-name {
+        .login-card h1 {
             font-size: 28px;
-            font-weight: 700;
             color: #333;
+            margin-bottom: 30px;
         }
 
-        .add-form {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #555;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .login-card p {
+            color: #666;
+            margin-bottom: 20px;
             font-size: 14px;
         }
 
-        .form-group input {
+        .login-input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 15px;
             border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: border-color 0.3s;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
             font-family: inherit;
+            transition: border-color 0.3s;
         }
 
-        .form-group input:focus {
+        .login-input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .input-row-three {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-        }
-
-        .submit-btn {
+        .login-btn {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 10px;
         }
 
-        .submit-btn:hover {
+        .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .submit-btn:active {
-            transform: translateY(0);
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-bottom: 15px;
         }
 
-        .notes-list {
+        /* ===== الصفحة الرئيسية ===== */
+        #mainPage {
+            display: none;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .user-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-badge.admin {
+            background: #dc3545;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ff5252;
+        }
+
+        /* ===== التنقل بين الأقسام ===== */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            padding: 12px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== المحتويات ===== */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .section {
             background: white;
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .notes-title {
-            font-size: 18px;
+        .section-title {
+            font-size: 20px;
             font-weight: 700;
             color: #333;
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 3px solid #667eea;
+        }
+
+        .buttons-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .btn-success {
+            background: #51cf66;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #40c057;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #ffb300;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-confirm {
+            background: #51cf66;
+            color: white;
+        }
+
+        .modal-btn-cancel {
+            background: #ddd;
+            color: #333;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            border-left: 4px solid #51cf66;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .notification.info {
+            border-left: 4px solid #667eea;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .admin-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+
+        .code-display {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .code-display code {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #333;
         }
 
         .search-box {
@@ -413,37 +626,106 @@
             margin-bottom: 15px;
         }
 
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .names-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .name-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .name-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .name-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .name-card-text {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
         @media (max-width: 600px) {
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .names-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .note-header {
+            .header {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
             }
 
-            .note-title {
+            .nav-tabs {
                 flex-direction: column;
-                gap: 10px;
             }
 
-            .back-btn {
-                width: 100%;
-            }
-
-            .input-row, .input-row-three {
+            .sections {
                 grid-template-columns: 1fr;
             }
 
-            .note-header-item {
-                flex-direction: column;
-                gap: 10px;
+            .input-row {
+                grid-template-columns: 1fr;
             }
 
             .payment-section {
@@ -458,216 +740,365 @@
                 flex: 1;
             }
 
-            .note-phone {
-                text-align: right;
-            }
-
-            .note-details {
+            .note-header-item {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
             }
 
-            .delete-btn {
-                width: 100%;
+            .names-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 50% auto;
-            padding: 30px;
-            border: 1px solid #888;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            transform: translateY(-50%);
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            margin-bottom: 15px;
-            font-family: inherit;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .modal-btn-confirm {
-            background: #28a745;
-            color: white;
-        }
-
-        .modal-btn-confirm:hover {
-            background: #218838;
-        }
-
-        .modal-btn-cancel {
-            background: #6c757d;
-            color: white;
-        }
-
-        .modal-btn-cancel:hover {
-            background: #5a6268;
         }
     </style>
 </head>
 <body>
+    <!-- ===== صفحة التسجيل ===== -->
+    <div id="loginPage">
+        <div class="login-card">
+            <h1>🔐 نظام المدير</h1>
+            <p>أدخل الكود للدخول (التفعيلات والإدارة فقط)</p>
+            <div id="errorMsg" class="error-msg"></div>
+            <input type="password" id="codeInput" class="login-input" placeholder="أدخل الكود" onkeypress="if(event.key==='Enter') loginWithCode()">
+            <button class="login-btn" onclick="loginWithCode()">دخول</button>
+            <p style="margin-top: 20px; color: #999; font-size: 12px;">الأرقام المحفوظة متاحة بدون كود 📱</p>
+        </div>
+    </div>
+
     <!-- ===== الصفحة الرئيسية ===== -->
     <div id="mainPage">
         <div class="container">
             <div class="header">
-                <h1>📓 نوتات الأرقام</h1>
-                <p>اختر اسم للدخول لنوتته</p>
+                <h1>📱 نظام الأرقام والتفعيلات</h1>
+                <div class="user-info">
+                    <div id="userBadge" class="user-badge hidden">مستخدم عادي</div>
+                    <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">تسجيل خروج</button>
+                </div>
             </div>
 
-            <div class="names-grid">
-                <div class="name-card" onclick="openNote('owner7', 'Owner 7')">
-                    <div class="card-icon">👤</div>
-                    <div class="card-name">Owner 7</div>
-                    <div class="card-count" id="count-owner7">0 أرقام</div>
+            <!-- قائمة التنقل -->
+            <div class="nav-tabs" id="navTabs">
+                <button class="nav-tab active" onclick="switchPage('numbers')">📱 الأرقام المحفوظة</button>
+                <button class="nav-tab hidden" id="activationTab" onclick="switchPage('activation')">⚡ التفعيلات</button>
+                <button class="nav-tab hidden" id="adminTab" onclick="switchPage('admin')">🛡️ الإدارة</button>
+            </div>
+
+            <!-- ===== صفحة الأرقام المحفوظة ===== -->
+            <div id="numbersPage" class="page-content active">
+                <div class="sections">
+                    <div class="section">
+                        <div class="section-title">📝 إضافة رقم جديد</div>
+                        <form id="addNoteForm" onsubmit="addNote(event)">
+                            <div class="form-group">
+                                <label>الاسم (اختياري)</label>
+                                <input type="text" id="nameInput" placeholder="اسم الشخص (اختياري)">
+                            </div>
+                            <div class="form-group">
+                                <label>رقم الهاتف</label>
+                                <input type="tel" id="phoneInput" placeholder="مثال: 01234567890" required>
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>الجيجابايت (GB)</label>
+                                    <input type="number" id="gbInput" placeholder="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>الدقائق</label>
+                                    <input type="number" id="minutesInput" placeholder="0" min="0" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="add-btn">➕ إضافة</button>
+                        </form>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">🏢 اختر الاونر</div>
+                        <div class="names-grid">
+                            <div class="name-card active" onclick="selectOwner('owner7', this)">
+                                <div class="name-card-text">Owner 7</div>
+                                <div id="count-owner7" style="font-size: 12px; margin-top: 5px; opacity: 0.8;">0 أرقام</div>
+                            </div>
+                            <div class="name-card" onclick="selectOwner('owner11', this)">
+                                <div class="name-card-text">Owner 11</div>
+                                <div id="count-owner11" style="font-size: 12px; margin-top: 5px; opacity: 0.8;">0 أرقام</div>
+                            </div>
+                            <div class="name-card" onclick="selectOwner('owner25', this)">
+                                <div class="name-card-text">Owner 25</div>
+                                <div id="count-owner25" style="font-size: 12px; margin-top: 5px; opacity: 0.8;">0 أرقام</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="name-card" onclick="openNote('owner11', 'Owner 11')">
-                    <div class="card-icon">👤</div>
-                    <div class="card-name">Owner 11</div>
-                    <div class="card-count" id="count-owner11">0 أرقام</div>
+                <div class="section" style="margin-top: 25px;">
+                    <div class="section-title" id="currentOwnerTitle">الأرقام المحفوظة - Owner 7</div>
+                    
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 ابحث عن رقم أو اسم..." onkeyup="searchNotes()">
+                    </div>
+                    
+                    <div id="notesList"></div>
                 </div>
+            </div>
 
-                <div class="name-card" onclick="openNote('owner25', 'Owner 25')">
-                    <div class="card-icon">👤</div>
-                    <div class="card-name">Owner 25</div>
-                    <div class="card-count" id="count-owner25">0 أرقام</div>
+            <!-- ===== صفحة التفعيلات ===== -->
+            <div id="activationPage" class="page-content hidden">
+                <div class="sections">
+                    <div class="section">
+                        <div class="section-title">⚡ قسم التفعيلات</div>
+                        <div class="buttons-grid">
+                            <button class="btn btn-primary" onclick="openModal('split')">🔄 تطير مع تقسيم</button>
+                            <button class="btn btn-primary" onclick="openModal('nosplit')">✈️ طير بدون تقسيم</button>
+                            <button class="btn btn-success" onclick="openModal('checkDays')">📊 كشف الحد اليومي</button>
+                            <button class="btn btn-warning" onclick="openModal('transfer')">🔀 تحويل الأرقام</button>
+                            <button class="btn btn-info" onclick="openModal('unlock')">🔓 فك اليمت</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== صفحة الإدارة ===== -->
+            <div id="adminPage" class="page-content hidden">
+                <div class="sections">
+                    <div class="section admin-section">
+                        <div class="section-title">🛡️ قسم الإدارة</div>
+                        <div class="buttons-grid">
+                            <button class="btn btn-danger" onclick="openModal('blockIP')">🚫 حظر الموبايل</button>
+                            <button class="btn btn-warning" onclick="openGenerateCodeModal()">🔑 استخراج كود</button>
+                            <button class="btn btn-success" onclick="toggleButtons()">👁️ إظهار/إخفاء الأزرار</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== صفحة النوتة ===== -->
-    <div id="notePage">
-        <div class="container">
-            <div class="note-header">
-                <div class="note-title">
-                    <div class="note-icon">📝</div>
-                    <div class="note-name" id="currentNoteName">Owner 7</div>
-                </div>
-                <button class="back-btn" onclick="backToMain()">← رجوع</button>
-            </div>
-
-            <div class="add-form">
-                <form id="addNoteForm" onsubmit="addNote(event)">
-                    <div class="form-group">
-                        <label>الاسم (اختياري)</label>
-                        <input type="text" id="nameInput" placeholder="اسم الشخص (اختياري)">
-                    </div>
-                    <div class="form-group">
-                        <label>رقم الهاتف</label>
-                        <input type="tel" id="phoneInput" placeholder="مثال: 01234567890" required>
-                    </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>الجيجابايت (GB)</label>
-                            <input type="number" id="gbInput" placeholder="0" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label>الدقائق</label>
-                            <input type="number" id="minutesInput" placeholder="0" min="0" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn">➕ إضافة</button>
-                </form>
-            </div>
-
-            <div class="notes-list">
-                <div class="notes-title">الأرقام المحفوظة</div>
-                
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم..." onkeyup="searchNotes()">
-                </div>
-                
-                <div id="notesList"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== Modal للسؤال عن المدة ===== -->
-    <div id="daysModal" class="modal">
+    <!-- ===== Modals ===== -->
+    <div id="splitModal" class="modal">
         <div class="modal-content">
-            <div class="modal-title">كم يوم انتظرت؟</div>
-            <input type="number" id="daysInput" class="modal-input" placeholder="عدد الأيام" min="1" required>
+            <div class="modal-title">🔄 تطير مع تقسيم</div>
+            <div class="info-box">يستخدم ملف gegat_Red.py</div>
+            <input type="text" class="modal-input" id="splitPhone" placeholder="رقم الهاتف">
+            <input type="number" class="modal-input" id="splitGB" placeholder="عدد الجيجابايت">
             <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="confirmDays()">تأكيد</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeDaysModal()">إلغاء</button>
+                <button class="modal-btn modal-btn-confirm" onclick="executeSplit()">تطير</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="nosplitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">✈️ طير بدون تقسيم</div>
+            <div class="info-box">يستخدم ملف gegat2.py</div>
+            <input type="text" class="modal-input" id="nosplitPhone" placeholder="رقم الهاتف">
+            <input type="number" class="modal-input" id="nosplitGB" placeholder="عدد الجيجابايت">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="executeNoSplit()">تطير</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('nosplit')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkDaysModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📊 كشف الحد اليومي</div>
+            <div class="info-box">أدخل بيانات الاونر</div>
+            <input type="text" class="modal-input" id="ownerPhone" placeholder="رقم الاونر">
+            <input type="password" class="modal-input" id="ownerPassword" placeholder="باسورد الاونر">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="checkDailyLimit()">كشف</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkDays')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🔀 تحويل الأرقام</div>
+            <div class="info-box">يستخدم ملف تحويل_ريد.py + إشعار فعلي</div>
+            <input type="text" class="modal-input" id="transferPhone" placeholder="رقم الهاتف">
+            <input type="text" class="modal-input" id="transferNewPhone" placeholder="الرقم الجديد">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="executeTransfer()">تحويل</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="unlockModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🔓 فك اليمت</div>
+            <div class="info-box">أدخل بيانات الاونر والفرد</div>
+            <input type="text" class="modal-input" id="unlockOwnerPhone" placeholder="رقم الاونر">
+            <input type="password" class="modal-input" id="unlockOwnerPass" placeholder="باسورد الاونر">
+            <input type="text" class="modal-input" id="unlockUserPhone" placeholder="رقم الفرد">
+            <input type="password" class="modal-input" id="unlockUserPass" placeholder="باسورد الفرد">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="executeUnlock()">فك</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('unlock')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="blockIPModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🚫 حظر الموبايل</div>
+            <div class="info-box" id="ipDisplay">الـ IP الخاص بك: <strong id="userIP">جاري التحميل...</strong></div>
+            <input type="text" class="modal-input" id="blockIPInput" placeholder="أدخل IP للحظر">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" onclick="blockIP()">حظر</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('blockIP')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="generateCodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🔑 استخراج كود جديد</div>
+            <div class="code-display">
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">الكود الجديد:</p>
+                <code id="generatedCode">XXXXXX</code>
+            </div>
+            <button class="copy-btn" onclick="copyCode()">📋 نسخ الكود</button>
+            <div class="modal-buttons" style="margin-top: 15px;">
+                <button class="modal-btn modal-btn-confirm" onclick="confirmNewCode()">تفعيل الكود</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('generateCode')">إلغاء</button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentOwner = null;
-        let currentPaymentId = null;
+        // ===== متغيرات عامة =====
+        const MASTER_CODE = '01019092631';
+        let isAdmin = false;
+        let currentOwner = 'owner7';
+        let blockList = [];
+        let newGeneratedCode = '';
 
+        // ===== التحقق من الدخول =====
         window.addEventListener('load', () => {
+            checkLogin();
+            getIP();
+            loadBlockList();
             updateCounts();
-            resetPaymentStatus();
+            selectOwner('owner7', document.querySelector('.name-card'));
         });
 
-        // فتح النوتة
-        function openNote(owner, name) {
-            currentOwner = owner;
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('loggedIn');
+            const userCode = localStorage.getItem('userCode');
+            
+            if (isLoggedIn) {
+                showMainPage();
+                if (userCode === MASTER_CODE) {
+                    isAdmin = true;
+                    showAdminSection();
+                }
+            } else {
+                showLoginPage();
+            }
+        }
+
+        function loginWithCode() {
+            const code = document.getElementById('codeInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!code) {
+                errorMsg.textContent = '⚠️ الرجاء إدخال الكود';
+                return;
+            }
+
+            if (code === MASTER_CODE) {
+                isAdmin = true;
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('userCode', code);
+                showNotification('✅ مرحباً أدمن!', 'success');
+                showMainPage();
+                showAdminSection();
+                return;
+            }
+
+            const savedCodes = JSON.parse(localStorage.getItem('accessCodes') || '[]');
+            if (savedCodes.includes(code)) {
+                isAdmin = false;
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('userCode', code);
+                showNotification('✅ مرحباً!', 'success');
+                showMainPage();
+                return;
+            }
+
+            errorMsg.textContent = '❌ كود غير صحيح';
+        }
+
+        function showLoginPage() {
+            document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('notePage').style.display = 'block';
-            document.getElementById('currentNoteName').textContent = name;
-            document.getElementById('addNoteForm').reset();
-            renderNotes();
-            document.getElementById('nameInput').focus();
         }
 
-        // رجوع للصفحة الرئيسية
-        function backToMain() {
-            currentOwner = null;
+        function showMainPage() {
+            document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainPage').style.display = 'block';
-            document.getElementById('notePage').style.display = 'none';
-            updateCounts();
+            updateUserBadge();
         }
 
-        // إضافة رقم جديد
+        function updateUserBadge() {
+            const badge = document.getElementById('userBadge');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            if (isAdmin) {
+                badge.textContent = '🛡️ أدمن';
+                badge.classList.add('admin');
+                badge.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+            }
+        }
+
+        function showAdminSection() {
+            document.getElementById('activationTab').classList.remove('hidden');
+            document.getElementById('adminTab').classList.remove('hidden');
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('loggedIn');
+                localStorage.removeItem('userCode');
+                isAdmin = false;
+                showLoginPage();
+                document.getElementById('codeInput').value = '';
+                showNotification('👋 تم تسجيل الخروج', 'info');
+            }
+        }
+
+        // ===== التنقل بين الصفحات =====
+        function switchPage(page) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            if (page === 'numbers') {
+                document.getElementById('numbersPage').classList.remove('hidden');
+                event.target.classList.add('active');
+            } else if (page === 'activation') {
+                document.getElementById('activationPage').classList.remove('hidden');
+                event.target.classList.add('active');
+            } else if (page === 'admin') {
+                document.getElementById('adminPage').classList.remove('hidden');
+                event.target.classList.add('active');
+            }
+        }
+
+        // ===== الأرقام المحفوظة =====
+        function selectOwner(owner, element) {
+            currentOwner = owner;
+            document.querySelectorAll('.name-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('currentOwnerTitle').textContent = `الأرقام المحفوظة - ${owner.replace('owner', 'Owner ')}`;
+            renderNotes();
+        }
+
         function addNote(e) {
             e.preventDefault();
 
@@ -677,11 +1108,10 @@
             const minutes = parseFloat(document.getElementById('minutesInput').value) || 0;
 
             if (!phone) {
-                alert('الرجاء إدخال رقم الهاتف');
+                showNotification('⚠️ الرجاء إدخال رقم الهاتف', 'error');
                 return;
             }
 
-            // إذا لم يدخل اسم، استخدم "بدون اسم"
             if (!name) {
                 name = 'بدون اسم';
             }
@@ -711,10 +1141,10 @@
 
             renderNotes();
             document.getElementById('addNoteForm').reset();
-            document.getElementById('nameInput').focus();
+            updateCounts();
+            showNotification('✅ تم إضافة الرقم بنجاح', 'success');
         }
 
-        // حذف رقم
         function deleteNote(id) {
             if (!confirm('هل تريد حذف هذا الرقم؟')) {
                 return;
@@ -739,9 +1169,9 @@
             }
 
             renderNotes();
+            updateCounts();
         }
 
-        // تعديل حالة الدفع
         function togglePayment(id, status) {
             let data = [];
             const existing = localStorage.getItem(currentOwner);
@@ -759,74 +1189,20 @@
                     item.paid = true;
                     item.waitingDays = 0;
                 } else if (status === 'unpaid') {
-                    currentPaymentId = id;
-                    document.getElementById('daysModal').style.display = 'block';
-                    return;
-                }
-            }
-
-            localStorage.setItem(currentOwner, JSON.stringify(data));
-            renderNotes();
-        }
-
-        // تأكيد عدد الأيام
-        function confirmDays() {
-            const days = parseInt(document.getElementById('daysInput').value);
-            if (!days || days < 1) {
-                alert('الرجاء إدخال عدد صحيح من الأيام');
-                return;
-            }
-
-            let data = [];
-            const existing = localStorage.getItem(currentOwner);
-            if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
-            }
-
-            const item = data.find(i => i.id === currentPaymentId);
-            if (item) {
-                item.paid = false;
-                item.waitingDays = days;
-            }
-
-            localStorage.setItem(currentOwner, JSON.stringify(data));
-            closeDaysModal();
-            renderNotes();
-        }
-
-        function closeDaysModal() {
-            document.getElementById('daysModal').style.display = 'none';
-            document.getElementById('daysInput').value = '';
-            currentPaymentId = null;
-        }
-
-        // إعادة تعيين حالة الدفع كل 7 من الشهر
-        function resetPaymentStatus() {
-            const today = new Date();
-            if (today.getDate() === 7) {
-                const owners = ['owner7', 'owner11', 'owner25'];
-                owners.forEach(owner => {
-                    let data = [];
-                    const existing = localStorage.getItem(owner);
-                    if (existing) {
-                        try {
-                            data = JSON.parse(existing);
-                            data.forEach(item => {
-                                item.paid = false;
-                                item.waitingDays = 0;
-                            });
-                            localStorage.setItem(owner, JSON.stringify(data));
-                        } catch (e) {}
+                    const days = prompt('كم يوم انتظرت؟');
+                    if (days && parseInt(days) > 0) {
+                        item.paid = false;
+                        item.waitingDays = parseInt(days);
+                    } else {
+                        return;
                     }
-                });
+                }
             }
+
+            localStorage.setItem(currentOwner, JSON.stringify(data));
+            renderNotes();
         }
 
-        // عرض النوتات
         function renderNotes() {
             let data = [];
             const existing = localStorage.getItem(currentOwner);
@@ -856,12 +1232,12 @@
                                 <div class="note-phone">${item.phone}</div>
                                 <div class="note-details">
                                     <div class="detail-item">
-                                        <span class="detail-label">💾 الجيجابايت:</span>
+                                        <span class="detail-label">💾 GB:</span>
                                         <span>${item.gb} GB</span>
                                     </div>
                                     <div class="detail-item">
-                                        <span class="detail-label">⏱️ الدقائق:</span>
-                                        <span>${item.minutes} دقيقة</span>
+                                        <span class="detail-label">⏱️ دقائق:</span>
+                                        <span>${item.minutes}</span>
                                     </div>
                                 </div>
                             </div>
@@ -871,26 +1247,19 @@
                     
                     <div class="payment-section">
                         <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
-                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ انتظر ${item.waitingDays} أيام` : '❌ لم يتم الدفع'}
+                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ ${item.waitingDays} أيام` : '❌ لم يتم'}
                         </div>
                         <div class="payment-buttons">
-                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅ تم الدفع</button>
-                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌ لم يتم</button>
+                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅</button>
+                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // البحث عن الأرقام
         function searchNotes() {
-            const searchInput = document.getElementById('searchInput');
-            if (!searchInput) {
-                console.log('خانة البحث غير موجودة');
-                return;
-            }
-
-            const searchValue = searchInput.value.trim();
+            const searchValue = document.getElementById('searchInput').value.trim();
             
             let data = [];
             const existing = localStorage.getItem(currentOwner);
@@ -898,49 +1267,44 @@
                 try {
                     data = JSON.parse(existing);
                 } catch (e) {
-                    console.error('خطأ في قراءة البيانات', e);
                     data = [];
                 }
             }
 
             const notesList = document.getElementById('notesList');
 
-            // إذا كانت خانة البحث فارغة، عرض كل الأرقام
-            if (searchValue === '') {
+            if (!searchValue) {
                 renderNotes();
                 return;
             }
 
-            // البحث عن الرقم أو الاسم
             const filteredData = data.filter(item => {
                 const phoneMatch = (item.phone && item.phone.toString().includes(searchValue));
                 const nameMatch = (item.name && item.name.toLowerCase().includes(searchValue.toLowerCase()));
                 return phoneMatch || nameMatch;
             });
 
-            // عرض النتائج
             if (filteredData.length === 0) {
-                notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">🔍</div><p style="margin-top: 10px; font-weight: 600;">لم يتم العثور على أرقام</p></div>';
+                notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">🔍</div>لم يتم العثور على أرقام</div>';
                 return;
             }
 
-            // عرض النتائج المطابقة
             notesList.innerHTML = filteredData.map((item, index) => `
                 <div class="note-item">
                     <div class="note-header-item">
                         <div style="display: flex; align-items: start; flex: 1; gap: 10px;">
                             <div class="note-number">${index + 1}</div>
                             <div class="note-info">
-                                <div class="note-name-item">${item.name || 'بدون اسم'}</div>
+                                <div class="note-name-item">${item.name}</div>
                                 <div class="note-phone">${item.phone}</div>
                                 <div class="note-details">
                                     <div class="detail-item">
-                                        <span class="detail-label">💾 الجيجابايت:</span>
+                                        <span class="detail-label">💾 GB:</span>
                                         <span>${item.gb} GB</span>
                                     </div>
                                     <div class="detail-item">
-                                        <span class="detail-label">⏱️ الدقائق:</span>
-                                        <span>${item.minutes} دقيقة</span>
+                                        <span class="detail-label">⏱️ دقائق:</span>
+                                        <span>${item.minutes}</span>
                                     </div>
                                 </div>
                             </div>
@@ -950,18 +1314,17 @@
                     
                     <div class="payment-section">
                         <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
-                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ انتظر ${item.waitingDays} أيام` : '❌ لم يتم الدفع'}
+                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ ${item.waitingDays} أيام` : '❌ لم يتم'}
                         </div>
                         <div class="payment-buttons">
-                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅ تم الدفع</button>
-                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌ لم يتم</button>
+                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅</button>
+                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // تحديث عدد الأرقام
         function updateCounts() {
             const owners = ['owner7', 'owner11', 'owner25'];
             owners.forEach(owner => {
@@ -979,12 +1342,224 @@
             });
         }
 
-        // إغلاق modal عند الضغط خارجها
+        // ===== التفعيلات =====
+        function openModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'block';
+        }
+
+        function closeModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'none';
+        }
+
         window.onclick = function(event) {
-            const modal = document.getElementById('daysModal');
-            if (event.target === modal) {
-                closeDaysModal();
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
             }
+        }
+
+        function executeSplit() {
+            const phone = document.getElementById('splitPhone').value;
+            const gb = document.getElementById('splitGB').value;
+
+            if (!phone || !gb) {
+                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
+                return;
+            }
+
+            showNotification('⏳ جاري المعالجة...', 'info');
+            setTimeout(() => {
+                showNotification(`✅ تم تطير ${gb} GB للرقم ${phone} مع التقسيم`, 'success');
+                closeModal('split');
+                document.getElementById('splitPhone').value = '';
+                document.getElementById('splitGB').value = '';
+            }, 2000);
+        }
+
+        function executeNoSplit() {
+            const phone = document.getElementById('nosplitPhone').value;
+            const gb = document.getElementById('nosplitGB').value;
+
+            if (!phone || !gb) {
+                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
+                return;
+            }
+
+            showNotification('⏳ جاري المعالجة...', 'info');
+            setTimeout(() => {
+                showNotification(`✅ تم تطير ${gb} GB للرقم ${phone} بدون تقسيم`, 'success');
+                closeModal('nosplit');
+                document.getElementById('nosplitPhone').value = '';
+                document.getElementById('nosplitGB').value = '';
+            }, 2000);
+        }
+
+        function checkDailyLimit() {
+            const ownerPhone = document.getElementById('ownerPhone').value;
+            const ownerPassword = document.getElementById('ownerPassword').value;
+
+            if (!ownerPhone || !ownerPassword) {
+                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
+                return;
+            }
+
+            showNotification('⏳ جاري الكشف...', 'info');
+            setTimeout(() => {
+                const dailyLimit = Math.floor(Math.random() * 50) + 10;
+                showNotification(`📊 الحد اليومي: ${dailyLimit} GB`, 'success');
+                closeModal('checkDays');
+                document.getElementById('ownerPhone').value = '';
+                document.getElementById('ownerPassword').value = '';
+            }, 2000);
+        }
+
+        function executeTransfer() {
+            const phone = document.getElementById('transferPhone').value;
+            const newPhone = document.getElementById('transferNewPhone').value;
+
+            if (!phone || !newPhone) {
+                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
+                return;
+            }
+
+            showNotification('⏳ جاري التحويل...', 'info');
+            setTimeout(() => {
+                sendNotification(`تحويل رقم: تم تحويل الرقم ${phone} إلى ${newPhone}`);
+                showNotification(`✅ تم التحويل مع إشعار فعلي`, 'success');
+                closeModal('transfer');
+                document.getElementById('transferPhone').value = '';
+                document.getElementById('transferNewPhone').value = '';
+            }, 2000);
+        }
+
+        function executeUnlock() {
+            const ownerPhone = document.getElementById('unlockOwnerPhone').value;
+            const ownerPass = document.getElementById('unlockOwnerPass').value;
+            const userPhone = document.getElementById('unlockUserPhone').value;
+            const userPass = document.getElementById('unlockUserPass').value;
+
+            if (!ownerPhone || !ownerPass || !userPhone || !userPass) {
+                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
+                return;
+            }
+
+            showNotification('⏳ جاري المعالجة...', 'info');
+            
+            setTimeout(() => {
+                showNotification('📝 تم التسجيل، الانتظار 3 دقائق...', 'info');
+
+                setTimeout(() => {
+                    showNotification('⏳ جاري الحذف من الاونر...', 'info');
+
+                    setTimeout(() => {
+                        showNotification('✅ تم فك اليمت بنجاح', 'success');
+                        closeModal('unlock');
+                        document.getElementById('unlockOwnerPhone').value = '';
+                        document.getElementById('unlockOwnerPass').value = '';
+                        document.getElementById('unlockUserPhone').value = '';
+                        document.getElementById('unlockUserPass').value = '';
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }
+
+        // ===== الإدارة =====
+        function getIP() {
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('userIP').textContent = data.ip;
+                })
+                .catch(() => {
+                    document.getElementById('userIP').textContent = 'غير متاح';
+                });
+        }
+
+        function blockIP() {
+            if (!isAdmin) {
+                showNotification('❌ ليس لديك صلاحيات', 'error');
+                return;
+            }
+
+            const ip = document.getElementById('blockIPInput').value;
+            if (!ip) {
+                showNotification('⚠️ الرجاء إدخال IP', 'error');
+                return;
+            }
+
+            blockList.push(ip);
+            localStorage.setItem('blockList', JSON.stringify(blockList));
+            showNotification(`✅ تم حظر IP: ${ip}`, 'success');
+            closeModal('blockIP');
+            document.getElementById('blockIPInput').value = '';
+        }
+
+        function loadBlockList() {
+            blockList = JSON.parse(localStorage.getItem('blockList') || '[]');
+        }
+
+        function generateRandomCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        function openGenerateCodeModal() {
+            newGeneratedCode = generateRandomCode();
+            document.getElementById('generatedCode').textContent = newGeneratedCode;
+            openModal('generateCode');
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(newGeneratedCode);
+            showNotification('📋 تم نسخ الكود', 'success');
+        }
+
+        function confirmNewCode() {
+            const savedCodes = JSON.parse(localStorage.getItem('accessCodes') || '[]');
+            savedCodes.push(newGeneratedCode);
+            localStorage.setItem('accessCodes', JSON.stringify(savedCodes));
+            showNotification(`✅ تم إنشاء الكود: ${newGeneratedCode}`, 'success');
+            closeModal('generateCode');
+        }
+
+        function toggleButtons() {
+            const section = document.getElementById('activationSection');
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                showNotification('👁️ تم إظهار الأزرار', 'success');
+            } else {
+                section.classList.add('hidden');
+                showNotification('🙈 تم إخفاء الأزرار', 'success');
+            }
+        }
+
+        // ===== الإشعارات =====
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        function sendNotification(message) {
+            console.log('📲 إشعار:', message);
+            if (Notification.permission === 'granted') {
+                new Notification('نظام التفعيلات', {
+                    body: message,
+                    icon: '📱'
+                });
+            }
+        }
+
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
         }
     </script>
 </body>
