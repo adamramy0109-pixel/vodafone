@@ -5,749 +5,246 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام الأرقام والتفعيلات</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1000px; margin: 0 auto; }
 
         /* ===== صفحة التسجيل ===== */
         #loginPage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             z-index: 1000;
         }
-
         .login-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
+            background: white; border-radius: 20px; padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%; max-width: 400px; text-align: center;
         }
-
-        .login-card h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .login-card p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
+        .login-card h1 { font-size: 28px; color: #333; margin-bottom: 30px; }
+        .login-card p { color: #666; margin-bottom: 20px; font-size: 14px; }
         .login-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-family: inherit;
-            transition: border-color 0.3s;
+            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px;
+            font-size: 16px; margin-bottom: 20px; text-align: center;
+            font-family: inherit; transition: border-color 0.3s;
         }
-
-        .login-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
+        .login-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
         .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px; font-size: 16px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
         }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .error-msg {
-            color: #ff6b6b;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
+        .error-msg { color: #ff6b6b; font-size: 13px; margin-bottom: 15px; }
 
         /* ===== الصفحة الرئيسية ===== */
-        #mainPage {
-            display: none;
-        }
-
+        #mainPage { display: none; }
         .header {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: white; border-radius: 15px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .header h1 {
-            color: #333;
-            font-size: 24px;
-        }
-
-        .user-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
+        .header h1 { color: #333; font-size: 24px; }
+        .user-info { display: flex; gap: 15px; align-items: center; }
         .user-badge {
-            background: #667eea;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
+            background: #667eea; color: white; padding: 8px 15px;
+            border-radius: 20px; font-size: 13px; font-weight: 600;
         }
-
-        .user-badge.admin {
-            background: #dc3545;
-        }
-
+        .user-badge.admin { background: #dc3545; }
         .logout-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+            background: #ff6b6b; color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;
         }
-
-        .logout-btn:hover {
-            background: #ff5252;
-        }
+        .logout-btn:hover { background: #ff5252; }
 
         /* ===== التنقل بين الأقسام ===== */
         .nav-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            overflow-x: auto;
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto;
+            background: white; padding: 15px; border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
         .nav-tab {
-            padding: 12px 20px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s;
+            padding: 12px 20px; background: #f0f0f0; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s;
             white-space: nowrap;
         }
-
         .nav-tab.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
-        .nav-tab:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+        .nav-tab:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
         /* ===== المحتويات ===== */
-        .page-content {
-            display: none;
-        }
-
-        .page-content.active {
-            display: block;
-        }
-
+        .page-content { display: none; }
+        .page-content.active { display: block; }
         .sections {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
         }
-
         .section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
         .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
+            font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px;
+            padding-bottom: 15px; border-bottom: 3px solid #667eea;
         }
-
-        .buttons-grid {
-            display: grid;
-            gap: 12px;
-        }
-
+        .buttons-grid { display: grid; gap: 12px; }
         .btn {
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
+            padding: 15px; border: none; border-radius: 10px; font-size: 14px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center;
         }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
+        .btn-danger { background: #ff6b6b; color: white; }
+        .btn-danger:hover { background: #ff5252; }
+        .btn-success { background: #51cf66; color: white; }
+        .btn-success:hover { background: #40c057; }
+        .btn-warning { background: #ffc107; color: white; }
+        .btn-warning:hover { background: #ffb300; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-info:hover { background: #138496; }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-danger {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #ff5252;
-        }
-
-        .btn-success {
-            background: #51cf66;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #40c057;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #ffb300;
-        }
-
-        .btn-info {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .btn-info:hover {
-            background: #138496;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* Modal */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            display: none; position: fixed; z-index: 999; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);
         }
-
         .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background-color: white; margin: 10% auto; padding: 30px;
+            border-radius: 15px; width: 90%; max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
+        .modal-title { font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px; }
         .modal-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 15px;
-            font-family: inherit;
+            width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
+            font-size: 14px; margin-bottom: 15px; font-family: inherit;
         }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; }
         .modal-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            flex: 1; padding: 12px; border: none; border-radius: 8px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
         }
-
-        .modal-btn-confirm {
-            background: #51cf66;
-            color: white;
-        }
-
-        .modal-btn-cancel {
-            background: #ddd;
-            color: #333;
-        }
+        .modal-btn-confirm { background: #51cf66; color: white; }
+        .modal-btn-cancel { background: #ddd; color: #333; }
 
         .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            max-width: 300px;
-            z-index: 2000;
-            animation: slideIn 0.3s ease;
+            position: fixed; top: 20px; right: 20px; background: white;
+            padding: 20px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 300px; z-index: 2000; animation: slideIn 0.3s ease;
         }
-
-        .notification.success {
-            border-left: 4px solid #51cf66;
-        }
-
-        .notification.error {
-            border-left: 4px solid #ff6b6b;
-        }
-
-        .notification.info {
-            border-left: 4px solid #667eea;
-        }
-
+        .notification.success { border-left: 4px solid #51cf66; }
+        .notification.error { border-left: 4px solid #ff6b6b; }
+        .notification.info { border-left: 4px solid #667eea; }
         @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        .admin-section {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-        }
-
+        .admin-section { background: #fff3cd; border: 2px solid #ffc107; }
         .code-display {
-            background: #f8f9fa;
-            border: 2px dashed #667eea;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 15px 0;
+            background: #f8f9fa; border: 2px dashed #667eea; padding: 20px;
+            border-radius: 10px; text-align: center; margin: 15px 0;
         }
-
         .code-display code {
-            font-size: 24px;
-            font-weight: 700;
-            color: #667eea;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            font-size: 24px; font-weight: 700; color: #667eea;
+            font-family: 'Courier New', monospace; letter-spacing: 2px;
         }
-
         .copy-btn {
-            margin-top: 10px;
-            padding: 8px 15px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
+            margin-top: 10px; padding: 8px 15px; background: #667eea;
+            color: white; border: none; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 12px;
         }
-
-        .copy-btn:hover {
-            background: #764ba2;
-        }
-
+        .copy-btn:hover { background: #764ba2; }
         .info-box {
-            background: #e7f3ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #333;
+            background: #e7f3ff; border-left: 4px solid #667eea; padding: 15px;
+            border-radius: 8px; margin-bottom: 15px; font-size: 13px; color: #333;
         }
-
-        .search-box {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
+        .search-box { margin-bottom: 20px; display: flex; gap: 10px; }
         .search-box input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: border-color 0.3s;
-            font-family: inherit;
+            flex: 1; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
+            font-size: 15px; transition: border-color 0.3s; font-family: inherit;
         }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
+        .search-box input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
         .note-item {
-            background: #f8f9fa;
-            border-right: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            transition: all 0.3s;
+            background: #f8f9fa; border-right: 4px solid #667eea; padding: 15px;
+            margin-bottom: 12px; border-radius: 8px; transition: all 0.3s;
         }
-
-        .note-item:hover {
-            background: #f0f0f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .note-header-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 10px;
-        }
-
-        .note-number {
-            font-size: 20px;
-            font-weight: 700;
-            color: #667eea;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .note-info {
-            flex: 1;
-            margin: 0 15px;
-        }
-
-        .note-name-item {
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .note-phone {
-            font-size: 15px;
-            color: #666;
-            direction: ltr;
-            text-align: left;
-            margin-bottom: 8px;
-        }
-
-        .note-details {
-            display: flex;
-            gap: 20px;
-            font-size: 13px;
-            color: #666;
-            flex-wrap: wrap;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .detail-label {
-            color: #999;
-            font-weight: 500;
-        }
-
+        .note-item:hover { background: #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .note-header-item { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+        .note-number { font-size: 20px; font-weight: 700; color: #667eea; min-width: 30px; text-align: center; }
+        .note-info { flex: 1; margin: 0 15px; }
+        .note-name-item { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 5px; }
+        .note-phone { font-size: 15px; color: #666; direction: ltr; text-align: left; margin-bottom: 8px; }
+        .note-details { display: flex; gap: 20px; font-size: 13px; color: #666; flex-wrap: wrap; }
+        .detail-item { display: flex; align-items: center; gap: 5px; }
+        .detail-label { color: #999; font-weight: 500; }
         .payment-section {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            justify-content: space-between;
+            background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px;
+            padding: 12px; margin-top: 10px; display: flex; flex-wrap: wrap;
+            gap: 10px; align-items: center; justify-content: space-between;
         }
-
-        .payment-status {
-            font-size: 14px;
-            font-weight: 600;
-            color: #856404;
-            flex: 1;
-        }
-
-        .payment-status.paid {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        .payment-status.unpaid {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        .payment-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
+        .payment-status { font-size: 14px; font-weight: 600; color: #856404; flex: 1; }
+        .payment-status.paid { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 8px 12px; border-radius: 6px; }
+        .payment-status.unpaid { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 8px 12px; border-radius: 6px; }
+        .payment-buttons { display: flex; gap: 8px; }
         .payment-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
+            padding: 8px 12px; border: none; border-radius: 6px; font-size: 12px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;
         }
-
-        .payment-btn.paid {
-            background: #28a745;
-            color: white;
-        }
-
-        .payment-btn.paid:hover {
-            background: #218838;
-        }
-
-        .payment-btn.unpaid {
-            background: #dc3545;
-            color: white;
-        }
-
-        .payment-btn.unpaid:hover {
-            background: #c82333;
-        }
-
+        .payment-btn.paid { background: #28a745; color: white; }
+        .payment-btn.paid:hover { background: #218838; }
+        .payment-btn.unpaid { background: #dc3545; color: white; }
+        .payment-btn.unpaid:hover { background: #c82333; }
         .delete-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 12px;
+            background: #ff6b6b; color: white; border: none; padding: 8px 12px;
+            border-radius: 6px; cursor: pointer; font-weight: 600;
+            transition: all 0.3s; font-size: 12px;
         }
-
-        .delete-btn:hover {
-            background: #ff5252;
-            transform: scale(1.05);
-        }
-
-        .empty-message {
-            text-align: center;
-            color: #999;
-            padding: 40px 20px;
-            font-size: 15px;
-        }
-
-        .empty-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #555;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
+        .delete-btn:hover { background: #ff5252; transform: scale(1.05); }
+        .empty-message { text-align: center; color: #999; padding: 40px 20px; font-size: 15px; }
+        .empty-icon { font-size: 40px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; color: #555; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
         .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: border-color 0.3s;
-            font-family: inherit;
+            width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
+            font-size: 15px; transition: border-color 0.3s; font-family: inherit;
         }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
+        .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .add-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 8px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
         }
-
-        .add-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .names-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
+        .names-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
         .name-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 3px solid transparent;
+            background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center;
+            cursor: pointer; transition: all 0.3s; border: 3px solid transparent;
         }
-
-        .name-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
-        }
-
-        .name-card.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .name-card-text {
-            font-weight: 700;
-            font-size: 14px;
-        }
+        .name-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: #667eea; }
+        .name-card.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .name-card-text { font-weight: 700; font-size: 14px; }
 
         @media (max-width: 600px) {
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .nav-tabs {
-                flex-direction: column;
-            }
-
-            .sections {
-                grid-template-columns: 1fr;
-            }
-
-            .input-row {
-                grid-template-columns: 1fr;
-            }
-
-            .payment-section {
-                flex-direction: column;
-            }
-
-            .payment-buttons {
-                width: 100%;
-            }
-
-            .payment-btn {
-                flex: 1;
-            }
-
-            .note-header-item {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .names-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .nav-tabs { flex-direction: column; }
+            .sections { grid-template-columns: 1fr; }
+            .input-row { grid-template-columns: 1fr; }
+            .payment-section { flex-direction: column; }
+            .payment-buttons { width: 100%; }
+            .payment-btn { flex: 1; }
+            .note-header-item { flex-direction: column; gap: 10px; }
+            .names-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -756,7 +253,7 @@
     <div id="loginPage">
         <div class="login-card">
             <h1>🔐 نظام المدير</h1>
-            <p>أدخل الكود للدخول (التفعيلات والإدارة فقط)</p>
+            <p>أدخل الكود للدخول (التفاعلات والإدارة فقط)</p>
             <div id="errorMsg" class="error-msg"></div>
             <input type="password" id="codeInput" class="login-input" placeholder="أدخل الكود" onkeypress="if(event.key==='Enter') loginWithCode()">
             <button class="login-btn" onclick="loginWithCode()">دخول</button>
@@ -831,11 +328,9 @@
 
                 <div class="section" style="margin-top: 25px;">
                     <div class="section-title" id="currentOwnerTitle">الأرقام المحفوظة - Owner 7</div>
-                    
                     <div class="search-box">
                         <input type="text" id="searchInput" placeholder="🔍 ابحث عن رقم أو اسم..." onkeyup="searchNotes()">
                     </div>
-                    
                     <div id="notesList"></div>
                 </div>
             </div>
@@ -845,7 +340,7 @@
                 <div class="sections">
                     <div class="section">
                         <div class="section-title">⚡ قسم التفعيلات</div>
-                        <div class="buttons-grid">
+                        <div class="buttons-grid" id="activationButtons">
                             <button class="btn btn-primary" onclick="openModal('split')">🔄 تطير مع تقسيم</button>
                             <button class="btn btn-primary" onclick="openModal('nosplit')">✈️ طير بدون تقسيم</button>
                             <button class="btn btn-success" onclick="openModal('checkDays')">📊 كشف الحد اليومي</button>
@@ -864,7 +359,7 @@
                         <div class="buttons-grid">
                             <button class="btn btn-danger" onclick="openModal('blockIP')">🚫 حظر الموبايل</button>
                             <button class="btn btn-warning" onclick="openGenerateCodeModal()">🔑 استخراج كود</button>
-                            <button class="btn btn-success" onclick="toggleButtons()">👁️ إظهار/إخفاء الأزرار</button>
+                            <button class="btn btn-success" onclick="toggleButtons()">👁️ إظهار/إخفاء أزرار التفعيلات</button>
                         </div>
                     </div>
                 </div>
@@ -980,9 +475,33 @@
             checkLogin();
             getIP();
             loadBlockList();
+            seedDemoData();
             updateCounts();
             selectOwner('owner7', document.querySelector('.name-card'));
         });
+
+        // إضافة بيانات تجريبية عند أول تشغيل
+        function seedDemoData() {
+            const owners = ['owner7', 'owner11', 'owner25'];
+            owners.forEach(owner => {
+                if (!localStorage.getItem(owner)) {
+                    let demo = [];
+                    if (owner === 'owner7') {
+                        demo = [
+                            { id: 1, name: 'أحمد', phone: '01012345678', gb: 10, minutes: 100, paid: false, waitingDays: 0 },
+                            { id: 2, name: 'محمد', phone: '01123456789', gb: 5, minutes: 50, paid: true, waitingDays: 0 }
+                        ];
+                    } else if (owner === 'owner11') {
+                        demo = [
+                            { id: 3, name: 'سارة', phone: '01234567890', gb: 20, minutes: 200, paid: true, waitingDays: 0 }
+                        ];
+                    } else {
+                        demo = [];
+                    }
+                    localStorage.setItem(owner, JSON.stringify(demo));
+                }
+            });
+        }
 
         function checkLogin() {
             const isLoggedIn = localStorage.getItem('loggedIn');
@@ -993,6 +512,15 @@
                 if (userCode === MASTER_CODE) {
                     isAdmin = true;
                     showAdminSection();
+                }
+                // التحقق من حالة إظهار التفعيلات للمستخدم العادي
+                if (!isAdmin) {
+                    const showActivation = localStorage.getItem('showActivation') === 'true';
+                    if (showActivation) {
+                        document.getElementById('activationTab').classList.remove('hidden');
+                    } else {
+                        document.getElementById('activationTab').classList.add('hidden');
+                    }
                 }
             } else {
                 showLoginPage();
@@ -1025,6 +553,13 @@
                 localStorage.setItem('userCode', code);
                 showNotification('✅ مرحباً!', 'success');
                 showMainPage();
+                // إظهار التفعيلات للمستخدم العادي فقط إذا كان الأدمن قد فعلها
+                const showActivation = localStorage.getItem('showActivation') === 'true';
+                if (showActivation) {
+                    document.getElementById('activationTab').classList.remove('hidden');
+                } else {
+                    document.getElementById('activationTab').classList.add('hidden');
+                }
                 return;
             }
 
@@ -1075,13 +610,9 @@
 
         // ===== التنقل بين الصفحات =====
         function switchPage(page) {
-            // إخفاء جميع الصفحات
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-            
-            // إزالة active من جميع التبويبات
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             
-            // إظهار الصفحة المختارة وتفعيل التبويب
             if (page === 'numbers') {
                 document.getElementById('numbersPage').classList.remove('hidden');
                 document.querySelectorAll('.nav-tab')[0].classList.add('active');
@@ -1105,7 +636,6 @@
 
         function addNote(e) {
             e.preventDefault();
-
             let name = document.getElementById('nameInput').value.trim();
             const phone = document.getElementById('phoneInput').value.trim();
             const gb = parseFloat(document.getElementById('gbInput').value) || 0;
@@ -1115,19 +645,12 @@
                 showNotification('⚠️ الرجاء إدخال رقم الهاتف', 'error');
                 return;
             }
-
-            if (!name) {
-                name = 'بدون اسم';
-            }
+            if (!name) name = 'بدون اسم';
 
             let data = [];
             const existing = localStorage.getItem(currentOwner);
             if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
+                try { data = JSON.parse(existing); } catch (e) { data = []; }
             }
 
             const newNote = {
@@ -1142,7 +665,6 @@
 
             data.push(newNote);
             localStorage.setItem(currentOwner, JSON.stringify(data));
-
             renderNotes();
             document.getElementById('addNoteForm').reset();
             updateCounts();
@@ -1150,18 +672,12 @@
         }
 
         function deleteNote(id) {
-            if (!confirm('هل تريد حذف هذا الرقم؟')) {
-                return;
-            }
+            if (!confirm('هل تريد حذف هذا الرقم؟')) return;
 
             let data = [];
             const existing = localStorage.getItem(currentOwner);
             if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
+                try { data = JSON.parse(existing); } catch (e) { data = []; }
             }
 
             data = data.filter(item => item.id !== id);
@@ -1171,7 +687,6 @@
             } else {
                 localStorage.setItem(currentOwner, JSON.stringify(data));
             }
-
             renderNotes();
             updateCounts();
         }
@@ -1180,11 +695,7 @@
             let data = [];
             const existing = localStorage.getItem(currentOwner);
             if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
+                try { data = JSON.parse(existing); } catch (e) { data = []; }
             }
 
             const item = data.find(i => i.id === id);
@@ -1211,11 +722,7 @@
             let data = [];
             const existing = localStorage.getItem(currentOwner);
             if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
+                try { data = JSON.parse(existing); } catch (e) { data = []; }
             }
 
             const notesList = document.getElementById('notesList');
@@ -1235,20 +742,13 @@
                                 <div class="note-name-item">${item.name}</div>
                                 <div class="note-phone">${item.phone}</div>
                                 <div class="note-details">
-                                    <div class="detail-item">
-                                        <span class="detail-label">💾 GB:</span>
-                                        <span>${item.gb} GB</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">⏱️ دقائق:</span>
-                                        <span>${item.minutes}</span>
-                                    </div>
+                                    <div class="detail-item"><span class="detail-label">💾 GB:</span><span>${item.gb} GB</span></div>
+                                    <div class="detail-item"><span class="detail-label">⏱️ دقائق:</span><span>${item.minutes}</span></div>
                                 </div>
                             </div>
                         </div>
                         <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
                     </div>
-                    
                     <div class="payment-section">
                         <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
                             ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ ${item.waitingDays} أيام` : '❌ لم يتم'}
@@ -1264,19 +764,13 @@
 
         function searchNotes() {
             const searchValue = document.getElementById('searchInput').value.trim();
-            
             let data = [];
             const existing = localStorage.getItem(currentOwner);
             if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
+                try { data = JSON.parse(existing); } catch (e) { data = []; }
             }
 
             const notesList = document.getElementById('notesList');
-
             if (!searchValue) {
                 renderNotes();
                 return;
@@ -1302,20 +796,13 @@
                                 <div class="note-name-item">${item.name}</div>
                                 <div class="note-phone">${item.phone}</div>
                                 <div class="note-details">
-                                    <div class="detail-item">
-                                        <span class="detail-label">💾 GB:</span>
-                                        <span>${item.gb} GB</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">⏱️ دقائق:</span>
-                                        <span>${item.minutes}</span>
-                                    </div>
+                                    <div class="detail-item"><span class="detail-label">💾 GB:</span><span>${item.gb} GB</span></div>
+                                    <div class="detail-item"><span class="detail-label">⏱️ دقائق:</span><span>${item.minutes}</span></div>
                                 </div>
                             </div>
                         </div>
                         <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
                     </div>
-                    
                     <div class="payment-section">
                         <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
                             ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ ${item.waitingDays} أيام` : '❌ لم يتم'}
@@ -1335,11 +822,7 @@
                 let data = [];
                 const existing = localStorage.getItem(owner);
                 if (existing) {
-                    try {
-                        data = JSON.parse(existing);
-                    } catch (e) {
-                        data = [];
-                    }
+                    try { data = JSON.parse(existing); } catch (e) { data = []; }
                 }
                 const count = data.length;
                 document.getElementById(`count-${owner}`).textContent = `${count} ${count === 1 ? 'رقم' : 'أرقام'}`;
@@ -1364,12 +847,7 @@
         function executeSplit() {
             const phone = document.getElementById('splitPhone').value;
             const gb = document.getElementById('splitGB').value;
-
-            if (!phone || !gb) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
+            if (!phone || !gb) { showNotification('⚠️ الرجاء ملء جميع الحقول', 'error'); return; }
             showNotification('⏳ جاري المعالجة...', 'info');
             setTimeout(() => {
                 showNotification(`✅ تم تطير ${gb} GB للرقم ${phone} مع التقسيم`, 'success');
@@ -1382,12 +860,7 @@
         function executeNoSplit() {
             const phone = document.getElementById('nosplitPhone').value;
             const gb = document.getElementById('nosplitGB').value;
-
-            if (!phone || !gb) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
+            if (!phone || !gb) { showNotification('⚠️ الرجاء ملء جميع الحقول', 'error'); return; }
             showNotification('⏳ جاري المعالجة...', 'info');
             setTimeout(() => {
                 showNotification(`✅ تم تطير ${gb} GB للرقم ${phone} بدون تقسيم`, 'success');
@@ -1400,12 +873,7 @@
         function checkDailyLimit() {
             const ownerPhone = document.getElementById('ownerPhone').value;
             const ownerPassword = document.getElementById('ownerPassword').value;
-
-            if (!ownerPhone || !ownerPassword) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
+            if (!ownerPhone || !ownerPassword) { showNotification('⚠️ الرجاء ملء جميع الحقول', 'error'); return; }
             showNotification('⏳ جاري الكشف...', 'info');
             setTimeout(() => {
                 const dailyLimit = Math.floor(Math.random() * 50) + 10;
@@ -1419,12 +887,7 @@
         function executeTransfer() {
             const phone = document.getElementById('transferPhone').value;
             const newPhone = document.getElementById('transferNewPhone').value;
-
-            if (!phone || !newPhone) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
+            if (!phone || !newPhone) { showNotification('⚠️ الرجاء ملء جميع الحقول', 'error'); return; }
             showNotification('⏳ جاري التحويل...', 'info');
             setTimeout(() => {
                 sendNotification(`تحويل رقم: تم تحويل الرقم ${phone} إلى ${newPhone}`);
@@ -1440,20 +903,12 @@
             const ownerPass = document.getElementById('unlockOwnerPass').value;
             const userPhone = document.getElementById('unlockUserPhone').value;
             const userPass = document.getElementById('unlockUserPass').value;
-
-            if (!ownerPhone || !ownerPass || !userPhone || !userPass) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
+            if (!ownerPhone || !ownerPass || !userPhone || !userPass) { showNotification('⚠️ الرجاء ملء جميع الحقول', 'error'); return; }
             showNotification('⏳ جاري المعالجة...', 'info');
-            
             setTimeout(() => {
                 showNotification('📝 تم التسجيل، الانتظار 3 دقائق...', 'info');
-
                 setTimeout(() => {
                     showNotification('⏳ جاري الحذف من الاونر...', 'info');
-
                     setTimeout(() => {
                         showNotification('✅ تم فك اليمت بنجاح', 'success');
                         closeModal('unlock');
@@ -1470,26 +925,14 @@
         function getIP() {
             fetch('https://api.ipify.org?format=json')
                 .then(res => res.json())
-                .then(data => {
-                    document.getElementById('userIP').textContent = data.ip;
-                })
-                .catch(() => {
-                    document.getElementById('userIP').textContent = 'غير متاح';
-                });
+                .then(data => { document.getElementById('userIP').textContent = data.ip; })
+                .catch(() => { document.getElementById('userIP').textContent = 'غير متاح'; });
         }
 
         function blockIP() {
-            if (!isAdmin) {
-                showNotification('❌ ليس لديك صلاحيات', 'error');
-                return;
-            }
-
+            if (!isAdmin) { showNotification('❌ ليس لديك صلاحيات', 'error'); return; }
             const ip = document.getElementById('blockIPInput').value;
-            if (!ip) {
-                showNotification('⚠️ الرجاء إدخال IP', 'error');
-                return;
-            }
-
+            if (!ip) { showNotification('⚠️ الرجاء إدخال IP', 'error'); return; }
             blockList.push(ip);
             localStorage.setItem('blockList', JSON.stringify(blockList));
             showNotification(`✅ تم حظر IP: ${ip}`, 'success');
@@ -1529,14 +972,26 @@
             closeModal('generateCode');
         }
 
+        // ===== إظهار/إخفاء أزرار التفعيلات (للمستخدمين) =====
         function toggleButtons() {
-            const section = document.getElementById('activationSection');
-            if (section.classList.contains('hidden')) {
-                section.classList.remove('hidden');
-                showNotification('👁️ تم إظهار الأزرار', 'success');
+            if (!isAdmin) { showNotification('❌ ليس لديك صلاحيات', 'error'); return; }
+            
+            const currentState = localStorage.getItem('showActivation') === 'true';
+            const newState = !currentState;
+            localStorage.setItem('showActivation', newState.toString());
+            
+            // تحديث واجهة المستخدم الحالي (الأدمن) - لكن الأدمن يرى التفعيلات دائماً
+            // هذا الخيار يؤثر على المستخدمين العاديين
+            const activationTab = document.getElementById('activationTab');
+            if (newState) {
+                activationTab.classList.remove('hidden');
+                showNotification('👁️ تم إظهار التفعيلات للمستخدمين', 'success');
             } else {
-                section.classList.add('hidden');
-                showNotification('🙈 تم إخفاء الأزرار', 'success');
+                // إذا كان الأدمن، لا نخفي التبويب عنه
+                if (!isAdmin) {
+                    activationTab.classList.add('hidden');
+                }
+                showNotification('🙈 تم إخفاء التفعيلات عن المستخدمين', 'success');
             }
         }
 
@@ -1546,19 +1001,13 @@
             notification.className = `notification ${type}`;
             notification.innerHTML = message;
             document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 4000);
+            setTimeout(() => { notification.remove(); }, 4000);
         }
 
         function sendNotification(message) {
             console.log('📲 إشعار:', message);
             if (Notification.permission === 'granted') {
-                new Notification('نظام التفعيلات', {
-                    body: message,
-                    icon: '📱'
-                });
+                new Notification('نظام التفعيلات', { body: message, icon: '📱' });
             }
         }
 
