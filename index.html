@@ -378,7 +378,6 @@ loadOwners(); renderSavedNumbers(); renderManualSaved();
 await applyButtonsConfig();
 checkNotifStatus();
 startRunningTasksPolling();
-// تحقق من الإشعارات المخزنة
 checkPendingNotifications();
 }
 
@@ -403,32 +402,39 @@ notify('✅ تم تفعيل الإشعارات', 'success');
 document.getElementById('notifBanner').classList.remove('hidden');
 notify('⚠️ تم رفض الإشعارات', 'error');
 }
-} catch(e) { notify('❌ خطأ', 'error'); }
+} catch(e) { notify('❌ خطأ: ' + e.message, 'error'); }
 }
 
 async function registerServiceWorker() {
-if (!('serviceWorker' in navigator)) return;
+if (!('serviceWorker' in navigator)) { notify('❌ المتصفح لا يدعم SW', 'error'); return; }
 try {
-const reg = await navigator.serviceWorker.register('/vodafone/sw.js');
+const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
 console.log('SW registered:', reg);
+await new Promise(r => setTimeout(r, 1000));
 await subscribePush(reg);
-} catch(e) { console.error('SW error:', e); }
+} catch(e) { console.error('SW error:', e); notify('❌ SW: ' + e.message, 'error'); }
 }
 
 async function subscribePush(reg) {
 try {
 const vapidResp = await fetch(BACKEND_URL + '/api/vapid-public-key');
 const vapidData = await vapidResp.json();
-if (vapidData.status !== 'success') return;
+if (vapidData.status !== 'success') { notify('❌ فشل جلب VAPID', 'error'); return; }
 const sub = await reg.pushManager.subscribe({
 userVisibleOnly: true,
 applicationServerKey: urlBase64ToUint8Array(vapidData.publicKey)
 });
-await fetch(BACKEND_URL + '/api/subscribe-push', {
+const resp = await fetch(BACKEND_URL + '/api/subscribe-push', {
 method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ subscription: sub })
 });
-} catch(e) { console.error('Push subscribe error:', e); }
+const data = await resp.json();
+if (data.status === 'success') {
+console.log('Push subscribed');
+} else {
+notify('⚠️ فشل تسجيل Push', 'error');
+}
+} catch(e) { console.error('Push subscribe error:', e); notify('❌ Push: ' + e.message, 'error'); }
 }
 
 function urlBase64ToUint8Array(base64String) {
@@ -851,9 +857,6 @@ else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') ||
 const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
 body.appendChild(line); body.scrollTop = body.scrollHeight;
-if (msg.includes('🚨') && Notification.permission === 'granted' && !('serviceWorker' in navigator)) {
-try { new Notification('🚨 تحول النظام', { body: msg }); } catch(e) {}
-}
 }
 function termLog(msg, type) { addTermLine(msg); }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
