@@ -1,17 +1,57 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response, render_template_string
 from flask_cors import CORS
-import logging
-import random
-import string
-
-# إعداد اللوجز
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import subprocess
+import os
+import sys
+import threading
+import queue
+import time
 
 app = Flask(__name__)
+CORS(app)
 
-# تفعيل CORS بشكل كامل عشان GitHub Pages يقدر يكلم السيرفر
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+# قائمة عشان نخزن فيها اللوجز اللي بتطلع من السكريبتات
+log_queue = queue.Queue()
+log_history = []
+
+# دالة عشان تشغل السكريبت وتبعت الـ output للـ queue
+def run_script(script_name, args):
+    global log_history
+    try:
+        # تأكد إن السكريبت موجود
+        if not os.path.exists(script_name):
+            log_queue.put(f"❌ الملف {script_name} غير موجود\n")
+            return
+        
+        # تشغيل السكريبت
+        process = subprocess.Popen(
+            [sys.executable, script_name] + args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            universal_newlines=True
+        )
+        
+        # قراءة الـ output سطر بسطر
+        for line in iter(process.stdout.readline, ''):
+            if line:
+                log_queue.put(line)
+                log_history.append(line)
+        
+        process.stdout.close()
+        process.wait()
+        log_queue.put("✅ انتهى التنفيذ\n")
+        
+    except Exception as e:
+        log_queue.put(f"❌ خطأ في التشغيل: {str(e)}\n")
+
+# دالة عشان نستخدمها في الـ API
+def start_script_in_background(script_name, args):
+    thread = threading.Thread(target=run_script, args=(script_name, args))
+    thread.daemon = True
+    thread.start()
+    return thread
 
 # ------------------ APIs ------------------
 
@@ -19,82 +59,116 @@ CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 def health():
     return jsonify({'status': 'running'}), 200
 
-@app.route('/api/split-transfer', methods=['POST'])
-def split_transfer():
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({'status': 'error', 'message': 'No data provided'}), 400
-        phone = data.get('phone')
-        gb = data.get('gb')
-        minutes = data.get('minutes')
-        logger.info(f"Split transfer: {phone}, {gb}GB, {minutes}min")
-        return jsonify({'status': 'success', 'message': f'OK: {gb}GB transferred'})
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+@app.route('/api/run-split', methods=['POST'])
+def api_run_split():
+    data = request.json
+    owner_phone = data.get('owner_phone')
+    owner_pass = data.get('owner_password')
+    member_phone = data.get('member_phone')
+    member_pass = data.get('member_password')
+    gb = data.get('gb')
+    minutes = data.get('minutes')
+    
+    # نمرر البيانات كـ arguments للسكريبت
+    args = [owner_phone, owner_pass, member_phone, member_pass, gb, minutes]
+    start_script_in_background('split.py', args)
+    
+    return jsonify({'status': 'started', 'message': 'تم بدء التطير مع التقسيم'})
 
-@app.route('/api/nosplit-transfer', methods=['POST'])
-def nosplit_transfer():
-    try:
-        data = request.get_json()
-        phone = data.get('phone')
-        gb = data.get('gb')
-        logger.info(f"No split transfer: {phone}, {gb}GB")
-        return jsonify({'status': 'success', 'message': f'OK: {gb}GB transferred'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+@app.route('/api/run-nosplit', methods=['POST'])
+def api_run_nosplit():
+    data = request.json
+    owner_phone = data.get('owner_phone')
+    owner_pass = data.get('owner_password')
+    member_phone = data.get('member_phone')
+    member_pass = data.get('member_password')
+    gb = data.get('gb')
+    minutes = data.get('minutes')
+    
+    args = [owner_phone, owner_pass, member_phone, member_pass, gb, minutes]
+    start_script_in_background('nosplit.py', args)
+    
+    return jsonify({'status': 'started', 'message': 'تم بدء التطير بدون تقسيم'})
 
-@app.route('/api/check-daily-limit', methods=['POST'])
-def check_daily_limit():
-    try:
-        data = request.get_json()
-        owner_phone = data.get('owner_phone')
-        logger.info(f"Check daily limit: {owner_phone}")
-        return jsonify({'status': 'success', 'daily_limit': 50, 'message': 'Limit: 50GB'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+@app.route('/api/run-transfer', methods=['POST'])
+def api_run_transfer():
+    data = request.json
+    owner_phone = data.get('owner_phone')
+    owner_pass = data.get('owner_password')
+    member_phone = data.get('member_phone')
+    member_pass = data.get('member_password')
+    
+    args = [owner_phone, owner_pass, member_phone, member_pass]
+    start_script_in_background('transfer.py', args)
+    
+    return jsonify({'status': 'started', 'message': 'تم بدء التحويل'})
 
-@app.route('/api/transfer-number', methods=['POST'])
-def transfer_number():
-    try:
-        data = request.get_json()
-        from_number = data.get('from_number')
-        to_number = data.get('to_number')
-        logger.info(f"Transfer: {from_number} to {to_number}")
-        return jsonify({'status': 'success', 'message': 'Transfer OK'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+@app.route('/api/logs', methods=['GET'])
+def get_logs():
+    """دالة عشان الـ Terminal يجيب اللوجز الجديدة"""
+    global log_history
+    # نرجع اللوجز الجديدة بس
+    new_logs = list(log_queue.queue)
+    # نفرغ الـ queue
+    while not log_queue.empty():
+        log_queue.get()
+    
+    return jsonify({
+        'logs': new_logs,
+        'history': log_history[-100:]  # آخر 100 سطر
+    })
 
-@app.route('/api/unlock-device', methods=['POST'])
-def unlock_device():
-    try:
-        data = request.get_json()
-        owner_phone = data.get('owner_phone')
-        user_phone = data.get('user_phone')
-        logger.info(f"Unlock: {user_phone}")
-        return jsonify({'status': 'success', 'message': 'Unlocked'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+@app.route('/api/clear-logs', methods=['POST'])
+def clear_logs():
+    global log_history
+    log_history = []
+    while not log_queue.empty():
+        log_queue.get()
+    return jsonify({'status': 'cleared'})
 
-@app.route('/api/block-ip', methods=['POST'])
-def block_ip():
-    try:
-        data = request.get_json()
-        ip = data.get('ip')
-        logger.info(f"Block IP: {ip}")
-        return jsonify({'status': 'success', 'message': 'Blocked'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
-@app.route('/api/generate-code', methods=['POST'])
-def generate_code():
-    try:
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-        logger.info(f"Generated code: {code}")
-        return jsonify({'status': 'success', 'code': code})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+# صفحة عشان نشوف اللوجز (ممكن تدمجها في الموقع الأساسي)
+@app.route('/terminal')
+def terminal_page():
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <title>Terminal</title>
+        <style>
+            body { background: #1e1e1e; color: #00ff00; font-family: monospace; padding: 20px; }
+            #terminal { background: #000; padding: 20px; border-radius: 10px; min-height: 400px; overflow-y: auto; }
+            .log-line { margin: 5px 0; border-bottom: 1px solid #333; padding: 5px; }
+        </style>
+    </head>
+    <body>
+        <h1>🖥️ Terminal</h1>
+        <div id="terminal"></div>
+        <script>
+            const BACKEND = 'https://01019092631.pythonanywhere.com';
+            const term = document.getElementById('terminal');
+            
+            async function fetchLogs() {
+                try {
+                    const res = await fetch(BACKEND + '/api/logs');
+                    const data = await res.json();
+                    if (data.logs.length > 0) {
+                        data.logs.forEach(log => {
+                            const div = document.createElement('div');
+                            div.className = 'log-line';
+                            div.textContent = log;
+                            term.appendChild(div);
+                        });
+                        term.scrollTop = term.scrollHeight;
+                    }
+                } catch (e) {}
+            }
+            
+            setInterval(fetchLogs, 1000);
+        </script>
+    </body>
+    </html>
+    ''')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
