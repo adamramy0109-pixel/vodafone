@@ -311,7 +311,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 
 <script>
-const BACKEND_URL = 'https://dining-professor-synthetic-ottawa.trycloudflare.com';
+const BACKEND_URL = 'https://protect-mutual-verde-benefits.trycloudflare.com';
 let SESSION_ID = localStorage.getItem('sessionId');
 if (!SESSION_ID) {
     SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
@@ -320,7 +320,8 @@ if (!SESSION_ID) {
 const PACKAGES = [{gb:25,min:2500},{gb:30,min:3000},{gb:35,min:3500},{gb:40,min:4000},{gb:45,min:4500},{gb:50,min:5000},{gb:55,min:5500},{gb:60,min:6000},{gb:65,min:6500},{gb:70,min:7000},{gb:75,min:7500},{gb:80,min:8000},{gb:85,min:8500}];
 const PERCENT_OPTIONS = [10, 20, 40];
 
-let currentRole = null, currentCode = null, currentEventSource = null, terminalOpen = false, codeTimerInterval = null, currentSavedTab = 'activated', runningInterval = null;
+let currentRole = null, currentCode = null, codeTimerInterval = null, currentSavedTab = 'activated', runningInterval = null;
+let lastLogCount = 0, logPollingInterval = null, terminalOpen = false;
 
 function getOwners() { try { return JSON.parse(localStorage.getItem('owners') || '[]'); } catch(e) { return []; } }
 function saveOwners(l) { localStorage.setItem('owners', JSON.stringify(l)); }
@@ -382,7 +383,6 @@ loadOwners(); renderSavedNumbers(); renderManualSaved();
 await applyButtonsConfig();
 checkNotifStatus();
 startRunningTasksPolling();
-// فتح التريمنال تلقائياً بعد الدخول
 setTimeout(() => openTerminal(), 1000);
 }
 
@@ -813,31 +813,57 @@ else el.textContent = 'مفيش IPs محظورة';
 function openTerminal() {
 const t = document.getElementById('terminalContainer');
 t.style.display = 'flex'; terminalOpen = true;
-if (!currentEventSource) startTerminalStream();
+startTerminalStream();
 }
 function toggleTerminal() {
 const t = document.getElementById('terminalContainer');
 if (t.style.display === 'none' || !t.style.display) openTerminal();
-else { t.style.display = 'none'; terminalOpen = false; }
+else {
+t.style.display = 'none';
+terminalOpen = false;
+if (logPollingInterval) clearInterval(logPollingInterval);
 }
-function clearTerminal() { document.getElementById('terminalBody').innerHTML = ''; }
+}
+function clearTerminal() {
+document.getElementById('terminalBody').innerHTML = '';
+// امسح اللوجز من السيرفر
+fetch(BACKEND_URL + '/api/logs/' + SESSION_ID, { method: 'DELETE' }).catch(() => {});
+lastLogCount = 0;
+}
 function startTerminalStream() {
-if (currentEventSource) currentEventSource.close();
-currentEventSource = new EventSource(BACKEND_URL + '/api/terminal/' + SESSION_ID);
-currentEventSource.onmessage = function(event) {
-try { const data = JSON.parse(event.data); if (data.message) addTermLine(data.message); } catch(e) {}
-};
-currentEventSource.onerror = function() { setTimeout(() => { if (terminalOpen) startTerminalStream(); }, 3000); };
+if (logPollingInterval) clearInterval(logPollingInterval);
+lastLogCount = 0;
+fetch(BACKEND_URL + '/api/logs/' + SESSION_ID)
+.then(r => r.json())
+.then(data => {
+if (data.logs) {
+data.logs.forEach(msg => addTermLine(msg));
+lastLogCount = data.logs.length;
+}
+}).catch(() => {});
+logPollingInterval = setInterval(async () => {
+try {
+const resp = await fetch(BACKEND_URL + '/api/logs/' + SESSION_ID);
+const data = await resp.json();
+if (data.status === 'success' && data.logs) {
+if (data.logs.length > lastLogCount) {
+const newLogs = data.logs.slice(lastLogCount);
+newLogs.forEach(msg => addTermLine(msg));
+lastLogCount = data.logs.length;
+}
+}
+} catch(e) {}
+}, 2000);
 }
 function addTermLine(msg) {
 const body = document.getElementById('terminalBody');
 const line = document.createElement('div');
 line.className = 'term-line';
 let cls = 'term-default';
-if (msg.includes('❌') || msg.includes('خطأ')) cls = 'term-error';
+if (msg.includes('❌') || msg.includes('خطأ') || msg.includes('فشل')) cls = 'term-error';
 else if (msg.includes('✅')) cls = 'term-success';
 else if (msg.includes('⚠️')) cls = 'term-warn';
-else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦') || msg.includes('🚨')) cls = 'term-info';
+else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦') || msg.includes('🚨') || msg.includes('🔍') || msg.includes('🔎')) cls = 'term-info';
 const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
 body.appendChild(line); body.scrollTop = body.scrollHeight;
