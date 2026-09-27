@@ -9,7 +9,6 @@
 body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 15px; color: #333; }
 .container { max-width: 1000px; margin: 0 auto; padding-bottom: 350px; }
 
-/* صفحة الدخول */
 .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 999; padding: 20px; }
 .login-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; width: 100%; max-width: 400px; }
 .login-card h1 { font-size: 28px; color: #333; margin-bottom: 20px; }
@@ -18,7 +17,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .error { color: #ff6b6b; margin-bottom: 15px; font-weight: 600; min-height: 20px; }
 .hidden { display: none !important; }
 
-/* الصفحة الرئيسية */
 .main-page { display: none; }
 .header { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .header h1 { color: #333; font-size: 20px; }
@@ -41,9 +39,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
 .btn-success { background: #51cf66; color: white; }
 .btn-danger { background: #ff6b6b; color: white; }
-.btn-warning { background: #ffa94d; color: white; }
 
-/* الـ Modals */
 .modal { display: none; position: fixed; z-index: 999; inset: 0; background: rgba(0,0,0,0.6); padding: 20px; overflow-y: auto; }
 .modal.show { display: block; }
 .modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -56,32 +52,25 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .modal-btn-ok { background: #51cf66; color: white; }
 .modal-btn-cancel { background: #ddd; color: #333; }
 
-/* شارات الأونر */
 .owner-row { display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; }
 .owner-row .owner-info { flex: 1; font-size: 13px; }
 .owner-row .owner-info strong { display: block; color: #333; }
 .owner-row .owner-info small { color: #888; font-size: 11px; }
 .owner-row button { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
 
-/* الإشعارات */
 .notification { position: fixed; top: 20px; right: 20px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.25); z-index: 99999; font-weight: 600; font-size: 14px; max-width: 320px; animation: slideIn 0.3s ease; }
 .notification.success { border-right: 4px solid #51cf66; color: #2b8a3e; }
 .notification.error { border-right: 4px solid #ff6b6b; color: #c92a2a; }
 .notification.info { border-right: 4px solid #74c0fc; color: #1864ab; }
 @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-/* التريمنال */
 .terminal-container { position: fixed; bottom: 0; left: 0; right: 0; height: 320px; background: #0d1117; border-top-left-radius: 15px; border-top-right-radius: 15px; box-shadow: 0 -5px 25px rgba(0,0,0,0.4); z-index: 9998; display: none; flex-direction: column; }
 .terminal-header { background: #161b22; color: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 13px; border-top-left-radius: 15px; border-top-right-radius: 15px; }
 .terminal-header .title { display: flex; align-items: center; gap: 8px; }
 .terminal-header .dot { width: 10px; height: 10px; border-radius: 50%; background: #51cf66; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 .terminal-actions button { background: #30363d; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 5px; }
-.terminal-actions button:hover { background: #444c56; }
 .terminal-body { flex: 1; padding: 12px 15px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12.5px; direction: ltr; text-align: left; line-height: 1.6; }
-.terminal-body::-webkit-scrollbar { width: 8px; }
-.terminal-body::-webkit-scrollbar-track { background: #0d1117; }
-.terminal-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
 .term-line { margin-bottom: 2px; word-wrap: break-word; }
 .term-info { color: #74c0fc; }
 .term-success { color: #51cf66; }
@@ -93,7 +82,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </head>
 <body>
 
-<!-- صفحة الدخول -->
 <div class="login-page" id="loginPage">
 <div class="login-card">
 <h1>🔐 الدخول</h1>
@@ -103,7 +91,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- الصفحة الرئيسية -->
 <div class="main-page" id="mainPage">
 <div class="container">
 <div class="header">
@@ -120,7 +107,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button onclick="showPage('admin', this)">🛡️ الإدارة</button>
 </div>
 
-<!-- صفحة التفعيلات -->
 <div class="page active" id="activationPage">
 <div class="section">
 <h2>⚡ عمليات التفعيل</h2>
@@ -134,7 +120,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- صفحة الأونرز -->
 <div class="page" id="ownersPage">
 <div class="section">
 <h2>👥 إدارة الأونرز</h2>
@@ -144,7 +129,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- صفحة الإدارة -->
 <div class="page" id="adminPage">
 <div class="section" style="background: #fff3cd; border: 2px solid #ffc107;">
 <h2>🛡️ الإدارة</h2>
@@ -158,7 +142,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: تطير مع تقسيم -->
 <div class="modal" id="splitModal">
 <div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
@@ -188,7 +171,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: تطير بدون تقسيم -->
 <div class="modal" id="nosplitModal">
 <div class="modal-content">
 <div class="modal-title">✈️ تطير بدون تقسيم</div>
@@ -218,7 +200,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: كشف الحد -->
 <div class="modal" id="checkdaysModal">
 <div class="modal-content">
 <div class="modal-title">📊 كشف الحد اليومي</div>
@@ -235,7 +216,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: تحويل الأرقام -->
 <div class="modal" id="transferModal">
 <div class="modal-content">
 <div class="modal-title">🔀 تحويل الأرقام</div>
@@ -258,7 +238,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: فك اليمت -->
 <div class="modal" id="unlockModal">
 <div class="modal-content">
 <div class="modal-title">🔓 فك اليمت</div>
@@ -272,7 +251,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: حظر IP -->
 <div class="modal" id="blockModal">
 <div class="modal-content">
 <div class="modal-title">🚫 حظر IP</div>
@@ -284,7 +262,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: إضافة أونر -->
 <div class="modal" id="addownerModal">
 <div class="modal-content">
 <div class="modal-title">➕ إضافة أونر جديد</div>
@@ -298,7 +275,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- Modal: كود جديد -->
 <div class="modal" id="codeModal">
 <div class="modal-content">
 <div class="modal-title">🔑 كود جديد</div>
@@ -308,7 +284,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- التريمنال اللايف -->
 <div class="terminal-container" id="terminalContainer">
 <div class="terminal-header">
 <div class="title"><span class="dot"></span> 💻 التريمنال اللايف</div>
@@ -323,20 +298,18 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <script>
 // ==================== الإعدادات ====================
 const MASTER_CODE = '01019092631';
-const BACKEND_URL = 'https://01019092631.pythonanywhere.com';
+const BACKEND_URL = 'https://headphones-scoop-overcome-extensions.trycloudflare.com';
 const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
 
 let currentEventSource = null;
 let terminalOpen = false;
 
-// ==================== التخزين ====================
 function getOwners() {
 try { return JSON.parse(localStorage.getItem('owners') || '[]'); }
 catch(e) { return []; }
 }
 function saveOwners(list) { localStorage.setItem('owners', JSON.stringify(list)); }
 
-// ==================== الدخول ====================
 function login() {
 const code = document.getElementById('codeInput').value.trim();
 const error = document.getElementById('loginError');
@@ -355,7 +328,6 @@ document.getElementById('mainPage').style.display = 'block';
 loadOwners();
 }
 
-// ==================== التنقل ====================
 function showPage(page, btn) {
 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
@@ -364,11 +336,9 @@ if (btn) btn.classList.add('active');
 if (page === 'owners') renderOwners();
 }
 
-// ==================== الأونرز ====================
 function loadOwners() {
 const owners = getOwners();
-const selects = ['splitOwnerSelect', 'nosplitOwnerSelect', 'checkOwnerSelect'];
-selects.forEach(id => {
+['splitOwnerSelect', 'nosplitOwnerSelect', 'checkOwnerSelect'].forEach(id => {
 const sel = document.getElementById(id);
 if (!sel) return;
 sel.innerHTML = '<option value="">-- اختر الأونر --</option>';
@@ -427,7 +397,6 @@ loadOwners(); renderOwners();
 notify('🗑️ تم الحذف', 'success');
 }
 
-// ==================== اختيار الأونر ====================
 function onOwnerSelect(prefix) {
 const sel = document.getElementById(prefix + 'OwnerSelect');
 const manual = document.getElementById(prefix + 'OwnerManual');
@@ -452,7 +421,6 @@ if (isNaN(idx) || !owners[idx]) return null;
 return { phone: owners[idx].phone, password: owners[idx].password };
 }
 
-// ==================== الـ Modals ====================
 function openModal(name) {
 const m = document.getElementById(name + 'Modal');
 if (m) m.classList.add('show');
@@ -463,7 +431,6 @@ const m = document.getElementById(name + 'Modal');
 if (m) m.classList.remove('show');
 }
 
-// ==================== API ====================
 async function apiCall(endpoint, body) {
 body.session_id = SESSION_ID;
 const response = await fetch(BACKEND_URL + endpoint, {
@@ -476,7 +443,6 @@ if (!response.ok) throw new Error(data.message || 'Server Error');
 return data;
 }
 
-// ==================== العمليات ====================
 async function executeSplit() {
 const owner = getOwnerData('split');
 if (!owner) { notify('⚠️ اختر أونر أو أدخل بياناته', 'error'); return; }
@@ -574,7 +540,6 @@ if (navigator.clipboard) navigator.clipboard.writeText(code);
 notify('📋 تم النسخ', 'success');
 }
 
-// ==================== التريمنال ====================
 function openTerminal() {
 const t = document.getElementById('terminalContainer');
 t.style.display = 'flex';
@@ -621,7 +586,6 @@ function escapeHtml(s) {
 return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-// ==================== الإشعارات ====================
 function notify(msg, type) {
 const div = document.createElement('div');
 div.className = 'notification ' + (type || 'info');
@@ -630,7 +594,6 @@ document.body.appendChild(div);
 setTimeout(() => div.remove(), 3500);
 }
 
-// ==================== التشغيل ====================
 window.addEventListener('load', () => {
 if (localStorage.getItem('loggedIn')) {
 showMainPage();
