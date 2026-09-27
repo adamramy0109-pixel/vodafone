@@ -8,7 +8,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 15px; color: #333; }
 .container { max-width: 1000px; margin: 0 auto; padding-bottom: 350px; }
-
 .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 999; padding: 20px; }
 .login-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; width: 100%; max-width: 400px; }
 .login-card h1 { font-size: 28px; color: #333; margin-bottom: 20px; }
@@ -16,7 +15,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .login-card button { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 16px; }
 .error { color: #ff6b6b; margin-bottom: 15px; font-weight: 600; min-height: 20px; }
 .hidden { display: none !important; }
-
 .main-page { display: none; }
 .header { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .header h1 { color: #333; font-size: 20px; }
@@ -24,11 +22,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .badge { background: #667eea; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
 .badge.admin { background: #dc3545; }
 .logout-btn { background: #ff6b6b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
-
 .nav { display: flex; gap: 10px; margin-bottom: 20px; background: white; padding: 12px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); flex-wrap: wrap; }
 .nav button { padding: 10px 15px; border: none; background: #f0f0f0; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
 .nav button.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-
 .page { display: none; }
 .page.active { display: block; }
 .section { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -41,14 +37,12 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .btn-danger { background: #ff6b6b; color: white; }
 .btn-warning { background: #ffa94d; color: white; }
 .btn-info { background: #74c0fc; color: white; }
-
 .tabs { display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
 .tabs button { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: 600; font-size: 13px; color: #666; }
 .tabs button.active { background: #f0f0f0; color: #667eea; border-bottom: 3px solid #667eea; }
-
 .modal { display: none; position: fixed; z-index: 999; inset: 0; background: rgba(0,0,0,0.6); padding: 20px; overflow-y: auto; }
 .modal.show { display: block; }
-.modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
 .modal-title { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
 .modal-input, .modal-select { width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; background: white; }
 .modal-input:focus, .modal-select:focus { outline: none; border-color: #667eea; }
@@ -57,21 +51,19 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
 .modal-btn-ok { background: #51cf66; color: white; }
 .modal-btn-cancel { background: #ddd; color: #333; }
-
 .owner-row, .saved-row, .log-row { display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
 .owner-row .owner-info, .saved-row .saved-info, .log-row .log-info { flex: 1; }
 .owner-row .owner-info strong, .saved-row .saved-info strong { display: block; color: #333; }
 .owner-row .owner-info small, .saved-row .saved-info small, .log-row small { color: #888; font-size: 11px; }
 .owner-row button, .saved-row button { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-
+.member-block { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid #667eea; }
+.member-block h4 { color: #667eea; font-size: 14px; margin-bottom: 8px; }
 .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
-
 .notification { position: fixed; top: 20px; right: 20px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.25); z-index: 99999; font-weight: 600; font-size: 14px; max-width: 320px; animation: slideIn 0.3s ease; }
 .notification.success { border-right: 4px solid #51cf66; color: #2b8a3e; }
 .notification.error { border-right: 4px solid #ff6b6b; color: #c92a2a; }
 .notification.info { border-right: 4px solid #74c0fc; color: #1864ab; }
 @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
 .terminal-container { position: fixed; bottom: 0; left: 0; right: 0; height: 320px; background: #0d1117; border-top-left-radius: 15px; border-top-right-radius: 15px; box-shadow: 0 -5px 25px rgba(0,0,0,0.4); z-index: 9998; display: none; flex-direction: column; }
 .terminal-header { background: #161b22; color: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 13px; border-top-left-radius: 15px; border-top-right-radius: 15px; }
 .terminal-header .title { display: flex; align-items: center; gap: 8px; }
@@ -80,12 +72,10 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .terminal-actions button { background: #30363d; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 5px; }
 .terminal-body { flex: 1; padding: 12px 15px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12.5px; direction: ltr; text-align: left; line-height: 1.6; }
 .term-line { margin-bottom: 2px; word-wrap: break-word; }
-.term-info { color: #74c0fc; }
-.term-success { color: #51cf66; }
-.term-error { color: #ff6b6b; }
-.term-warn { color: #ffd43b; }
-.term-default { color: #8b949e; }
-.term-time { color: #6e7681; margin-right: 8px; }
+.term-info { color: #74c0fc; } .term-success { color: #51cf66; } .term-error { color: #ff6b6b; } .term-warn { color: #ffd43b; } .term-default { color: #8b949e; } .term-time { color: #6e7681; margin-right: 8px; }
+.notif-banner { background: #ffa94d; color: white; padding: 12px 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.notif-banner button { background: white; color: #ffa94d; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; }
+.running-badge { background: #51cf66; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-right: 5px; animation: pulse 2s infinite; }
 </style>
 </head>
 <body>
@@ -101,6 +91,10 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 
 <div class="main-page" id="mainPage">
 <div class="container">
+<div id="notifBanner" class="notif-banner hidden">
+<span>🔔 عايز تفعّل الإشعارات؟</span>
+<button onclick="requestNotifPermission()">تفعيل الإشعارات</button>
+</div>
 <div class="header">
 <h1>📱 نظام التفعيلات</h1>
 <div class="user-info">
@@ -108,14 +102,12 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="logout-btn" onclick="logout()">خروج</button>
 </div>
 </div>
-
 <div class="nav">
 <button class="active" onclick="showPage('activation', this)">⚡ التفعيلات</button>
 <button onclick="showPage('owners', this)">👥 الأونرز</button>
 <button id="savedBtn" onclick="showPage('saved', this)">💾 الأرقام المحفوظة</button>
 <button id="adminBtn" class="hidden" onclick="showPage('admin', this)">🛡️ الإدارة</button>
 </div>
-
 <div class="page active" id="activationPage">
 <div class="section">
 <h2>⚡ عمليات التفعيل</h2>
@@ -123,20 +115,21 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="btn btn-primary" data-btn="split" onclick="openModal('split')">🔄 تطير مع تقسيم</button>
 <button class="btn btn-primary" data-btn="nosplit" onclick="openModal('nosplit')">✈️ تطير بدون تقسيم</button>
 <button class="btn btn-primary" data-btn="checkdays" onclick="openModal('checkdays')">📊 كشف الحد</button>
-<button class="btn btn-primary" data-btn="transfer" onclick="openModal('transfer')">🔀 تحويل الأرقام</button>
+<button class="btn btn-primary" data-btn="transfer" onclick="openTransferModal()">🔀 تحويل الأرقام</button>
 </div>
 </div>
+<div class="section" id="runningSection" style="display:none;">
+<h2>⏳ عمليات شغالة</h2>
+<div id="runningTasks"></div>
 </div>
-
+</div>
 <div class="page" id="ownersPage">
 <div class="section">
 <h2>👥 إدارة الأونرز</h2>
-<p style="color:#666; font-size:13px; margin-bottom:15px;">الأونرز محفوظين في متصفحك (localStorage).</p>
 <button class="btn btn-success" style="width:100%; margin-bottom:15px;" onclick="openModal('addowner')">➕ إضافة أونر جديد</button>
 <div id="ownersList"></div>
 </div>
 </div>
-
 <div class="page" id="savedPage">
 <div class="section">
 <h2>💾 الأرقام المحفوظة</h2>
@@ -144,9 +137,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button id="tabActivated" class="active" onclick="switchSavedTab('activated')">📥 الأرقام المتفعّلة</button>
 <button id="tabManual" onclick="switchSavedTab('manual')">📋 الأرقام المحفوظة</button>
 </div>
-<div id="activatedTab">
-<div id="savedList"></div>
-</div>
+<div id="activatedTab"><div id="savedList"></div></div>
 <div id="manualTab" class="hidden">
 <button class="btn btn-success" style="width:100%; margin-bottom:15px;" onclick="openModal('addsaved')">➕ إضافة رقم محفوظ</button>
 <input type="text" class="search-box" id="searchSaved" placeholder="🔍 ابحث بالاسم أو الرقم..." oninput="renderManualSaved()">
@@ -154,7 +145,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 </div>
-
 <div class="page" id="adminPage">
 <div class="section" style="background: #fff3cd; border: 2px solid #ffc107;">
 <h2>🛡️ الإدارة</h2>
@@ -167,11 +157,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 </div>
-
 </div>
 </div>
 
-<!-- Modals -->
 <div class="modal" id="splitModal"><div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
 <label class="form-label">👤 الأونر</label>
@@ -227,21 +215,18 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <div class="modal" id="transferModal"><div class="modal-content">
-<div class="modal-title">🔀 تحويل الأرقام</div>
-<label class="form-label">📱 رقم الفرد</label>
-<input type="tel" id="transferPhone" class="modal-input" placeholder="رقم الفرد">
-<label class="form-label">🔑 باسورد الفرد</label>
-<input type="password" id="transferPass" class="modal-input" placeholder="باسورد الفرد">
-<label class="form-label">📊 النسبة</label>
-<select id="transferPercent" class="modal-select">
-<option value="">-- اختر النسبة --</option>
-<option value="10">10%</option>
-<option value="20">20%</option>
-<option value="40">40%</option>
-</select>
-<input type="number" id="transferPercentManual" class="modal-input" placeholder="أو أدخل نسبة مخصصة">
+<div class="modal-title">🔀 تحويل الأرقام المتعدد</div>
+<label class="form-label">👤 الأونر</label>
+<select class="modal-select" id="transferOwnerSelect" onchange="onOwnerSelect('transfer')"></select>
+<div id="transferOwnerManual" class="hidden">
+<input type="tel" id="transferOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="transferOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+</div>
+<label class="form-label">👥 عدد الأفراد</label>
+<input type="number" id="membersCount" class="modal-input" placeholder="مثلاً 4" min="1" max="20" oninput="renderMemberInputs()">
+<div id="membersInputs"></div>
 <div class="modal-buttons">
-<button class="modal-btn modal-btn-ok" onclick="executeTransfer()">تحويل</button>
+<button class="modal-btn modal-btn-ok" onclick="executeMultiTransfer()">🚀 بدء التحويل</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
 </div>
 </div></div>
@@ -261,7 +246,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="modal-title">➕ إضافة رقم محفوظ</div>
 <input type="text" id="newSavedName" class="modal-input" placeholder="الاسم">
 <input type="tel" id="newSavedPhone" class="modal-input" placeholder="الرقم">
-<input type="number" id="newSavedPercent" class="modal-input" placeholder="النسبة %">
+<label class="form-label">📦 الباقة</label>
+<select id="newSavedPlan" class="modal-select"></select>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="addManualSaved()">حفظ</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('addsaved')">إلغاء</button>
@@ -287,7 +273,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 
 <div class="modal" id="buttonsConfigModal"><div class="modal-content">
 <div class="modal-title">👁️ إخفاء/إظهار الأزرار</div>
-<p style="color:#666; font-size:13px; margin-bottom:15px;">اختار الأزرار اللي عايز تخفيها عن المستخدم العادي.</p>
 <div id="buttonsConfigList"></div>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="saveButtonsConfig()">💾 حفظ</button>
@@ -326,26 +311,13 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 
 <script>
-// ==================== الإعدادات ====================
-const BACKEND_URL = 'https://databases-neighborhood-outputs-presents.trycloudflare.com';
+const BACKEND_URL = 'https://regional-attitudes-mass-nutten.trycloudflare.com';
 const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
+const PACKAGES = [{gb:25,min:2500},{gb:30,min:3000},{gb:35,min:3500},{gb:40,min:4000},{gb:45,min:4500},{gb:50,min:5000},{gb:55,min:5500},{gb:60,min:6000},{gb:65,min:6500},{gb:70,min:7000},{gb:75,min:7500},{gb:80,min:8000},{gb:85,min:8500}];
+const PERCENT_OPTIONS = [10, 20, 40];
 
-const PACKAGES = [
-{gb: 25, min: 2500}, {gb: 30, min: 3000}, {gb: 35, min: 3500},
-{gb: 40, min: 4000}, {gb: 45, min: 4500}, {gb: 50, min: 5000},
-{gb: 55, min: 5500}, {gb: 60, min: 6000}, {gb: 65, min: 6500},
-{gb: 70, min: 7000}, {gb: 75, min: 7500}, {gb: 80, min: 8000},
-{gb: 85, min: 8500}
-];
+let currentRole = null, currentCode = null, currentEventSource = null, terminalOpen = false, codeTimerInterval = null, currentSavedTab = 'activated', runningInterval = null;
 
-let currentRole = null;
-let currentCode = null;
-let currentEventSource = null;
-let terminalOpen = false;
-let codeTimerInterval = null;
-let currentSavedTab = 'activated';
-
-// ==================== التخزين ====================
 function getOwners() { try { return JSON.parse(localStorage.getItem('owners') || '[]'); } catch(e) { return []; } }
 function saveOwners(l) { localStorage.setItem('owners', JSON.stringify(l)); }
 function getSavedNumbers() { try { return JSON.parse(localStorage.getItem('savedNumbers') || '[]'); } catch(e) { return []; } }
@@ -353,9 +325,8 @@ function saveSavedNumbers(l) { localStorage.setItem('savedNumbers', JSON.stringi
 function getManualSaved() { try { return JSON.parse(localStorage.getItem('manualSaved') || '[]'); } catch(e) { return []; } }
 function saveManualSaved(l) { localStorage.setItem('manualSaved', JSON.stringify(l)); }
 
-// ==================== الباقات ====================
 function fillPackages() {
-['splitPlan', 'nosplitPlan'].forEach(id => {
+['splitPlan','nosplitPlan','newSavedPlan'].forEach(id => {
 const sel = document.getElementById(id);
 if (!sel) return;
 sel.innerHTML = '<option value="">-- اختر الباقة --</option>';
@@ -368,50 +339,30 @@ sel.appendChild(o);
 });
 }
 
-// ==================== الدخول ====================
 async function login() {
 const code = document.getElementById('codeInput').value.trim().toUpperCase();
 const error = document.getElementById('loginError');
 if (!code) { error.textContent = '⚠️ أدخل الكود'; return; }
 error.textContent = '⏳ جاري التحقق...';
-
 try {
-const resp = await fetch(BACKEND_URL + '/api/verify-code', {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ code })
-});
+const resp = await fetch(BACKEND_URL + '/api/verify-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
 const data = await resp.json();
-if (!resp.ok || data.status === 'error') {
-error.textContent = '❌ ' + (data.message || 'كود غير صحيح');
-return;
-}
-
+if (!resp.ok || data.status === 'error') { error.textContent = '❌ ' + (data.message || 'كود غير صحيح'); return; }
 const loggedKey = 'loggedDevice_' + code;
 if (!localStorage.getItem(loggedKey)) {
-fetch(BACKEND_URL + '/api/log-device', {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ code, role: data.role })
-}).catch(() => {});
+fetch(BACKEND_URL + '/api/log-device', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, role: data.role }) }).catch(() => {});
 localStorage.setItem(loggedKey, 'true');
 }
-
 currentRole = data.role;
 currentCode = code;
 localStorage.setItem('loggedIn', 'true');
 localStorage.setItem('role', data.role);
 localStorage.setItem('code', code);
 showMainPage();
-} catch(e) { error.textContent = '❌ فشل الاتصال بالسيرفر'; }
+} catch(e) { error.textContent = '❌ فشل الاتصال'; }
 }
 
-function logout() {
-if (confirm('تسجيل خروج؟')) {
-localStorage.removeItem('loggedIn');
-localStorage.removeItem('role');
-localStorage.removeItem('code');
-location.reload();
-}
-}
+function logout() { if (confirm('تسجيل خروج؟')) { localStorage.removeItem('loggedIn'); localStorage.removeItem('role'); localStorage.removeItem('code'); location.reload(); } }
 
 async function showMainPage() {
 document.getElementById('loginPage').classList.add('hidden');
@@ -423,62 +374,145 @@ document.getElementById('adminBtn').classList.remove('hidden');
 } else {
 document.getElementById('userBadge').textContent = '👤 مستخدم';
 }
-loadOwners();
-renderSavedNumbers();
-renderManualSaved();
+loadOwners(); renderSavedNumbers(); renderManualSaved();
 await applyButtonsConfig();
+checkNotifStatus();
+startRunningTasksPolling();
+// تحقق من الإشعارات المخزنة
+checkPendingNotifications();
 }
 
-// ==================== إخفاء الأزرار ====================
+function checkNotifStatus() {
+if (!('Notification' in window)) return;
+if (Notification.permission === 'default') {
+setTimeout(() => requestNotifPermission(), 2000);
+} else if (Notification.permission === 'denied') {
+document.getElementById('notifBanner').classList.remove('hidden');
+}
+}
+
+async function requestNotifPermission() {
+if (!('Notification' in window)) { notify('❌ المتصفح لا يدعم الإشعارات', 'error'); return; }
+try {
+const perm = await Notification.requestPermission();
+if (perm === 'granted') {
+document.getElementById('notifBanner').classList.add('hidden');
+await registerServiceWorker();
+notify('✅ تم تفعيل الإشعارات', 'success');
+} else {
+document.getElementById('notifBanner').classList.remove('hidden');
+notify('⚠️ تم رفض الإشعارات', 'error');
+}
+} catch(e) { notify('❌ خطأ', 'error'); }
+}
+
+async function registerServiceWorker() {
+if (!('serviceWorker' in navigator)) return;
+try {
+const reg = await navigator.serviceWorker.register('/vodafone/sw.js');
+console.log('SW registered:', reg);
+await subscribePush(reg);
+} catch(e) { console.error('SW error:', e); }
+}
+
+async function subscribePush(reg) {
+try {
+const vapidResp = await fetch(BACKEND_URL + '/api/vapid-public-key');
+const vapidData = await vapidResp.json();
+if (vapidData.status !== 'success') return;
+const sub = await reg.pushManager.subscribe({
+userVisibleOnly: true,
+applicationServerKey: urlBase64ToUint8Array(vapidData.publicKey)
+});
+await fetch(BACKEND_URL + '/api/subscribe-push', {
+method: 'POST', headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ subscription: sub })
+});
+} catch(e) { console.error('Push subscribe error:', e); }
+}
+
+function urlBase64ToUint8Array(base64String) {
+const padding = '='.repeat((4 - base64String.length % 4) % 4);
+const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+const raw = window.atob(base64);
+const out = new Uint8Array(raw.length);
+for (let i = 0; i < raw.length; ++i) out[i] = raw.charCodeAt(i);
+return out;
+}
+
+async function checkPendingNotifications() {
+try {
+const resp = await fetch(BACKEND_URL + '/api/notifications/' + SESSION_ID);
+const data = await resp.json();
+if (data.notifications && data.notifications.length > 0) {
+data.notifications.forEach(n => notify(n, 'info'));
+}
+} catch(e) {}
+}
+
+function startRunningTasksPolling() {
+if (runningInterval) clearInterval(runningInterval);
+runningInterval = setInterval(loadRunningTasks, 5000);
+loadRunningTasks();
+}
+
+async function loadRunningTasks() {
+try {
+const resp = await fetch(BACKEND_URL + '/api/monitoring-tasks');
+const data = await resp.json();
+if (!data.tasks || data.tasks.length === 0) {
+document.getElementById('runningSection').style.display = 'none';
+return;
+}
+const running = data.tasks.filter(t => t.status === 'running');
+if (running.length === 0) {
+document.getElementById('runningSection').style.display = 'none';
+return;
+}
+document.getElementById('runningSection').style.display = 'block';
+const container = document.getElementById('runningTasks');
+container.innerHTML = '';
+running.forEach(t => {
+const div = document.createElement('div');
+div.className = 'owner-row';
+div.innerHTML = `<div class="owner-info"><strong>👤 ${t.owner}</strong><small>${t.members.length} فرد | بدأت: ${t.started}</small></div><span class="running-badge">شغالة</span>`;
+container.appendChild(div);
+});
+} catch(e) {}
+}
+
 async function applyButtonsConfig() {
 try {
 const resp = await fetch(BACKEND_URL + '/api/buttons-config');
 const data = await resp.json();
 if (data.status === 'success' && currentRole !== 'admin') {
-data.hidden.forEach(btnKey => {
-const btn = document.querySelector(`[data-btn="${btnKey}"]`);
-if (btn) btn.classList.add('hidden');
-});
+data.hidden.forEach(k => { const b = document.querySelector(`[data-btn="${k}"]`); if (b) b.classList.add('hidden'); });
 }
 } catch(e) {}
 }
 
 function renderButtonsConfig() {
-const allButtons = [
-{ key: 'split', name: '🔄 تطير مع تقسيم' },
-{ key: 'nosplit', name: '✈️ تطير بدون تقسيم' },
-{ key: 'checkdays', name: '📊 كشف الحد' },
-{ key: 'transfer', name: '🔀 تحويل الأرقام' }
-];
+const btns = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'nosplit',name:'✈️ تطير بدون تقسيم'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل الأرقام'}];
 fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(data => {
 const hidden = data.hidden || [];
 const list = document.getElementById('buttonsConfigList');
 list.innerHTML = '';
-allButtons.forEach(b => {
+btns.forEach(b => {
 const row = document.createElement('div');
 row.className = 'owner-row';
-row.innerHTML = `<label style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer;">
-<input type="checkbox" ${hidden.includes(b.key) ? 'checked' : ''} data-key="${b.key}" style="width:18px; height:18px;">
-<span>${b.name}</span></label>`;
+row.innerHTML = `<label style="flex:1; display:flex; align-items:center; gap:8px;"><input type="checkbox" ${hidden.includes(b.key)?'checked':''} data-key="${b.key}" style="width:18px;height:18px;"><span>${b.name}</span></label>`;
 list.appendChild(row);
 });
 });
 }
 
 async function saveButtonsConfig() {
-const checked = document.querySelectorAll('#buttonsConfigList input[type="checkbox"]:checked');
+const checked = document.querySelectorAll('#buttonsConfigList input:checked');
 const hidden = Array.from(checked).map(cb => cb.dataset.key);
-try {
-await fetch(BACKEND_URL + '/api/buttons-config', {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ hidden })
-});
-notify('✅ تم الحفظ', 'success');
-closeModal('buttonsConfig');
-} catch(e) { notify('❌ فشل الحفظ', 'error'); }
+await fetch(BACKEND_URL + '/api/buttons-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({hidden}) });
+notify('✅ تم الحفظ', 'success'); closeModal('buttonsConfig');
 }
 
-// ==================== التنقل ====================
 function showPage(page, btn) {
 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
@@ -488,39 +522,30 @@ if (page === 'owners') renderOwners();
 if (page === 'saved') { renderSavedNumbers(); renderManualSaved(); }
 }
 
-// ==================== الأونرز ====================
 function loadOwners() {
 const owners = getOwners();
-['splitOwnerSelect', 'nosplitOwnerSelect', 'checkOwnerSelect'].forEach(id => {
-const sel = document.getElementById(id);
-if (!sel) return;
+['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','transferOwnerSelect'].forEach(id => {
+const sel = document.getElementById(id); if (!sel) return;
 sel.innerHTML = '<option value="">-- اختر الأونر --</option>';
 owners.forEach((o, i) => {
 const opt = document.createElement('option');
-opt.value = i;
-opt.textContent = (o.label || o.phone) + ' — ' + o.phone;
+opt.value = i; opt.textContent = (o.label || o.phone) + ' — ' + o.phone;
 sel.appendChild(opt);
 });
-const optManual = document.createElement('option');
-optManual.value = 'manual';
-optManual.textContent = '✏️ إدخال يدوي';
-sel.appendChild(optManual);
+const m = document.createElement('option'); m.value = 'manual'; m.textContent = '✏️ إدخال يدوي';
+sel.appendChild(m);
 });
 }
 
 function renderOwners() {
 const owners = getOwners();
 const list = document.getElementById('ownersList');
-if (owners.length === 0) {
-list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش أونرز محفوظين</p>';
-return;
-}
+if (!owners.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أونرز</p>'; return; }
 list.innerHTML = '';
 owners.forEach((o, i) => {
 const row = document.createElement('div');
 row.className = 'owner-row';
-row.innerHTML = `<div class="owner-info"><strong>${o.label || o.phone}</strong><small>${o.phone}</small></div>
-<button onclick="removeOwner(${i})">🗑️ حذف</button>`;
+row.innerHTML = `<div class="owner-info"><strong>${o.label || o.phone}</strong><small>${o.phone}</small></div><button onclick="removeOwner(${i})">🗑️ حذف</button>`;
 list.appendChild(row);
 });
 }
@@ -529,28 +554,18 @@ function addOwner() {
 const label = document.getElementById('newOwnerLabel').value.trim();
 const phone = document.getElementById('newOwnerPhone').value.trim();
 const pass = document.getElementById('newOwnerPass').value.trim();
-if (!phone || !pass) { notify('⚠️ الرقم والباسورد مطلوبين', 'error'); return; }
+if (!phone || !pass) { notify('⚠️ مطلوب', 'error'); return; }
 const owners = getOwners();
 owners.push({ label: label || phone, phone, password: pass });
-saveOwners(owners);
-loadOwners(); renderOwners();
-notify('✅ تم إضافة الأونر', 'success');
-closeModal('addowner');
+saveOwners(owners); loadOwners(); renderOwners();
+notify('✅ تم الإضافة', 'success'); closeModal('addowner');
 document.getElementById('newOwnerLabel').value = '';
 document.getElementById('newOwnerPhone').value = '';
 document.getElementById('newOwnerPass').value = '';
 }
 
-function removeOwner(index) {
-if (!confirm('حذف الأونر؟')) return;
-const owners = getOwners();
-owners.splice(index, 1);
-saveOwners(owners);
-loadOwners(); renderOwners();
-notify('🗑️ تم الحذف', 'success');
-}
+function removeOwner(i) { if (!confirm('حذف؟')) return; const o = getOwners(); o.splice(i,1); saveOwners(o); loadOwners(); renderOwners(); }
 
-// ==================== الأرقام المحفوظة ====================
 function switchSavedTab(tab) {
 currentSavedTab = tab;
 document.getElementById('tabActivated').classList.toggle('active', tab === 'activated');
@@ -561,109 +576,68 @@ document.getElementById('manualTab').classList.toggle('hidden', tab !== 'manual'
 
 function addSavedNumber(data) {
 const saved = getSavedNumbers();
-saved.unshift({
-phone: data.phone, owner: data.owner, gb: data.gb,
-minutes: data.minutes, type: data.type,
-date: new Date().toLocaleString('ar-EG')
-});
+saved.unshift({ phone: data.phone, owner: data.owner, gb: data.gb, minutes: data.minutes, type: data.type, date: new Date().toLocaleString('ar-EG') });
 if (saved.length > 100) saved.pop();
-saveSavedNumbers(saved);
-renderSavedNumbers();
+saveSavedNumbers(saved); renderSavedNumbers();
 }
 
 function renderSavedNumbers() {
 const saved = getSavedNumbers();
 const list = document.getElementById('savedList');
-if (saved.length === 0) {
-list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش أرقام متفعلة</p>';
-return;
-}
+if (!saved.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام متفعلة</p>'; return; }
 list.innerHTML = '';
 saved.forEach((s, i) => {
 const row = document.createElement('div');
 row.className = 'saved-row';
-row.innerHTML = `<div class="saved-info">
-<strong>📱 ${s.phone}</strong>
-<small>👤 ${s.owner} | 📦 ${s.gb}GB + ${s.minutes} دقيقة | ${s.type}</small>
-<small>📅 ${s.date}</small>
-</div>
-<button onclick="removeSaved(${i})">🗑️ حذف</button>`;
+row.innerHTML = `<div class="saved-info"><strong>📱 ${s.phone}</strong><small>👤 ${s.owner} | 📦 ${s.gb}GB + ${s.minutes} دقيقة | ${s.type}</small><small>📅 ${s.date}</small></div><button onclick="removeSaved(${i})">🗑️</button>`;
 list.appendChild(row);
 });
 }
 
-function removeSaved(index) {
-if (!confirm('حذف الرقم؟')) return;
-const saved = getSavedNumbers();
-saved.splice(index, 1);
-saveSavedNumbers(saved);
-renderSavedNumbers();
-}
+function removeSaved(i) { if (!confirm('حذف؟')) return; const s = getSavedNumbers(); s.splice(i,1); saveSavedNumbers(s); renderSavedNumbers(); }
 
-// الأرقام المحفوظة يدوياً
 function addManualSaved() {
 const name = document.getElementById('newSavedName').value.trim();
 const phone = document.getElementById('newSavedPhone').value.trim();
-const percent = document.getElementById('newSavedPercent').value.trim();
-if (!name || !phone || !percent) { notify('⚠️ كل الحقول مطلوبة', 'error'); return; }
+const plan = document.getElementById('newSavedPlan').value;
+if (!name || !phone || !plan) { notify('⚠️ كل الحقول مطلوبة', 'error'); return; }
+const [gb, min] = plan.split('|');
 const list = getManualSaved();
-list.unshift({ name, phone, percent, date: new Date().toLocaleString('ar-EG') });
-saveManualSaved(list);
-renderManualSaved();
-notify('✅ تم الإضافة', 'success');
-closeModal('addsaved');
+list.unshift({ name, phone, gb: parseInt(gb), minutes: parseInt(min), date: new Date().toLocaleString('ar-EG') });
+saveManualSaved(list); renderManualSaved();
+notify('✅ تم الإضافة', 'success'); closeModal('addsaved');
 document.getElementById('newSavedName').value = '';
 document.getElementById('newSavedPhone').value = '';
-document.getElementById('newSavedPercent').value = '';
+document.getElementById('newSavedPlan').value = '';
 }
 
 function renderManualSaved() {
 const list = getManualSaved();
 const search = (document.getElementById('searchSaved')?.value || '').trim().toLowerCase();
-const container = document.getElementById('manualSavedList');
-if (!container) return;
-const filtered = list.filter(item =>
-!search || item.name.toLowerCase().includes(search) || item.phone.includes(search)
-);
-if (filtered.length === 0) {
-container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش نتائج</p>';
-return;
-}
+const container = document.getElementById('manualSavedList'); if (!container) return;
+const filtered = list.filter(item => !search || item.name.toLowerCase().includes(search) || item.phone.includes(search));
+if (!filtered.length) { container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش نتائج</p>'; return; }
 container.innerHTML = '';
 filtered.forEach((s) => {
 const realIndex = list.indexOf(s);
 const row = document.createElement('div');
 row.className = 'saved-row';
-row.innerHTML = `<div class="saved-info">
-<strong>👤 ${s.name}</strong>
-<small>📱 ${s.phone} | 📊 ${s.percent}%</small>
-<small>📅 ${s.date}</small>
-</div>
-<button onclick="removeManualSaved(${realIndex})">🗑️ حذف</button>`;
+row.innerHTML = `<div class="saved-info"><strong>👤 ${s.name}</strong><small>📱 ${s.phone} | 📦 ${s.gb}GB + ${s.minutes} دقيقة</small><small>📅 ${s.date}</small></div><button onclick="removeManualSaved(${realIndex})">🗑️</button>`;
 container.appendChild(row);
 });
 }
 
-function removeManualSaved(index) {
-if (!confirm('حذف الرقم؟')) return;
-const list = getManualSaved();
-list.splice(index, 1);
-saveManualSaved(list);
-renderManualSaved();
-}
+function removeManualSaved(i) { if (!confirm('حذف؟')) return; const l = getManualSaved(); l.splice(i,1); saveManualSaved(l); renderManualSaved(); }
 
-// ==================== اختيار الأونر ====================
 function onOwnerSelect(prefix) {
 const sel = document.getElementById(prefix + 'OwnerSelect');
 const manual = document.getElementById(prefix + 'OwnerManual');
 if (!sel || !manual) return;
-if (sel.value === 'manual') manual.classList.remove('hidden');
-else manual.classList.add('hidden');
+if (sel.value === 'manual') manual.classList.remove('hidden'); else manual.classList.add('hidden');
 }
 
 function getOwnerData(prefix) {
-const sel = document.getElementById(prefix + 'OwnerSelect');
-if (!sel) return null;
+const sel = document.getElementById(prefix + 'OwnerSelect'); if (!sel) return null;
 if (sel.value === 'manual') {
 const phone = document.getElementById(prefix + 'OwnerPhone').value.trim();
 const pass = document.getElementById(prefix + 'OwnerPass').value.trim();
@@ -671,44 +645,33 @@ if (!phone || !pass) return null;
 return { phone, password: pass };
 }
 if (sel.value === '') return null;
-const owners = getOwners();
-const idx = parseInt(sel.value);
+const owners = getOwners(); const idx = parseInt(sel.value);
 if (isNaN(idx) || !owners[idx]) return null;
 return { phone: owners[idx].phone, password: owners[idx].password };
 }
 
-// ==================== Modals ====================
 function openModal(name) {
-const m = document.getElementById(name + 'Modal');
-if (m) m.classList.add('show');
+const m = document.getElementById(name + 'Modal'); if (m) m.classList.add('show');
 if (name === 'deviceLogs') loadDeviceLogs();
 if (name === 'buttonsConfig') renderButtonsConfig();
 if (name === 'blockip') loadBlockedList();
 }
-function closeModal(name) {
-const m = document.getElementById(name + 'Modal');
-if (m) m.classList.remove('show');
-}
+function closeModal(name) { const m = document.getElementById(name + 'Modal'); if (m) m.classList.remove('show'); }
 
-// ==================== API ====================
 async function apiCall(endpoint, body) {
 body.session_id = SESSION_ID;
-const response = await fetch(BACKEND_URL + endpoint, {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(body)
-});
+const response = await fetch(BACKEND_URL + endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
 const data = await response.json().catch(() => ({}));
 if (!response.ok) throw new Error(data.message || 'Server Error');
 return data;
 }
 
-// ==================== العمليات ====================
 async function executeSplit() {
-const owner = getOwnerData('split');
-if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('splitPhone').value.trim();
+const pass = document.getElementById('splitPass').value.trim();
 const plan = document.getElementById('splitPlan').value;
-if (!phone || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
+if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
 const [gb, minutes] = plan.split('|');
 openTerminal();
 try {
@@ -719,11 +682,11 @@ closeModal('split');
 }
 
 async function executeNoSplit() {
-const owner = getOwnerData('nosplit');
-if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const owner = getOwnerData('nosplit'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('nosplitPhone').value.trim();
+const pass = document.getElementById('nosplitPass').value.trim();
 const plan = document.getElementById('nosplitPlan').value;
-if (!phone || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
+if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
 const [gb, minutes] = plan.split('|');
 openTerminal();
 try {
@@ -734,38 +697,65 @@ closeModal('nosplit');
 }
 
 async function executeCheckDays() {
-const owner = getOwnerData('check');
-if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const owner = getOwnerData('check'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 openTerminal();
-try {
-await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password });
-closeModal('checkdays');
-} catch(e) { termLog('❌ ' + e.message, 'error'); }
+try { await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password }); closeModal('checkdays'); }
+catch(e) { termLog('❌ ' + e.message, 'error'); }
 }
 
-async function executeTransfer() {
-const phone = document.getElementById('transferPhone').value.trim();
-const pass = document.getElementById('transferPass').value.trim();
-let percent = document.getElementById('transferPercent').value;
-const pm = document.getElementById('transferPercentManual').value.trim();
-if (pm) percent = pm;
-if (!phone || !pass || !percent) { notify('⚠️ املأ الحقول', 'error'); return; }
+function openTransferModal() {
+openModal('transfer');
+renderMemberInputs();
+}
+
+function renderMemberInputs() {
+const count = parseInt(document.getElementById('membersCount').value) || 0;
+const container = document.getElementById('membersInputs');
+container.innerHTML = '';
+for (let i = 0; i < count; i++) {
+const div = document.createElement('div');
+div.className = 'member-block';
+div.innerHTML = `<h4>👤 الفرد #${i+1}</h4>
+<input type="tel" id="member_phone_${i}" class="modal-input" placeholder="رقم الفرد">
+<input type="password" id="member_pass_${i}" class="modal-input" placeholder="باسورد الفرد">
+<select id="member_percent_${i}" class="modal-select">
+<option value="">-- اختر النسبة --</option>
+${PERCENT_OPTIONS.map(p => `<option value="${p}">${p}%</option>`).join('')}
+</select>`;
+container.appendChild(div);
+}
+}
+
+async function executeMultiTransfer() {
+const owner = getOwnerData('transfer'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const count = parseInt(document.getElementById('membersCount').value) || 0;
+if (count < 1) { notify('⚠️ أدخل عدد الأفراد', 'error'); return; }
+const members = [];
+for (let i = 0; i < count; i++) {
+const phone = document.getElementById('member_phone_' + i).value.trim();
+const pass = document.getElementById('member_pass_' + i).value.trim();
+const percent = document.getElementById('member_percent_' + i).value;
+if (!phone || !pass || !percent) { notify(`⚠️ الفرد #${i+1} ناقص`, 'error'); return; }
+members.push({ phone, password: pass, percentage: percent });
+}
 openTerminal();
+termLog(`🚀 بدء التحويل المتعدد لـ ${count} فرد...`, 'info');
 try {
-await apiCall('/api/transfer-number', { phone, password: pass, percentage: percent });
+const data = await apiCall('/api/transfer-number', { owner_phone: owner.phone, owner_password: owner.password, members });
+notify('✅ ' + (data.message || 'بدأ التحويل'), 'success');
+termLog('✅ ' + (data.message || 'بدأ التحويل'), 'success');
 closeModal('transfer');
-} catch(e) { termLog('❌ ' + e.message, 'error'); }
+startRunningTasksPolling();
+} catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
 }
 
-// ==================== الأكواد ====================
 async function generateCode() {
 try {
-const resp = await fetch(BACKEND_URL + '/api/generate-code', { method: 'POST' });
+const resp = await fetch(BACKEND_URL + '/api/generate-code', { method:'POST' });
 const data = await resp.json();
 document.getElementById('newCode').textContent = data.code;
-openModal('code');
-startCodeTimer(data.expires_in || 300);
-} catch(e) { notify('❌ فشل التوليد', 'error'); }
+openModal('code'); startCodeTimer(data.expires_in || 300);
+} catch(e) { notify('❌ فشل', 'error'); }
 }
 
 function startCodeTimer(seconds) {
@@ -773,14 +763,12 @@ if (codeTimerInterval) clearInterval(codeTimerInterval);
 let remaining = seconds;
 const el = document.getElementById('codeTimer');
 const update = () => {
-const m = Math.floor(remaining / 60);
-const s = remaining % 60;
-el.textContent = `⏱️ صالح لمدة ${m}:${s.toString().padStart(2, '0')}`;
+const m = Math.floor(remaining / 60), s = remaining % 60;
+el.textContent = `⏱️ صالح لمدة ${m}:${s.toString().padStart(2,'0')}`;
 if (remaining <= 0) { el.textContent = '⌛ انتهت الصلاحية'; clearInterval(codeTimerInterval); return; }
 remaining--;
 };
-update();
-codeTimerInterval = setInterval(update, 1000);
+update(); codeTimerInterval = setInterval(update, 1000);
 }
 
 function copyCode() {
@@ -789,61 +777,37 @@ if (navigator.clipboard) navigator.clipboard.writeText(code);
 notify('📋 تم النسخ', 'success');
 }
 
-// ==================== سجل الأجهزة ====================
 async function loadDeviceLogs() {
 const list = document.getElementById('deviceLogsList');
-list.innerHTML = '<p style="text-align:center; color:#999;">جاري التحميل...</p>';
+list.innerHTML = '<p style="text-align:center;color:#999;">جاري التحميل...</p>';
 try {
 const resp = await fetch(BACKEND_URL + '/api/device-logs');
 const data = await resp.json();
-if (!data.logs || data.logs.length === 0) {
-list.innerHTML = '<p style="text-align:center; color:#999;">مفيش سجلات</p>';
-return;
-}
+if (!data.logs || !data.logs.length) { list.innerHTML = '<p style="text-align:center;color:#999;">مفيش سجلات</p>'; return; }
 list.innerHTML = '';
 data.logs.forEach(log => {
 const row = document.createElement('div');
 row.className = 'log-row';
-row.innerHTML = `<div class="log-info">
-<strong>🌐 ${log.ip}</strong>
-<small>📱 ${log.device.substring(0, 60)}...</small>
-<small>🎫 ${log.code} | ${log.role} | ${log.time}</small>
-</div>`;
+row.innerHTML = `<div class="log-info"><strong>🌐 ${log.ip}</strong><small>📱 ${log.device.substring(0,60)}...</small><small>🎫 ${log.code} | ${log.role} | ${log.time}</small></div>`;
 list.appendChild(row);
 });
-} catch(e) { list.innerHTML = '<p style="text-align:center; color:#ff6b6b;">فشل التحميل</p>'; }
+} catch(e) { list.innerHTML = '<p style="text-align:center;color:#ff6b6b;">فشل</p>'; }
 }
 
-async function clearDeviceLogs() {
-if (!confirm('مسح كل السجلات؟')) return;
-try { await fetch(BACKEND_URL + '/api/device-logs', { method: 'DELETE' }); loadDeviceLogs(); } catch(e) {}
-}
+async function clearDeviceLogs() { if (!confirm('مسح؟')) return; await fetch(BACKEND_URL + '/api/device-logs', { method:'DELETE' }); loadDeviceLogs(); }
 
-// ==================== حظر الـ IP ====================
 async function executeBlockIP() {
 const ip = document.getElementById('blockIP').value.trim();
-if (!ip) { notify('⚠️ أدخل الـ IP', 'error'); return; }
-try {
-await apiCall('/api/block-ip', { ip });
-notify('✅ تم الحظر', 'success');
-document.getElementById('blockIP').value = '';
-loadBlockedList();
-} catch(e) { notify('❌ ' + e.message, 'error'); }
+if (!ip) { notify('⚠️ أدخل IP', 'error'); return; }
+try { await apiCall('/api/block-ip', { ip }); notify('✅ تم الحظر', 'success'); document.getElementById('blockIP').value = ''; loadBlockedList(); }
+catch(e) { notify('❌ ' + e.message, 'error'); }
 }
 
 async function executeUnblockIP() {
 const ip = document.getElementById('unblockIP').value.trim();
-if (!ip) { notify('⚠️ أدخل الـ IP', 'error'); return; }
-try {
-const resp = await fetch(BACKEND_URL + '/api/unblock-ip', {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ ip })
-});
-const data = await resp.json();
-notify('✅ ' + (data.message || 'تم'), 'success');
-closeModal('unblockip');
-document.getElementById('unblockIP').value = '';
-} catch(e) { notify('❌ فشل', 'error'); }
+if (!ip) { notify('⚠️ أدخل IP', 'error'); return; }
+try { const r = await fetch(BACKEND_URL + '/api/unblock-ip', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ip}) }); const d = await r.json(); notify('✅ ' + (d.message || 'تم'), 'success'); closeModal('unblockip'); document.getElementById('unblockIP').value = ''; }
+catch(e) { notify('❌ فشل', 'error'); }
 }
 
 async function loadBlockedList() {
@@ -851,17 +815,14 @@ try {
 const resp = await fetch(BACKEND_URL + '/api/blocked-ips');
 const data = await resp.json();
 const el = document.getElementById('blockedList');
-if (data.blocked && data.blocked.length > 0) {
-el.innerHTML = '<strong>المحظورين:</strong><br>' + data.blocked.join('<br>');
-} else { el.textContent = 'مفيش IPs محظورة'; }
+if (data.blocked && data.blocked.length) el.innerHTML = '<strong>المحظورين:</strong><br>' + data.blocked.join('<br>');
+else el.textContent = 'مفيش IPs محظورة';
 } catch(e) {}
 }
 
-// ==================== التريمنال ====================
 function openTerminal() {
 const t = document.getElementById('terminalContainer');
-t.style.display = 'flex';
-terminalOpen = true;
+t.style.display = 'flex'; terminalOpen = true;
 if (!currentEventSource) startTerminalStream();
 }
 function toggleTerminal() {
@@ -874,14 +835,9 @@ function startTerminalStream() {
 if (currentEventSource) currentEventSource.close();
 currentEventSource = new EventSource(BACKEND_URL + '/api/terminal/' + SESSION_ID);
 currentEventSource.onmessage = function(event) {
-try {
-const data = JSON.parse(event.data);
-if (data.message) addTermLine(data.message);
-} catch(e) {}
+try { const data = JSON.parse(event.data); if (data.message) addTermLine(data.message); } catch(e) {}
 };
-currentEventSource.onerror = function() {
-setTimeout(() => { if (terminalOpen) startTerminalStream(); }, 3000);
-};
+currentEventSource.onerror = function() { setTimeout(() => { if (terminalOpen) startTerminalStream(); }, 3000); };
 }
 function addTermLine(msg) {
 const body = document.getElementById('terminalBody');
@@ -891,19 +847,17 @@ let cls = 'term-default';
 if (msg.includes('❌') || msg.includes('خطأ')) cls = 'term-error';
 else if (msg.includes('✅')) cls = 'term-success';
 else if (msg.includes('⚠️')) cls = 'term-warn';
-else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦')) cls = 'term-info';
+else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦') || msg.includes('🚨')) cls = 'term-info';
 const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
-body.appendChild(line);
-body.scrollTop = body.scrollHeight;
-if (msg.includes('تم العثور') || msg.includes('تم التحويل') || msg.includes('🚨')) notify(msg, 'info');
+body.appendChild(line); body.scrollTop = body.scrollHeight;
+if (msg.includes('🚨') && Notification.permission === 'granted' && !('serviceWorker' in navigator)) {
+try { new Notification('🚨 تحول النظام', { body: msg }); } catch(e) {}
+}
 }
 function termLog(msg, type) { addTermLine(msg); }
-function escapeHtml(s) {
-return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-// ==================== الإشعارات ====================
 function notify(msg, type) {
 const div = document.createElement('div');
 div.className = 'notification ' + (type || 'info');
@@ -912,7 +866,6 @@ document.body.appendChild(div);
 setTimeout(() => div.remove(), 3500);
 }
 
-// ==================== التشغيل ====================
 window.addEventListener('load', () => {
 fillPackages();
 if (localStorage.getItem('loggedIn')) {
