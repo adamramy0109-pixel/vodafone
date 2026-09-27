@@ -1,215 +1,6 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الأرقام والتفعيلات</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 999; }
-        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); text-align: center; width: 90%; max-width: 400px; }
-        .login-card h1 { font-size: 32px; color: #333; margin-bottom: 20px; }
-        .login-card input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; text-align: center; }
-        .login-card button { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
-        .login-card button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
-        .error { color: #ff6b6b; margin-bottom: 15px; }
-        .hidden { display: none !important; }
-        .main-page { display: none; }
-        .header { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { color: #333; font-size: 24px; }
-        .user-info { display: flex; gap: 15px; align-items: center; }
-        .badge { background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-        .badge.admin { background: #dc3545; }
-        .logout-btn { background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .logout-btn:hover { background: #ff5252; }
-        .nav { display: flex; gap: 10px; margin-bottom: 25px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-        .nav button { padding: 12px 20px; border: none; background: #f0f0f0; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-        .nav button.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .section { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-        .section h2 { font-size: 20px; color: #333; margin-bottom: 20px; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; color: #555; font-weight: 600; margin-bottom: 8px; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
-        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .btn { padding: 15px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
-        .btn-success { background: #51cf66; color: white; }
-        .btn-danger { background: #ff6b6b; color: white; }
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
-        .modal.show { display: block; }
-        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
-        .modal-title { font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px; }
-        .modal-input, .modal-select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
-        .modal-buttons { display: flex; gap: 10px; }
-        .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .modal-btn-ok { background: #51cf66; color: white; }
-        .modal-btn-cancel { background: #ddd; color: #333; }
-        .notification { position: fixed; top: 20px; right: 20px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); z-index: 9999; animation: slideIn 0.3s; max-width: 300px; }
-        .notification.success { border-left: 4px solid #51cf66; }
-        .notification.error { border-left: 4px solid #ff6b6b; }
-        @keyframes slideIn { from { transform: translateX(400px); } to { transform: translateX(0); } }
-    </style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div class="login-page" id="loginPage">
-    <div class="login-card">
-        <h1>🔐 الدخول</h1>
-        <div class="error" id="loginError"></div>
-        <input type="password" id="codeInput" placeholder="أدخل الكود" onkeypress="if(event.key==='Enter') login()">
-        <button onclick="login()">دخول</button>
-        <p style="margin-top: 20px; color: #999; font-size: 12px;">كود الأدمن: 01019092631</p>
-    </div>
-</div>
-
-<!-- MAIN PAGE -->
-<div class="main-page" id="mainPage">
-    <div class="container">
-        <div class="header">
-            <h1>📱 نظام التفعيلات</h1>
-            <div class="user-info">
-                <div class="badge" id="userBadge">مستخدم</div>
-                <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-            </div>
-        </div>
-
-        <div class="nav">
-            <button class="active" onclick="showPage('activation')">⚡ التفعيلات</button>
-            <button id="adminBtn" class="hidden" onclick="showPage('admin')">🛡️ الإدارة</button>
-        </div>
-
-        <div class="page active" id="activationPage">
-            <div class="section">
-                <h2>⚡ التفعيلات</h2>
-                <div class="button-grid">
-                    <button class="btn btn-primary" onclick="openModal('split')">🔄 تطير مع التقسيم</button>
-                    <button class="btn btn-primary" onclick="openModal('nosplit')">✈️ طير بدون تقسيم</button>
-                    <button class="btn btn-primary" onclick="openModal('checkdays')">📊 كشف الحد</button>
-                    <button class="btn btn-primary" onclick="openModal('transfer')">🔀 تحويل</button>
-                    <button class="btn btn-primary" onclick="openModal('unlock')">🔓 فك اليمت</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="page" id="adminPage">
-            <div class="section" style="background: #fff3cd; border: 2px solid #ffc107;">
-                <h2>🛡️ الإدارة</h2>
-                <div class="button-grid">
-                    <button class="btn btn-danger" onclick="openModal('block')">🚫 حظر IP</button>
-                    <button class="btn btn-success" onclick="openModal('code')">🔑 إنشاء كود</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODALS -->
-<div class="modal" id="splitModal">
-    <div class="modal-content">
-        <div class="modal-title">🔄 تطير مع التقسيم</div>
-        <input type="tel" id="splitPhone" class="modal-input" placeholder="رقم الهاتف" required>
-        <select id="splitPlan" class="modal-select" required>
-            <option value="">-- اختر الباقة --</option>
-            <option value="25|2500">25 GB + 2500 دقيقة</option>
-            <option value="30|3000">30 GB + 3000 دقيقة</option>
-            <option value="35|3500">35 GB + 3500 دقيقة</option>
-            <option value="40|4000">40 GB + 4000 دقيقة</option>
-            <option value="50|5000">50 GB + 5000 دقيقة</option>
-        </select>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-ok" onclick="executeSplit()">تطير</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="nosplitModal">
-    <div class="modal-content">
-        <div class="modal-title">✈️ طير بدون تقسيم</div>
-        <input type="tel" id="nosplitPhone" class="modal-input" placeholder="رقم الهاتف" required>
-        <select id="nosplitPlan" class="modal-select" required>
-            <option value="">-- اختر الباقة --</option>
-            <option value="25|2500">25 GB + 2500 دقيقة</option>
-            <option value="30|3000">30 GB + 3000 دقيقة</option>
-            <option value="35|3500">35 GB + 3500 دقيقة</option>
-            <option value="40|4000">40 GB + 4000 دقيقة</option>
-            <option value="50|5000">50 GB + 5000 دقيقة</option>
-        </select>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-ok" onclick="executeNoSplit()">تطير</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('nosplit')">إلغاء</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="checkdaysModal">
-    <div class="modal-content">
-        <div class="modal-title">📊 كشف الحد</div>
-        <input type="tel" id="checkPhone" class="modal-input" placeholder="رقم الاونر" required>
-        <input type="password" id="checkPass" class="modal-input" placeholder="الباسورد" required>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-ok" onclick="executeCheckDays()">كشف</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkdays')">إلغاء</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="transferModal">
-    <div class="modal-content">
-        <div class="modal-title">🔀 تحويل</div>
-        <input type="tel" id="transferFrom" class="modal-input" placeholder="من" required>
-        <input type="tel" id="transferTo" class="modal-input" placeholder="إلى" required>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-ok" onclick="executeTransfer()">تحويل</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="unlockModal">
-    <div class="modal-content">
-        <div class="modal-title">🔓 فك اليمت</div>
-        <input type="tel" id="ownerPhone" class="modal-input" placeholder="رقم الاونر" required>
-        <input type="password" id="ownerPass" class="modal-input" placeholder="باسورد" required>
-        <input type="tel" id="userPhone" class="modal-input" placeholder="رقم الفرد" required>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-ok" onclick="executeUnlock()">فك</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('unlock')">إلغاء</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="blockModal">
-    <div class="modal-content">
-        <div class="modal-title">🚫 حظر IP</div>
-        <input type="text" id="blockIP" class="modal-input" placeholder="IP" required>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-ok" onclick="executeBlockIP()">حظر</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('block')">إلغاء</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="codeModal">
-    <div class="modal-content">
-        <div class="modal-title">🔑 كود جديد</div>
-        <p id="newCode" style="text-align: center; font-size: 24px; font-weight: 700; color: #667eea; padding: 20px; background: #f0f0f0; border-radius: 8px;">انتظر...</p>
-        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="copyCode()">📋 نسخ</button>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('code')">إغلاق</button>
-        </div>
-    </div>
-</div>
-
-<script>
 const MASTER_CODE = '01019092631';
-const BACKEND_URL = 'https://01019092631.pythonanywhere.com';
+// تأكد إن اللينك ده هو لينك السيرفر بتاعك بالظبط
+const BACKEND_URL = 'https://01019092631.pythonanywhere.com'; 
 
 let isAdmin = false;
 
@@ -266,6 +57,28 @@ function closeModal(name) {
     document.getElementById(name + 'Modal').classList.remove('show');
 }
 
+// دالة مساعدة لطلب السيرفر
+async function apiCall(endpoint, body) {
+    try {
+        const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        
+        // لو السيرفر رجع خطأ 500 أو غيره
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.message || `HTTP ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+    }
+}
+
 async function executeSplit() {
     const phone = document.getElementById('splitPhone').value;
     const plan = document.getElementById('splitPlan').value;
@@ -278,17 +91,11 @@ async function executeSplit() {
     const [gb, minutes] = plan.split('|');
     
     try {
-        const response = await fetch(`${BACKEND_URL}/api/split-transfer`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone, gb, minutes })
-        });
-        
-        const data = await response.json();
-        notify('✅ تم التنفيذ', 'success');
+        await apiCall('/api/split-transfer', { phone, gb, minutes });
+        notify('✅ تم التنفيذ بنجاح', 'success');
         closeModal('split');
     } catch (error) {
-        notify('❌ خطأ في الاتصال', 'error');
+        notify('❌ خطأ في الاتصال بالسيرفر', 'error');
     }
 }
 
@@ -304,16 +111,11 @@ async function executeNoSplit() {
     const [gb, minutes] = plan.split('|');
     
     try {
-        await fetch(`${BACKEND_URL}/api/nosplit-transfer`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone, gb, minutes })
-        });
-        
-        notify('✅ تم التنفيذ', 'success');
+        await apiCall('/api/nosplit-transfer', { phone, gb, minutes });
+        notify('✅ تم التنفيذ بنجاح', 'success');
         closeModal('nosplit');
     } catch (error) {
-        notify('❌ خطأ في الاتصال', 'error');
+        notify('❌ خطأ في الاتصال بالسيرفر', 'error');
     }
 }
 
@@ -321,13 +123,8 @@ async function executeCheckDays() {
     const phone = document.getElementById('checkPhone').value;
     
     try {
-        await fetch(`${BACKEND_URL}/api/check-daily-limit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ owner_phone: phone })
-        });
-        
-        notify('✅ تم', 'success');
+        await apiCall('/api/check-daily-limit', { owner_phone: phone });
+        notify('✅ تم الكشف', 'success');
         closeModal('checkdays');
     } catch (error) {
         notify('❌ خطأ', 'error');
@@ -339,13 +136,8 @@ async function executeTransfer() {
     const to = document.getElementById('transferTo').value;
     
     try {
-        await fetch(`${BACKEND_URL}/api/transfer-number`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from_number: from, to_number: to })
-        });
-        
-        notify('✅ تم', 'success');
+        await apiCall('/api/transfer-number', { from_number: from, to_number: to });
+        notify('✅ تم التحويل', 'success');
         closeModal('transfer');
     } catch (error) {
         notify('❌ خطأ', 'error');
@@ -357,13 +149,8 @@ async function executeUnlock() {
     const userPhone = document.getElementById('userPhone').value;
     
     try {
-        await fetch(`${BACKEND_URL}/api/unlock-device`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ owner_phone: ownerPhone, user_phone: userPhone })
-        });
-        
-        notify('✅ تم', 'success');
+        await apiCall('/api/unlock-device', { owner_phone: ownerPhone, user_phone: userPhone });
+        notify('✅ تم فك اليمت', 'success');
         closeModal('unlock');
     } catch (error) {
         notify('❌ خطأ', 'error');
@@ -374,13 +161,8 @@ async function executeBlockIP() {
     const ip = document.getElementById('blockIP').value;
     
     try {
-        await fetch(`${BACKEND_URL}/api/block-ip`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ip })
-        });
-        
-        notify('✅ تم', 'success');
+        await apiCall('/api/block-ip', { ip });
+        notify('✅ تم حظر IP', 'success');
         closeModal('block');
     } catch (error) {
         notify('❌ خطأ', 'error');
@@ -389,16 +171,10 @@ async function executeBlockIP() {
 
 async function executeGenerateCode() {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/generate-code`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
-        });
-        
-        const data = await response.json();
+        const data = await apiCall('/api/generate-code', {});
         document.getElementById('newCode').textContent = data.code;
     } catch (error) {
-        notify('❌ خطأ', 'error');
+        document.getElementById('newCode').textContent = 'خطأ في التوليد';
     }
 }
 
@@ -423,7 +199,3 @@ window.addEventListener('load', () => {
         showMainPage();
     }
 });
-</script>
-
-</body>
-</html>
