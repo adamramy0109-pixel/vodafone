@@ -39,6 +39,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
 .btn-success { background: #51cf66; color: white; }
 .btn-danger { background: #ff6b6b; color: white; }
+.btn-warning { background: #ffa94d; color: white; }
+.btn-info { background: #74c0fc; color: white; }
 
 .modal { display: none; position: fixed; z-index: 999; inset: 0; background: rgba(0,0,0,0.6); padding: 20px; overflow-y: auto; }
 .modal.show { display: block; }
@@ -52,11 +54,11 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .modal-btn-ok { background: #51cf66; color: white; }
 .modal-btn-cancel { background: #ddd; color: #333; }
 
-.owner-row { display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; }
-.owner-row .owner-info { flex: 1; font-size: 13px; }
-.owner-row .owner-info strong { display: block; color: #333; }
-.owner-row .owner-info small { color: #888; font-size: 11px; }
-.owner-row button { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.owner-row, .saved-row, .log-row { display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+.owner-row .owner-info, .saved-row .saved-info, .log-row .log-info { flex: 1; }
+.owner-row .owner-info strong, .saved-row .saved-info strong { display: block; color: #333; }
+.owner-row .owner-info small, .saved-row .saved-info small, .log-row small { color: #888; font-size: 11px; }
+.owner-row button, .saved-row button { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
 
 .notification { position: fixed; top: 20px; right: 20px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.25); z-index: 99999; font-weight: 600; font-size: 14px; max-width: 320px; animation: slideIn 0.3s ease; }
 .notification.success { border-right: 4px solid #51cf66; color: #2b8a3e; }
@@ -78,6 +80,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .term-warn { color: #ffd43b; }
 .term-default { color: #8b949e; }
 .term-time { color: #6e7681; margin-right: 8px; }
+
+.timer-badge { background: #ffa94d; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -96,7 +100,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="header">
 <h1>📱 نظام التفعيلات</h1>
 <div class="user-info">
-<div class="badge admin" id="userBadge">🛡️ أدمن</div>
+<div class="badge" id="userBadge">👤 مستخدم</div>
 <button class="logout-btn" onclick="logout()">خروج</button>
 </div>
 </div>
@@ -104,18 +108,19 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="nav">
 <button class="active" onclick="showPage('activation', this)">⚡ التفعيلات</button>
 <button onclick="showPage('owners', this)">👥 الأونرز</button>
-<button onclick="showPage('admin', this)">🛡️ الإدارة</button>
+<button id="savedBtn" onclick="showPage('saved', this)">💾 الأرقام المحفوظة</button>
+<button id="adminBtn" class="hidden" onclick="showPage('admin', this)">🛡️ الإدارة</button>
 </div>
 
 <div class="page active" id="activationPage">
 <div class="section">
 <h2>⚡ عمليات التفعيل</h2>
-<div class="button-grid">
-<button class="btn btn-primary" onclick="openModal('split')">🔄 تطير مع تقسيم</button>
-<button class="btn btn-primary" onclick="openModal('nosplit')">✈️ تطير بدون تقسيم</button>
-<button class="btn btn-primary" onclick="openModal('checkdays')">📊 كشف الحد</button>
-<button class="btn btn-primary" onclick="openModal('transfer')">🔀 تحويل الأرقام</button>
-<button class="btn btn-primary" onclick="openModal('unlock')">🔓 فك اليمت</button>
+<div class="button-grid" id="activationButtons">
+<button class="btn btn-primary" data-btn="split" onclick="openModal('split')">🔄 تطير مع تقسيم</button>
+<button class="btn btn-primary" data-btn="nosplit" onclick="openModal('nosplit')">✈️ تطير بدون تقسيم</button>
+<button class="btn btn-primary" data-btn="checkdays" onclick="openModal('checkdays')">📊 كشف الحد</button>
+<button class="btn btn-primary" data-btn="transfer" onclick="openModal('transfer')">🔀 تحويل الأرقام</button>
+<button class="btn btn-primary" data-btn="unlock" onclick="openModal('unlock')">🔓 فك اليمت</button>
 </div>
 </div>
 </div>
@@ -129,12 +134,22 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
+<div class="page" id="savedPage">
+<div class="section">
+<h2>💾 الأرقام المحفوظة</h2>
+<p style="color:#666; font-size:13px; margin-bottom:15px;">الأرقام اللي اتعملت عليها عمليات ناجحة.</p>
+<div id="savedList"></div>
+</div>
+</div>
+
 <div class="page" id="adminPage">
 <div class="section" style="background: #fff3cd; border: 2px solid #ffc107;">
 <h2>🛡️ الإدارة</h2>
 <div class="button-grid">
-<button class="btn btn-danger" onclick="openModal('block')">🚫 حظر IP</button>
-<button class="btn btn-success" onclick="openModal('code')">🔑 إنشاء كود</button>
+<button class="btn btn-success" onclick="generateCode()">🔑 توليد كود مستخدم</button>
+<button class="btn btn-info" onclick="openModal('deviceLogs')">📋 سجل الأجهزة</button>
+<button class="btn btn-warning" onclick="openModal('buttonsConfig')">👁️ إخفاء/إظهار الأزرار</button>
+<button class="btn btn-danger" onclick="openModal('unblockip')">🔓 فك حظر IP</button>
 </div>
 </div>
 </div>
@@ -142,8 +157,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<div class="modal" id="splitModal">
-<div class="modal-content">
+<!-- Modals -->
+<div class="modal" id="splitModal"><div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
 <label class="form-label">👤 الأونر</label>
 <select class="modal-select" id="splitOwnerSelect" onchange="onOwnerSelect('split')"></select>
@@ -168,11 +183,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="modal-btn modal-btn-ok" onclick="executeSplit()">تطير</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
 </div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="nosplitModal">
-<div class="modal-content">
+<div class="modal" id="nosplitModal"><div class="modal-content">
 <div class="modal-title">✈️ تطير بدون تقسيم</div>
 <label class="form-label">👤 الأونر</label>
 <select class="modal-select" id="nosplitOwnerSelect" onchange="onOwnerSelect('nosplit')"></select>
@@ -197,11 +210,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="modal-btn modal-btn-ok" onclick="executeNoSplit()">تطير</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('nosplit')">إلغاء</button>
 </div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="checkdaysModal">
-<div class="modal-content">
+<div class="modal" id="checkdaysModal"><div class="modal-content">
 <div class="modal-title">📊 كشف الحد اليومي</div>
 <label class="form-label">👤 الأونر</label>
 <select class="modal-select" id="checkOwnerSelect" onchange="onOwnerSelect('check')"></select>
@@ -213,11 +224,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="modal-btn modal-btn-ok" onclick="executeCheckDays()">كشف</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkdays')">إلغاء</button>
 </div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="transferModal">
-<div class="modal-content">
+<div class="modal" id="transferModal"><div class="modal-content">
 <div class="modal-title">🔀 تحويل الأرقام</div>
 <label class="form-label">📱 رقم الفرد</label>
 <input type="tel" id="transferPhone" class="modal-input" placeholder="رقم الفرد">
@@ -230,16 +239,14 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <option value="20">20%</option>
 <option value="40">40%</option>
 </select>
-<input type="number" id="transferPercentManual" class="modal-input" placeholder="أو أدخل نسبة مخصصة" style="margin-top:-5px;">
+<input type="number" id="transferPercentManual" class="modal-input" placeholder="أو أدخل نسبة مخصصة">
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeTransfer()">تحويل</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
 </div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="unlockModal">
-<div class="modal-content">
+<div class="modal" id="unlockModal"><div class="modal-content">
 <div class="modal-title">🔓 فك اليمت</div>
 <input type="tel" id="ownerPhone" class="modal-input" placeholder="رقم الأونر">
 <input type="password" id="ownerPass" class="modal-input" placeholder="باسورد الأونر">
@@ -248,22 +255,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="modal-btn modal-btn-ok" onclick="executeUnlock()">فك</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('unlock')">إلغاء</button>
 </div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="blockModal">
-<div class="modal-content">
-<div class="modal-title">🚫 حظر IP</div>
-<input type="text" id="blockIP" class="modal-input" placeholder="IP">
-<div class="modal-buttons">
-<button class="modal-btn modal-btn-ok" onclick="executeBlockIP()">حظر</button>
-<button class="modal-btn modal-btn-cancel" onclick="closeModal('block')">إلغاء</button>
-</div>
-</div>
-</div>
-
-<div class="modal" id="addownerModal">
-<div class="modal-content">
+<div class="modal" id="addownerModal"><div class="modal-content">
 <div class="modal-title">➕ إضافة أونر جديد</div>
 <input type="text" id="newOwnerLabel" class="modal-input" placeholder="اسم الأونر (اختياري)">
 <input type="tel" id="newOwnerPhone" class="modal-input" placeholder="رقم الأونر">
@@ -272,17 +266,43 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="modal-btn modal-btn-ok" onclick="addOwner()">حفظ</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('addowner')">إلغاء</button>
 </div>
-</div>
-</div>
+</div></div>
 
-<div class="modal" id="codeModal">
-<div class="modal-content">
-<div class="modal-title">🔑 كود جديد</div>
-<p id="newCode" style="text-align:center; font-size:24px; font-weight:700; color:#667eea; padding:20px; background:#f0f0f0; border-radius:8px; letter-spacing:3px;">...</p>
+<div class="modal" id="codeModal"><div class="modal-content">
+<div class="modal-title">🔑 كود مستخدم جديد</div>
+<p id="newCode" style="text-align:center; font-size:26px; font-weight:700; color:#667eea; padding:20px; background:#f0f0f0; border-radius:8px; letter-spacing:3px;">...</p>
+<p id="codeTimer" style="text-align:center; color:#ff6b6b; font-weight:600;">⏱️ صالح لمدة 5:00</p>
 <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="copyCode()">📋 نسخ</button>
 <div class="modal-buttons"><button class="modal-btn modal-btn-cancel" onclick="closeModal('code')">إغلاق</button></div>
+</div></div>
+
+<div class="modal" id="deviceLogsModal"><div class="modal-content" style="max-width:600px;">
+<div class="modal-title">📋 سجل الأجهزة</div>
+<div id="deviceLogsList" style="max-height:400px; overflow-y:auto;"></div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="clearDeviceLogs()" style="background:#ff6b6b;">🗑️ مسح السجل</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('deviceLogs')">إغلاق</button>
 </div>
+</div></div>
+
+<div class="modal" id="buttonsConfigModal"><div class="modal-content">
+<div class="modal-title">👁️ إخفاء/إظهار الأزرار</div>
+<p style="color:#666; font-size:13px; margin-bottom:15px;">اختار الأزرار اللي عايز تخفيها عن المستخدم العادي.</p>
+<div id="buttonsConfigList"></div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="saveButtonsConfig()">💾 حفظ</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('buttonsConfig')">إلغاء</button>
 </div>
+</div></div>
+
+<div class="modal" id="unblockipModal"><div class="modal-content">
+<div class="modal-title">🔓 فك حظر IP</div>
+<input type="text" id="unblockIP" class="modal-input" placeholder="أدخل الـ IP">
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="executeUnblockIP()">فك الحظر</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('unblockip')">إلغاء</button>
+</div>
+</div></div>
 
 <div class="terminal-container" id="terminalContainer">
 <div class="terminal-header">
@@ -297,45 +317,162 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 
 <script>
 // ==================== الإعدادات ====================
-const MASTER_CODE = '01019092631';
-const BACKEND_URL = 'https://headphones-scoop-overcome-extensions.trycloudflare.com';
+const BACKEND_URL = 'https://receives-fuel-faculty-impressed.trycloudflare.com';
 const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
 
+let currentRole = null;
+let currentCode = null;
 let currentEventSource = null;
 let terminalOpen = false;
+let codeTimerInterval = null;
 
+// ==================== التخزين ====================
 function getOwners() {
 try { return JSON.parse(localStorage.getItem('owners') || '[]'); }
 catch(e) { return []; }
 }
 function saveOwners(list) { localStorage.setItem('owners', JSON.stringify(list)); }
 
-function login() {
-const code = document.getElementById('codeInput').value.trim();
+function getSavedNumbers() {
+try { return JSON.parse(localStorage.getItem('savedNumbers') || '[]'); }
+catch(e) { return []; }
+}
+function saveSavedNumbers(list) { localStorage.setItem('savedNumbers', JSON.stringify(list)); }
+
+// ==================== الدخول ====================
+async function login() {
+const code = document.getElementById('codeInput').value.trim().toUpperCase();
 const error = document.getElementById('loginError');
 if (!code) { error.textContent = '⚠️ أدخل الكود'; return; }
-if (code === MASTER_CODE) {
-localStorage.setItem('loggedIn', 'true');
-showMainPage();
-} else { error.textContent = '❌ كود غير صحيح'; }
-}
-function logout() {
-if (confirm('تسجيل خروج؟')) { localStorage.removeItem('loggedIn'); location.reload(); }
-}
-function showMainPage() {
-document.getElementById('loginPage').classList.add('hidden');
-document.getElementById('mainPage').style.display = 'block';
-loadOwners();
+error.textContent = '⏳ جاري التحقق...';
+
+try {
+const resp = await fetch(BACKEND_URL + '/api/verify-code', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ code })
+});
+const data = await resp.json();
+if (!resp.ok || data.status === 'error') {
+error.textContent = '❌ ' + (data.message || 'كود غير صحيح');
+return;
 }
 
+// تسجيل الجهاز (أول مرة بس)
+const loggedKey = 'loggedDevice_' + code;
+if (!localStorage.getItem(loggedKey)) {
+fetch(BACKEND_URL + '/api/log-device', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ code, role: data.role })
+}).catch(() => {});
+localStorage.setItem(loggedKey, 'true');
+}
+
+currentRole = data.role;
+currentCode = code;
+localStorage.setItem('loggedIn', 'true');
+localStorage.setItem('role', data.role);
+localStorage.setItem('code', code);
+showMainPage();
+} catch(e) {
+error.textContent = '❌ فشل الاتصال بالسيرفر';
+}
+}
+
+function logout() {
+if (confirm('تسجيل خروج؟')) {
+localStorage.removeItem('loggedIn');
+localStorage.removeItem('role');
+localStorage.removeItem('code');
+location.reload();
+}
+}
+
+async function showMainPage() {
+document.getElementById('loginPage').classList.add('hidden');
+document.getElementById('mainPage').style.display = 'block';
+
+if (currentRole === 'admin') {
+document.getElementById('userBadge').textContent = '🛡️ أدمن';
+document.getElementById('userBadge').classList.add('admin');
+document.getElementById('adminBtn').classList.remove('hidden');
+} else {
+document.getElementById('userBadge').textContent = '👤 مستخدم';
+}
+
+loadOwners();
+renderSavedNumbers();
+await applyButtonsConfig();
+}
+
+// ==================== إخفاء الأزرار ====================
+async function applyButtonsConfig() {
+try {
+const resp = await fetch(BACKEND_URL + '/api/buttons-config');
+const data = await resp.json();
+if (data.status === 'success' && currentRole !== 'admin') {
+data.hidden.forEach(btnKey => {
+const btn = document.querySelector(`[data-btn="${btnKey}"]`);
+if (btn) btn.classList.add('hidden');
+});
+}
+} catch(e) { console.error(e); }
+}
+
+function renderButtonsConfig() {
+const allButtons = [
+{ key: 'split', name: '🔄 تطير مع تقسيم' },
+{ key: 'nosplit', name: '✈️ تطير بدون تقسيم' },
+{ key: 'checkdays', name: '📊 كشف الحد' },
+{ key: 'transfer', name: '🔀 تحويل الأرقام' },
+{ key: 'unlock', name: '🔓 فك اليمت' }
+];
+
+fetch(BACKEND_URL + '/api/buttons-config')
+.then(r => r.json())
+.then(data => {
+const hidden = data.hidden || [];
+const list = document.getElementById('buttonsConfigList');
+list.innerHTML = '';
+allButtons.forEach(b => {
+const row = document.createElement('div');
+row.className = 'owner-row';
+row.innerHTML = `
+<label style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer;">
+<input type="checkbox" ${hidden.includes(b.key) ? 'checked' : ''} data-key="${b.key}" style="width:18px; height:18px;">
+<span>${b.name}</span>
+</label>`;
+list.appendChild(row);
+});
+});
+}
+
+async function saveButtonsConfig() {
+const checked = document.querySelectorAll('#buttonsConfigList input[type="checkbox"]:checked');
+const hidden = Array.from(checked).map(cb => cb.dataset.key);
+try {
+await fetch(BACKEND_URL + '/api/buttons-config', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ hidden })
+});
+notify('✅ تم الحفظ', 'success');
+closeModal('buttonsConfig');
+} catch(e) { notify('❌ فشل الحفظ', 'error'); }
+}
+
+// ==================== التنقل ====================
 function showPage(page, btn) {
 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
 document.getElementById(page + 'Page').classList.add('active');
 if (btn) btn.classList.add('active');
 if (page === 'owners') renderOwners();
+if (page === 'saved') renderSavedNumbers();
 }
 
+// ==================== الأونرز ====================
 function loadOwners() {
 const owners = getOwners();
 ['splitOwnerSelect', 'nosplitOwnerSelect', 'checkOwnerSelect'].forEach(id => {
@@ -397,6 +534,53 @@ loadOwners(); renderOwners();
 notify('🗑️ تم الحذف', 'success');
 }
 
+// ==================== الأرقام المحفوظة ====================
+function addSavedNumber(data) {
+const saved = getSavedNumbers();
+saved.unshift({
+phone: data.phone,
+owner: data.owner,
+gb: data.gb,
+minutes: data.minutes,
+type: data.type,
+date: new Date().toLocaleString('ar-EG')
+});
+if (saved.length > 100) saved.pop();
+saveSavedNumbers(saved);
+renderSavedNumbers();
+}
+
+function renderSavedNumbers() {
+const saved = getSavedNumbers();
+const list = document.getElementById('savedList');
+if (saved.length === 0) {
+list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش أرقام محفوظة</p>';
+return;
+}
+list.innerHTML = '';
+saved.forEach((s, i) => {
+const row = document.createElement('div');
+row.className = 'saved-row';
+row.innerHTML = `<div class="saved-info">
+<strong>📱 ${s.phone}</strong>
+<small>👤 ${s.owner} | 📦 ${s.gb}GB + ${s.minutes} دقيقة | ${s.type}</small>
+<small>📅 ${s.date}</small>
+</div>
+<button onclick="removeSaved(${i})">🗑️ حذف</button>`;
+list.appendChild(row);
+});
+}
+
+function removeSaved(index) {
+if (!confirm('حذف الرقم من المحفوظات؟')) return;
+const saved = getSavedNumbers();
+saved.splice(index, 1);
+saveSavedNumbers(saved);
+renderSavedNumbers();
+notify('🗑️ تم الحذف', 'success');
+}
+
+// ==================== اختيار الأونر ====================
 function onOwnerSelect(prefix) {
 const sel = document.getElementById(prefix + 'OwnerSelect');
 const manual = document.getElementById(prefix + 'OwnerManual');
@@ -421,16 +605,19 @@ if (isNaN(idx) || !owners[idx]) return null;
 return { phone: owners[idx].phone, password: owners[idx].password };
 }
 
+// ==================== Modals ====================
 function openModal(name) {
 const m = document.getElementById(name + 'Modal');
 if (m) m.classList.add('show');
-if (name === 'code') generateCode();
+if (name === 'deviceLogs') loadDeviceLogs();
+if (name === 'buttonsConfig') renderButtonsConfig();
 }
 function closeModal(name) {
 const m = document.getElementById(name + 'Modal');
 if (m) m.classList.remove('show');
 }
 
+// ==================== API ====================
 async function apiCall(endpoint, body) {
 body.session_id = SESSION_ID;
 const response = await fetch(BACKEND_URL + endpoint, {
@@ -443,6 +630,7 @@ if (!response.ok) throw new Error(data.message || 'Server Error');
 return data;
 }
 
+// ==================== العمليات ====================
 async function executeSplit() {
 const owner = getOwnerData('split');
 if (!owner) { notify('⚠️ اختر أونر أو أدخل بياناته', 'error'); return; }
@@ -455,7 +643,7 @@ openTerminal();
 termLog('🚀 بدء تطير مع تقسيم للرقم: ' + phone, 'info');
 try {
 await apiCall('/api/split-transfer', { phone, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
-notify('✅ تم التنفيذ', 'success');
+addSavedNumber({ phone, owner: owner.phone, gb, minutes, type: 'تطير مع تقسيم' });
 closeModal('split');
 } catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
 }
@@ -472,7 +660,7 @@ openTerminal();
 termLog('✈️ بدء تطير بدون تقسيم للرقم: ' + phone, 'info');
 try {
 await apiCall('/api/nosplit-transfer', { phone, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
-notify('✅ تم التنفيذ', 'success');
+addSavedNumber({ phone, owner: owner.phone, gb, minutes, type: 'تطير بدون تقسيم' });
 closeModal('nosplit');
 } catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
 }
@@ -483,8 +671,7 @@ if (!owner) { notify('⚠️ اختر أونر أو أدخل بياناته', 'e
 openTerminal();
 termLog('📊 بدء كشف الحد اليومي...', 'info');
 try {
-const data = await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password });
-notify('✅ ' + (data.message || 'تم الكشف'), 'success');
+await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password });
 closeModal('checkdays');
 } catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
 }
@@ -500,7 +687,6 @@ openTerminal();
 termLog('🔄 بدء تحويل الأرقام...', 'info');
 try {
 await apiCall('/api/transfer-number', { phone, password: pass, percentage: percent });
-notify('✅ تم التحويل', 'success');
 closeModal('transfer');
 } catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
 }
@@ -512,26 +698,48 @@ openTerminal();
 termLog('🔓 بدء فك اليمت...', 'info');
 try {
 await apiCall('/api/unlock-device', { owner_phone: ownerPhone, user_phone: userPhone });
-notify('✅ تم فك اليمت', 'success');
 closeModal('unlock');
 } catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
 }
 
-async function executeBlockIP() {
-const ip = document.getElementById('blockIP').value.trim();
+async function executeUnblockIP() {
+const ip = document.getElementById('unblockIP').value.trim();
+if (!ip) { notify('⚠️ أدخل الـ IP', 'error'); return; }
 try {
-await apiCall('/api/block-ip', { ip });
-notify('✅ تم الحظر', 'success');
-closeModal('block');
+await apiCall('/api/unblock-ip', { ip });
+notify('✅ تم فك الحظر', 'success');
+closeModal('unblockip');
 } catch(e) { notify('❌ ' + e.message, 'error'); }
 }
 
+// ==================== الأكواد ====================
 async function generateCode() {
-document.getElementById('newCode').textContent = '...';
 try {
-const data = await apiCall('/api/generate-code', {});
+const resp = await fetch(BACKEND_URL + '/api/generate-code', { method: 'POST' });
+const data = await resp.json();
 document.getElementById('newCode').textContent = data.code;
-} catch(e) { document.getElementById('newCode').textContent = 'خطأ'; }
+openModal('code');
+startCodeTimer(data.expires_in || 300);
+} catch(e) { notify('❌ فشل التوليد', 'error'); }
+}
+
+function startCodeTimer(seconds) {
+if (codeTimerInterval) clearInterval(codeTimerInterval);
+let remaining = seconds;
+const el = document.getElementById('codeTimer');
+const update = () => {
+const m = Math.floor(remaining / 60);
+const s = remaining % 60;
+el.textContent = `⏱️ صالح لمدة ${m}:${s.toString().padStart(2, '0')}`;
+if (remaining <= 0) {
+el.textContent = '⌛ انتهت الصلاحية';
+clearInterval(codeTimerInterval);
+return;
+}
+remaining--;
+};
+update();
+codeTimerInterval = setInterval(update, 1000);
 }
 
 function copyCode() {
@@ -540,6 +748,42 @@ if (navigator.clipboard) navigator.clipboard.writeText(code);
 notify('📋 تم النسخ', 'success');
 }
 
+// ==================== سجل الأجهزة ====================
+async function loadDeviceLogs() {
+const list = document.getElementById('deviceLogsList');
+list.innerHTML = '<p style="text-align:center; color:#999;">جاري التحميل...</p>';
+try {
+const resp = await fetch(BACKEND_URL + '/api/device-logs');
+const data = await resp.json();
+if (!data.logs || data.logs.length === 0) {
+list.innerHTML = '<p style="text-align:center; color:#999;">مفيش سجلات</p>';
+return;
+}
+list.innerHTML = '';
+data.logs.forEach(log => {
+const row = document.createElement('div');
+row.className = 'log-row';
+row.innerHTML = `<div class="log-info">
+<strong>🌐 ${log.ip}</strong>
+<small>📱 ${log.device.substring(0, 60)}...</small>
+<small>🎫 ${log.code} | ${log.role} | ${log.time}</small>
+</div>`;
+list.appendChild(row);
+});
+} catch(e) {
+list.innerHTML = '<p style="text-align:center; color:#ff6b6b;">فشل التحميل</p>';
+}
+}
+
+async function clearDeviceLogs() {
+if (!confirm('مسح كل السجلات؟')) return;
+try {
+await fetch(BACKEND_URL + '/api/device-logs', { method: 'DELETE' });
+loadDeviceLogs();
+} catch(e) {}
+}
+
+// ==================== التريمنال ====================
 function openTerminal() {
 const t = document.getElementById('terminalContainer');
 t.style.display = 'flex';
@@ -580,12 +824,18 @@ const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
 body.appendChild(line);
 body.scrollTop = body.scrollHeight;
+
+// إشعار تلقائي على الموبايل لو الرسالة مهمة
+if (msg.includes('تم العثور') || msg.includes('تم التحويل') || msg.includes('🚨')) {
+notify(msg, 'info');
+}
 }
 function termLog(msg, type) { addTermLine(msg); }
 function escapeHtml(s) {
 return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
+// ==================== الإشعارات ====================
 function notify(msg, type) {
 const div = document.createElement('div');
 div.className = 'notification ' + (type || 'info');
@@ -594,8 +844,11 @@ document.body.appendChild(div);
 setTimeout(() => div.remove(), 3500);
 }
 
+// ==================== التشغيل ====================
 window.addEventListener('load', () => {
 if (localStorage.getItem('loggedIn')) {
+currentRole = localStorage.getItem('role') || 'user';
+currentCode = localStorage.getItem('code') || '';
 showMainPage();
 }
 });
