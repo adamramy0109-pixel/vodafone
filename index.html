@@ -42,6 +42,10 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .btn-warning { background: #ffa94d; color: white; }
 .btn-info { background: #74c0fc; color: white; }
 
+.tabs { display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
+.tabs button { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: 600; font-size: 13px; color: #666; }
+.tabs button.active { background: #f0f0f0; color: #667eea; border-bottom: 3px solid #667eea; }
+
 .modal { display: none; position: fixed; z-index: 999; inset: 0; background: rgba(0,0,0,0.6); padding: 20px; overflow-y: auto; }
 .modal.show { display: block; }
 .modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -59,6 +63,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .owner-row .owner-info strong, .saved-row .saved-info strong { display: block; color: #333; }
 .owner-row .owner-info small, .saved-row .saved-info small, .log-row small { color: #888; font-size: 11px; }
 .owner-row button, .saved-row button { background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+
+.search-box { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
 
 .notification { position: fixed; top: 20px; right: 20px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.25); z-index: 99999; font-weight: 600; font-size: 14px; max-width: 320px; animation: slideIn 0.3s ease; }
 .notification.success { border-right: 4px solid #51cf66; color: #2b8a3e; }
@@ -80,8 +86,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .term-warn { color: #ffd43b; }
 .term-default { color: #8b949e; }
 .term-time { color: #6e7681; margin-right: 8px; }
-
-.timer-badge { background: #ffa94d; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -120,7 +124,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="btn btn-primary" data-btn="nosplit" onclick="openModal('nosplit')">✈️ تطير بدون تقسيم</button>
 <button class="btn btn-primary" data-btn="checkdays" onclick="openModal('checkdays')">📊 كشف الحد</button>
 <button class="btn btn-primary" data-btn="transfer" onclick="openModal('transfer')">🔀 تحويل الأرقام</button>
-<button class="btn btn-primary" data-btn="unlock" onclick="openModal('unlock')">🔓 فك اليمت</button>
 </div>
 </div>
 </div>
@@ -137,8 +140,18 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="page" id="savedPage">
 <div class="section">
 <h2>💾 الأرقام المحفوظة</h2>
-<p style="color:#666; font-size:13px; margin-bottom:15px;">الأرقام اللي اتعملت عليها عمليات ناجحة.</p>
+<div class="tabs">
+<button id="tabActivated" class="active" onclick="switchSavedTab('activated')">📥 الأرقام المتفعّلة</button>
+<button id="tabManual" onclick="switchSavedTab('manual')">📋 الأرقام المحفوظة</button>
+</div>
+<div id="activatedTab">
 <div id="savedList"></div>
+</div>
+<div id="manualTab" class="hidden">
+<button class="btn btn-success" style="width:100%; margin-bottom:15px;" onclick="openModal('addsaved')">➕ إضافة رقم محفوظ</button>
+<input type="text" class="search-box" id="searchSaved" placeholder="🔍 ابحث بالاسم أو الرقم..." oninput="renderManualSaved()">
+<div id="manualSavedList"></div>
+</div>
 </div>
 </div>
 
@@ -149,7 +162,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="btn btn-success" onclick="generateCode()">🔑 توليد كود مستخدم</button>
 <button class="btn btn-info" onclick="openModal('deviceLogs')">📋 سجل الأجهزة</button>
 <button class="btn btn-warning" onclick="openModal('buttonsConfig')">👁️ إخفاء/إظهار الأزرار</button>
-<button class="btn btn-danger" onclick="openModal('unblockip')">🔓 فك حظر IP</button>
+<button class="btn btn-danger" onclick="openModal('blockip')">🚫 حظر IP</button>
+<button class="btn btn-primary" onclick="openModal('unblockip')">🔓 فك حظر IP</button>
 </div>
 </div>
 </div>
@@ -171,14 +185,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <label class="form-label">🔑 باسورد العضو</label>
 <input type="password" id="splitPass" class="modal-input" placeholder="باسورد العضو">
 <label class="form-label">📦 الباقة</label>
-<select id="splitPlan" class="modal-select">
-<option value="">-- اختر الباقة --</option>
-<option value="25|2500">25 GB + 2500 دقيقة</option>
-<option value="30|3000">30 GB + 3000 دقيقة</option>
-<option value="35|3500">35 GB + 3500 دقيقة</option>
-<option value="40|4000">40 GB + 4000 دقيقة</option>
-<option value="50|5000">50 GB + 5000 دقيقة</option>
-</select>
+<select id="splitPlan" class="modal-select"></select>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeSplit()">تطير</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
@@ -198,14 +205,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <label class="form-label">🔑 باسورد العضو</label>
 <input type="password" id="nosplitPass" class="modal-input" placeholder="باسورد العضو">
 <label class="form-label">📦 الباقة</label>
-<select id="nosplitPlan" class="modal-select">
-<option value="">-- اختر الباقة --</option>
-<option value="25|2500">25 GB + 2500 دقيقة</option>
-<option value="30|3000">30 GB + 3000 دقيقة</option>
-<option value="35|3500">35 GB + 3500 دقيقة</option>
-<option value="40|4000">40 GB + 4000 دقيقة</option>
-<option value="50|5000">50 GB + 5000 دقيقة</option>
-</select>
+<select id="nosplitPlan" class="modal-select"></select>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeNoSplit()">تطير</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('nosplit')">إلغاء</button>
@@ -246,17 +246,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div></div>
 
-<div class="modal" id="unlockModal"><div class="modal-content">
-<div class="modal-title">🔓 فك اليمت</div>
-<input type="tel" id="ownerPhone" class="modal-input" placeholder="رقم الأونر">
-<input type="password" id="ownerPass" class="modal-input" placeholder="باسورد الأونر">
-<input type="tel" id="userPhone" class="modal-input" placeholder="رقم الفرد">
-<div class="modal-buttons">
-<button class="modal-btn modal-btn-ok" onclick="executeUnlock()">فك</button>
-<button class="modal-btn modal-btn-cancel" onclick="closeModal('unlock')">إلغاء</button>
-</div>
-</div></div>
-
 <div class="modal" id="addownerModal"><div class="modal-content">
 <div class="modal-title">➕ إضافة أونر جديد</div>
 <input type="text" id="newOwnerLabel" class="modal-input" placeholder="اسم الأونر (اختياري)">
@@ -265,6 +254,17 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="addOwner()">حفظ</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('addowner')">إلغاء</button>
+</div>
+</div></div>
+
+<div class="modal" id="addsavedModal"><div class="modal-content">
+<div class="modal-title">➕ إضافة رقم محفوظ</div>
+<input type="text" id="newSavedName" class="modal-input" placeholder="الاسم">
+<input type="tel" id="newSavedPhone" class="modal-input" placeholder="الرقم">
+<input type="number" id="newSavedPercent" class="modal-input" placeholder="النسبة %">
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="addManualSaved()">حفظ</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('addsaved')">إلغاء</button>
 </div>
 </div></div>
 
@@ -295,6 +295,16 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div></div>
 
+<div class="modal" id="blockipModal"><div class="modal-content">
+<div class="modal-title">🚫 حظر IP</div>
+<input type="text" id="blockIP" class="modal-input" placeholder="أدخل الـ IP">
+<div id="blockedList" style="margin-top:10px; font-size:13px; color:#666;"></div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="executeBlockIP()">حظر</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('blockip')">إغلاق</button>
+</div>
+</div></div>
+
 <div class="modal" id="unblockipModal"><div class="modal-content">
 <div class="modal-title">🔓 فك حظر IP</div>
 <input type="text" id="unblockIP" class="modal-input" placeholder="أدخل الـ IP">
@@ -317,27 +327,46 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 
 <script>
 // ==================== الإعدادات ====================
-const BACKEND_URL = 'https://receives-fuel-faculty-impressed.trycloudflare.com';
+const BACKEND_URL = 'https://databases-neighborhood-outputs-presents.trycloudflare.com';
 const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
+
+const PACKAGES = [
+{gb: 25, min: 2500}, {gb: 30, min: 3000}, {gb: 35, min: 3500},
+{gb: 40, min: 4000}, {gb: 45, min: 4500}, {gb: 50, min: 5000},
+{gb: 55, min: 5500}, {gb: 60, min: 6000}, {gb: 65, min: 6500},
+{gb: 70, min: 7000}, {gb: 75, min: 7500}, {gb: 80, min: 8000},
+{gb: 85, min: 8500}
+];
 
 let currentRole = null;
 let currentCode = null;
 let currentEventSource = null;
 let terminalOpen = false;
 let codeTimerInterval = null;
+let currentSavedTab = 'activated';
 
 // ==================== التخزين ====================
-function getOwners() {
-try { return JSON.parse(localStorage.getItem('owners') || '[]'); }
-catch(e) { return []; }
-}
-function saveOwners(list) { localStorage.setItem('owners', JSON.stringify(list)); }
+function getOwners() { try { return JSON.parse(localStorage.getItem('owners') || '[]'); } catch(e) { return []; } }
+function saveOwners(l) { localStorage.setItem('owners', JSON.stringify(l)); }
+function getSavedNumbers() { try { return JSON.parse(localStorage.getItem('savedNumbers') || '[]'); } catch(e) { return []; } }
+function saveSavedNumbers(l) { localStorage.setItem('savedNumbers', JSON.stringify(l)); }
+function getManualSaved() { try { return JSON.parse(localStorage.getItem('manualSaved') || '[]'); } catch(e) { return []; } }
+function saveManualSaved(l) { localStorage.setItem('manualSaved', JSON.stringify(l)); }
 
-function getSavedNumbers() {
-try { return JSON.parse(localStorage.getItem('savedNumbers') || '[]'); }
-catch(e) { return []; }
+// ==================== الباقات ====================
+function fillPackages() {
+['splitPlan', 'nosplitPlan'].forEach(id => {
+const sel = document.getElementById(id);
+if (!sel) return;
+sel.innerHTML = '<option value="">-- اختر الباقة --</option>';
+PACKAGES.forEach(p => {
+const o = document.createElement('option');
+o.value = p.gb + '|' + p.min;
+o.textContent = p.gb + ' GB + ' + p.min + ' دقيقة';
+sel.appendChild(o);
+});
+});
 }
-function saveSavedNumbers(list) { localStorage.setItem('savedNumbers', JSON.stringify(list)); }
 
 // ==================== الدخول ====================
 async function login() {
@@ -348,8 +377,7 @@ error.textContent = '⏳ جاري التحقق...';
 
 try {
 const resp = await fetch(BACKEND_URL + '/api/verify-code', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
+method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ code })
 });
 const data = await resp.json();
@@ -358,12 +386,10 @@ error.textContent = '❌ ' + (data.message || 'كود غير صحيح');
 return;
 }
 
-// تسجيل الجهاز (أول مرة بس)
 const loggedKey = 'loggedDevice_' + code;
 if (!localStorage.getItem(loggedKey)) {
 fetch(BACKEND_URL + '/api/log-device', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
+method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ code, role: data.role })
 }).catch(() => {});
 localStorage.setItem(loggedKey, 'true');
@@ -375,9 +401,7 @@ localStorage.setItem('loggedIn', 'true');
 localStorage.setItem('role', data.role);
 localStorage.setItem('code', code);
 showMainPage();
-} catch(e) {
-error.textContent = '❌ فشل الاتصال بالسيرفر';
-}
+} catch(e) { error.textContent = '❌ فشل الاتصال بالسيرفر'; }
 }
 
 function logout() {
@@ -392,7 +416,6 @@ location.reload();
 async function showMainPage() {
 document.getElementById('loginPage').classList.add('hidden');
 document.getElementById('mainPage').style.display = 'block';
-
 if (currentRole === 'admin') {
 document.getElementById('userBadge').textContent = '🛡️ أدمن';
 document.getElementById('userBadge').classList.add('admin');
@@ -400,9 +423,9 @@ document.getElementById('adminBtn').classList.remove('hidden');
 } else {
 document.getElementById('userBadge').textContent = '👤 مستخدم';
 }
-
 loadOwners();
 renderSavedNumbers();
+renderManualSaved();
 await applyButtonsConfig();
 }
 
@@ -417,7 +440,7 @@ const btn = document.querySelector(`[data-btn="${btnKey}"]`);
 if (btn) btn.classList.add('hidden');
 });
 }
-} catch(e) { console.error(e); }
+} catch(e) {}
 }
 
 function renderButtonsConfig() {
@@ -425,24 +448,18 @@ const allButtons = [
 { key: 'split', name: '🔄 تطير مع تقسيم' },
 { key: 'nosplit', name: '✈️ تطير بدون تقسيم' },
 { key: 'checkdays', name: '📊 كشف الحد' },
-{ key: 'transfer', name: '🔀 تحويل الأرقام' },
-{ key: 'unlock', name: '🔓 فك اليمت' }
+{ key: 'transfer', name: '🔀 تحويل الأرقام' }
 ];
-
-fetch(BACKEND_URL + '/api/buttons-config')
-.then(r => r.json())
-.then(data => {
+fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(data => {
 const hidden = data.hidden || [];
 const list = document.getElementById('buttonsConfigList');
 list.innerHTML = '';
 allButtons.forEach(b => {
 const row = document.createElement('div');
 row.className = 'owner-row';
-row.innerHTML = `
-<label style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer;">
+row.innerHTML = `<label style="flex:1; display:flex; align-items:center; gap:8px; cursor:pointer;">
 <input type="checkbox" ${hidden.includes(b.key) ? 'checked' : ''} data-key="${b.key}" style="width:18px; height:18px;">
-<span>${b.name}</span>
-</label>`;
+<span>${b.name}</span></label>`;
 list.appendChild(row);
 });
 });
@@ -453,8 +470,7 @@ const checked = document.querySelectorAll('#buttonsConfigList input[type="checkb
 const hidden = Array.from(checked).map(cb => cb.dataset.key);
 try {
 await fetch(BACKEND_URL + '/api/buttons-config', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
+method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ hidden })
 });
 notify('✅ تم الحفظ', 'success');
@@ -469,7 +485,7 @@ document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active
 document.getElementById(page + 'Page').classList.add('active');
 if (btn) btn.classList.add('active');
 if (page === 'owners') renderOwners();
-if (page === 'saved') renderSavedNumbers();
+if (page === 'saved') { renderSavedNumbers(); renderManualSaved(); }
 }
 
 // ==================== الأونرز ====================
@@ -535,14 +551,19 @@ notify('🗑️ تم الحذف', 'success');
 }
 
 // ==================== الأرقام المحفوظة ====================
+function switchSavedTab(tab) {
+currentSavedTab = tab;
+document.getElementById('tabActivated').classList.toggle('active', tab === 'activated');
+document.getElementById('tabManual').classList.toggle('active', tab === 'manual');
+document.getElementById('activatedTab').classList.toggle('hidden', tab !== 'activated');
+document.getElementById('manualTab').classList.toggle('hidden', tab !== 'manual');
+}
+
 function addSavedNumber(data) {
 const saved = getSavedNumbers();
 saved.unshift({
-phone: data.phone,
-owner: data.owner,
-gb: data.gb,
-minutes: data.minutes,
-type: data.type,
+phone: data.phone, owner: data.owner, gb: data.gb,
+minutes: data.minutes, type: data.type,
 date: new Date().toLocaleString('ar-EG')
 });
 if (saved.length > 100) saved.pop();
@@ -554,7 +575,7 @@ function renderSavedNumbers() {
 const saved = getSavedNumbers();
 const list = document.getElementById('savedList');
 if (saved.length === 0) {
-list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش أرقام محفوظة</p>';
+list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش أرقام متفعلة</p>';
 return;
 }
 list.innerHTML = '';
@@ -572,12 +593,63 @@ list.appendChild(row);
 }
 
 function removeSaved(index) {
-if (!confirm('حذف الرقم من المحفوظات؟')) return;
+if (!confirm('حذف الرقم؟')) return;
 const saved = getSavedNumbers();
 saved.splice(index, 1);
 saveSavedNumbers(saved);
 renderSavedNumbers();
-notify('🗑️ تم الحذف', 'success');
+}
+
+// الأرقام المحفوظة يدوياً
+function addManualSaved() {
+const name = document.getElementById('newSavedName').value.trim();
+const phone = document.getElementById('newSavedPhone').value.trim();
+const percent = document.getElementById('newSavedPercent').value.trim();
+if (!name || !phone || !percent) { notify('⚠️ كل الحقول مطلوبة', 'error'); return; }
+const list = getManualSaved();
+list.unshift({ name, phone, percent, date: new Date().toLocaleString('ar-EG') });
+saveManualSaved(list);
+renderManualSaved();
+notify('✅ تم الإضافة', 'success');
+closeModal('addsaved');
+document.getElementById('newSavedName').value = '';
+document.getElementById('newSavedPhone').value = '';
+document.getElementById('newSavedPercent').value = '';
+}
+
+function renderManualSaved() {
+const list = getManualSaved();
+const search = (document.getElementById('searchSaved')?.value || '').trim().toLowerCase();
+const container = document.getElementById('manualSavedList');
+if (!container) return;
+const filtered = list.filter(item =>
+!search || item.name.toLowerCase().includes(search) || item.phone.includes(search)
+);
+if (filtered.length === 0) {
+container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">مفيش نتائج</p>';
+return;
+}
+container.innerHTML = '';
+filtered.forEach((s) => {
+const realIndex = list.indexOf(s);
+const row = document.createElement('div');
+row.className = 'saved-row';
+row.innerHTML = `<div class="saved-info">
+<strong>👤 ${s.name}</strong>
+<small>📱 ${s.phone} | 📊 ${s.percent}%</small>
+<small>📅 ${s.date}</small>
+</div>
+<button onclick="removeManualSaved(${realIndex})">🗑️ حذف</button>`;
+container.appendChild(row);
+});
+}
+
+function removeManualSaved(index) {
+if (!confirm('حذف الرقم؟')) return;
+const list = getManualSaved();
+list.splice(index, 1);
+saveManualSaved(list);
+renderManualSaved();
 }
 
 // ==================== اختيار الأونر ====================
@@ -611,6 +683,7 @@ const m = document.getElementById(name + 'Modal');
 if (m) m.classList.add('show');
 if (name === 'deviceLogs') loadDeviceLogs();
 if (name === 'buttonsConfig') renderButtonsConfig();
+if (name === 'blockip') loadBlockedList();
 }
 function closeModal(name) {
 const m = document.getElementById(name + 'Modal');
@@ -621,8 +694,7 @@ if (m) m.classList.remove('show');
 async function apiCall(endpoint, body) {
 body.session_id = SESSION_ID;
 const response = await fetch(BACKEND_URL + endpoint, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
+method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(body)
 });
 const data = await response.json().catch(() => ({}));
@@ -633,83 +705,56 @@ return data;
 // ==================== العمليات ====================
 async function executeSplit() {
 const owner = getOwnerData('split');
-if (!owner) { notify('⚠️ اختر أونر أو أدخل بياناته', 'error'); return; }
+if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('splitPhone').value.trim();
-const pass = document.getElementById('splitPass').value.trim();
 const plan = document.getElementById('splitPlan').value;
-if (!phone || !pass || !plan) { notify('⚠️ املأ كل الحقول', 'error'); return; }
+if (!phone || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
 const [gb, minutes] = plan.split('|');
 openTerminal();
-termLog('🚀 بدء تطير مع تقسيم للرقم: ' + phone, 'info');
 try {
 await apiCall('/api/split-transfer', { phone, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
 addSavedNumber({ phone, owner: owner.phone, gb, minutes, type: 'تطير مع تقسيم' });
 closeModal('split');
-} catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
+} catch(e) { termLog('❌ ' + e.message, 'error'); }
 }
 
 async function executeNoSplit() {
 const owner = getOwnerData('nosplit');
-if (!owner) { notify('⚠️ اختر أونر أو أدخل بياناته', 'error'); return; }
+if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('nosplitPhone').value.trim();
-const pass = document.getElementById('nosplitPass').value.trim();
 const plan = document.getElementById('nosplitPlan').value;
-if (!phone || !pass || !plan) { notify('⚠️ املأ كل الحقول', 'error'); return; }
+if (!phone || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
 const [gb, minutes] = plan.split('|');
 openTerminal();
-termLog('✈️ بدء تطير بدون تقسيم للرقم: ' + phone, 'info');
 try {
 await apiCall('/api/nosplit-transfer', { phone, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
 addSavedNumber({ phone, owner: owner.phone, gb, minutes, type: 'تطير بدون تقسيم' });
 closeModal('nosplit');
-} catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
+} catch(e) { termLog('❌ ' + e.message, 'error'); }
 }
 
 async function executeCheckDays() {
 const owner = getOwnerData('check');
-if (!owner) { notify('⚠️ اختر أونر أو أدخل بياناته', 'error'); return; }
+if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 openTerminal();
-termLog('📊 بدء كشف الحد اليومي...', 'info');
 try {
 await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password });
 closeModal('checkdays');
-} catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
+} catch(e) { termLog('❌ ' + e.message, 'error'); }
 }
 
 async function executeTransfer() {
 const phone = document.getElementById('transferPhone').value.trim();
 const pass = document.getElementById('transferPass').value.trim();
 let percent = document.getElementById('transferPercent').value;
-const percentManual = document.getElementById('transferPercentManual').value.trim();
-if (percentManual) percent = percentManual;
-if (!phone || !pass || !percent) { notify('⚠️ املأ كل الحقول', 'error'); return; }
+const pm = document.getElementById('transferPercentManual').value.trim();
+if (pm) percent = pm;
+if (!phone || !pass || !percent) { notify('⚠️ املأ الحقول', 'error'); return; }
 openTerminal();
-termLog('🔄 بدء تحويل الأرقام...', 'info');
 try {
 await apiCall('/api/transfer-number', { phone, password: pass, percentage: percent });
 closeModal('transfer');
-} catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
-}
-
-async function executeUnlock() {
-const ownerPhone = document.getElementById('ownerPhone').value.trim();
-const userPhone = document.getElementById('userPhone').value.trim();
-openTerminal();
-termLog('🔓 بدء فك اليمت...', 'info');
-try {
-await apiCall('/api/unlock-device', { owner_phone: ownerPhone, user_phone: userPhone });
-closeModal('unlock');
-} catch(e) { notify('❌ ' + e.message, 'error'); termLog('❌ ' + e.message, 'error'); }
-}
-
-async function executeUnblockIP() {
-const ip = document.getElementById('unblockIP').value.trim();
-if (!ip) { notify('⚠️ أدخل الـ IP', 'error'); return; }
-try {
-await apiCall('/api/unblock-ip', { ip });
-notify('✅ تم فك الحظر', 'success');
-closeModal('unblockip');
-} catch(e) { notify('❌ ' + e.message, 'error'); }
+} catch(e) { termLog('❌ ' + e.message, 'error'); }
 }
 
 // ==================== الأكواد ====================
@@ -731,11 +776,7 @@ const update = () => {
 const m = Math.floor(remaining / 60);
 const s = remaining % 60;
 el.textContent = `⏱️ صالح لمدة ${m}:${s.toString().padStart(2, '0')}`;
-if (remaining <= 0) {
-el.textContent = '⌛ انتهت الصلاحية';
-clearInterval(codeTimerInterval);
-return;
-}
+if (remaining <= 0) { el.textContent = '⌛ انتهت الصلاحية'; clearInterval(codeTimerInterval); return; }
 remaining--;
 };
 update();
@@ -770,16 +811,49 @@ row.innerHTML = `<div class="log-info">
 </div>`;
 list.appendChild(row);
 });
-} catch(e) {
-list.innerHTML = '<p style="text-align:center; color:#ff6b6b;">فشل التحميل</p>';
-}
+} catch(e) { list.innerHTML = '<p style="text-align:center; color:#ff6b6b;">فشل التحميل</p>'; }
 }
 
 async function clearDeviceLogs() {
 if (!confirm('مسح كل السجلات؟')) return;
+try { await fetch(BACKEND_URL + '/api/device-logs', { method: 'DELETE' }); loadDeviceLogs(); } catch(e) {}
+}
+
+// ==================== حظر الـ IP ====================
+async function executeBlockIP() {
+const ip = document.getElementById('blockIP').value.trim();
+if (!ip) { notify('⚠️ أدخل الـ IP', 'error'); return; }
 try {
-await fetch(BACKEND_URL + '/api/device-logs', { method: 'DELETE' });
-loadDeviceLogs();
+await apiCall('/api/block-ip', { ip });
+notify('✅ تم الحظر', 'success');
+document.getElementById('blockIP').value = '';
+loadBlockedList();
+} catch(e) { notify('❌ ' + e.message, 'error'); }
+}
+
+async function executeUnblockIP() {
+const ip = document.getElementById('unblockIP').value.trim();
+if (!ip) { notify('⚠️ أدخل الـ IP', 'error'); return; }
+try {
+const resp = await fetch(BACKEND_URL + '/api/unblock-ip', {
+method: 'POST', headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ ip })
+});
+const data = await resp.json();
+notify('✅ ' + (data.message || 'تم'), 'success');
+closeModal('unblockip');
+document.getElementById('unblockIP').value = '';
+} catch(e) { notify('❌ فشل', 'error'); }
+}
+
+async function loadBlockedList() {
+try {
+const resp = await fetch(BACKEND_URL + '/api/blocked-ips');
+const data = await resp.json();
+const el = document.getElementById('blockedList');
+if (data.blocked && data.blocked.length > 0) {
+el.innerHTML = '<strong>المحظورين:</strong><br>' + data.blocked.join('<br>');
+} else { el.textContent = 'مفيش IPs محظورة'; }
 } catch(e) {}
 }
 
@@ -795,9 +869,7 @@ const t = document.getElementById('terminalContainer');
 if (t.style.display === 'none' || !t.style.display) openTerminal();
 else { t.style.display = 'none'; terminalOpen = false; }
 }
-function clearTerminal() {
-document.getElementById('terminalBody').innerHTML = '';
-}
+function clearTerminal() { document.getElementById('terminalBody').innerHTML = ''; }
 function startTerminalStream() {
 if (currentEventSource) currentEventSource.close();
 currentEventSource = new EventSource(BACKEND_URL + '/api/terminal/' + SESSION_ID);
@@ -824,11 +896,7 @@ const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
 body.appendChild(line);
 body.scrollTop = body.scrollHeight;
-
-// إشعار تلقائي على الموبايل لو الرسالة مهمة
-if (msg.includes('تم العثور') || msg.includes('تم التحويل') || msg.includes('🚨')) {
-notify(msg, 'info');
-}
+if (msg.includes('تم العثور') || msg.includes('تم التحويل') || msg.includes('🚨')) notify(msg, 'info');
 }
 function termLog(msg, type) { addTermLine(msg); }
 function escapeHtml(s) {
@@ -846,6 +914,7 @@ setTimeout(() => div.remove(), 3500);
 
 // ==================== التشغيل ====================
 window.addEventListener('load', () => {
+fillPackages();
 if (localStorage.getItem('loggedIn')) {
 currentRole = localStorage.getItem('role') || 'user';
 currentCode = localStorage.getItem('code') || '';
