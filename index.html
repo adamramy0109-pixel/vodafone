@@ -6,1084 +6,424 @@
     <title>نظام الأرقام والتفعيلات</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1000px; margin: 0 auto; }
-
-        /* ===== صفحة التسجيل ===== */
-        #loginPage {
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            z-index: 1000;
-        }
-        .login-card {
-            background: white; border-radius: 20px; padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 90%; max-width: 400px; text-align: center;
-        }
-        .login-card h1 { font-size: 28px; color: #333; margin-bottom: 30px; }
-        .login-card p { color: #666; margin-bottom: 20px; font-size: 14px; }
-        .login-input {
-            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px;
-            font-size: 16px; margin-bottom: 20px; text-align: center;
-            font-family: inherit; transition: border-color 0.3s;
-        }
-        .login-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
-        .login-btn {
-            width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 10px; font-size: 16px;
-            font-weight: 600; cursor: pointer; transition: all 0.3s;
-        }
-        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
-        .error-msg { color: #ff6b6b; font-size: 13px; margin-bottom: 15px; }
-
-        /* ===== الصفحة الرئيسية ===== */
-        #mainPage { display: none; }
-        .header {
-            background: white; border-radius: 15px; padding: 25px; margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 999; }
+        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); text-align: center; width: 90%; max-width: 400px; }
+        .login-card h1 { font-size: 32px; color: #333; margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; text-align: center; }
+        .login-card button { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        .login-card button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .error { color: #ff6b6b; margin-bottom: 15px; }
+        .hidden { display: none !important; }
+        .main-page { display: none; }
+        .header { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; align-items: center; }
         .header h1 { color: #333; font-size: 24px; }
         .user-info { display: flex; gap: 15px; align-items: center; }
-        .user-badge {
-            background: #667eea; color: white; padding: 8px 15px;
-            border-radius: 20px; font-size: 13px; font-weight: 600;
-        }
-        .user-badge.admin { background: #dc3545; }
-        .logout-btn {
-            background: #ff6b6b; color: white; border: none; padding: 10px 20px;
-            border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;
-        }
+        .badge { background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .badge.admin { background: #dc3545; }
+        .logout-btn { background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .logout-btn:hover { background: #ff5252; }
-
-        /* ===== التنقل بين الأقسام ===== */
-        .nav-tabs {
-            display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto;
-            background: white; padding: 15px; border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .nav-tab {
-            padding: 12px 20px; background: #f0f0f0; border: none; border-radius: 8px;
-            cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s;
-            white-space: nowrap;
-        }
-        .nav-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .nav-tab:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-
-        /* ===== المحتويات ===== */
-        .page-content { display: none; }
-        .sections {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        .section {
-            background: white; border-radius: 15px; padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .section-title {
-            font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px;
-            padding-bottom: 15px; border-bottom: 3px solid #667eea;
-        }
-        .buttons-grid { display: grid; gap: 12px; }
-        .btn {
-            padding: 15px; border: none; border-radius: 10px; font-size: 14px;
-            font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center;
-        }
+        .nav { display: flex; gap: 10px; margin-bottom: 25px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .nav button { padding: 12px 20px; border: none; background: #f0f0f0; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .nav button.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .section { background: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .section h2 { font-size: 20px; color: #333; margin-bottom: 20px; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; color: #555; font-weight: 600; margin-bottom: 8px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .btn { padding: 15px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; }
         .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
-        .btn-danger { background: #ff6b6b; color: white; }
-        .btn-danger:hover { background: #ff5252; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
         .btn-success { background: #51cf66; color: white; }
-        .btn-success:hover { background: #40c057; }
-        .btn-warning { background: #ffc107; color: white; }
-        .btn-warning:hover { background: #ffb300; }
-        .btn-info { background: #17a2b8; color: white; }
-        .btn-info:hover { background: #138496; }
-
-        .hidden { display: none !important; }
-
-        /* Modal */
-        .modal {
-            display: none; position: fixed; z-index: 999; left: 0; top: 0;
-            width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: white; margin: 10% auto; padding: 30px;
-            border-radius: 15px; width: 90%; max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
+        .btn-danger { background: #ff6b6b; color: white; }
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); }
+        .modal.show { display: block; }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
         .modal-title { font-size: 20px; font-weight: 700; color: #333; margin-bottom: 20px; }
-        .modal-input {
-            width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
-            font-size: 14px; margin-bottom: 15px; font-family: inherit;
-        }
-        .modal-buttons { display: flex; gap: 10px; justify-content: center; }
-        .modal-btn {
-            flex: 1; padding: 12px; border: none; border-radius: 8px;
-            font-weight: 600; cursor: pointer; transition: all 0.3s;
-        }
-        .modal-btn-confirm { background: #51cf66; color: white; }
+        .modal-input, .modal-select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
+        .modal-buttons { display: flex; gap: 10px; }
+        .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .modal-btn-ok { background: #51cf66; color: white; }
         .modal-btn-cancel { background: #ddd; color: #333; }
-
-        .notification {
-            position: fixed; top: 20px; right: 20px; background: white;
-            padding: 20px; border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            max-width: 300px; z-index: 2000; animation: slideIn 0.3s ease;
-        }
+        .notification { position: fixed; top: 20px; right: 20px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); z-index: 9999; animation: slideIn 0.3s; max-width: 300px; }
         .notification.success { border-left: 4px solid #51cf66; }
         .notification.error { border-left: 4px solid #ff6b6b; }
-        .notification.info { border-left: 4px solid #667eea; }
-        @keyframes slideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .admin-section { background: #fff3cd; border: 2px solid #ffc107; }
-        .code-display {
-            background: #f8f9fa; border: 2px dashed #667eea; padding: 20px;
-            border-radius: 10px; text-align: center; margin: 15px 0;
-        }
-        .code-display code {
-            font-size: 24px; font-weight: 700; color: #667eea;
-            font-family: 'Courier New', monospace; letter-spacing: 2px;
-        }
-        .copy-btn {
-            margin-top: 10px; padding: 8px 15px; background: #667eea;
-            color: white; border: none; border-radius: 6px; cursor: pointer;
-            font-weight: 600; font-size: 12px;
-        }
-        .copy-btn:hover { background: #764ba2; }
-        .info-box {
-            background: #e7f3ff; border-left: 4px solid #667eea; padding: 15px;
-            border-radius: 8px; margin-bottom: 15px; font-size: 13px; color: #333;
-        }
-        .search-box { margin-bottom: 20px; display: flex; gap: 10px; }
-        .search-box input {
-            flex: 1; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
-            font-size: 15px; transition: border-color 0.3s; font-family: inherit;
-        }
-        .search-box input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
-        .note-item {
-            background: #f8f9fa; border-right: 4px solid #667eea; padding: 15px;
-            margin-bottom: 12px; border-radius: 8px; transition: all 0.3s;
-        }
-        .note-item:hover { background: #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .note-header-item { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
-        .note-number { font-size: 20px; font-weight: 700; color: #667eea; min-width: 30px; text-align: center; }
-        .note-info { flex: 1; margin: 0 15px; }
-        .note-name-item { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 5px; }
-        .note-phone { font-size: 15px; color: #666; direction: ltr; text-align: left; margin-bottom: 8px; }
-        .note-details { display: flex; gap: 20px; font-size: 13px; color: #666; flex-wrap: wrap; }
-        .detail-item { display: flex; align-items: center; gap: 5px; }
-        .detail-label { color: #999; font-weight: 500; }
-        .payment-section {
-            background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px;
-            padding: 12px; margin-top: 10px; display: flex; flex-wrap: wrap;
-            gap: 10px; align-items: center; justify-content: space-between;
-        }
-        .payment-status { font-size: 14px; font-weight: 600; color: #856404; flex: 1; }
-        .payment-status.paid { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 8px 12px; border-radius: 6px; }
-        .payment-status.unpaid { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 8px 12px; border-radius: 6px; }
-        .payment-buttons { display: flex; gap: 8px; }
-        .payment-btn {
-            padding: 8px 12px; border: none; border-radius: 6px; font-size: 12px;
-            font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;
-        }
-        .payment-btn.paid { background: #28a745; color: white; }
-        .payment-btn.paid:hover { background: #218838; }
-        .payment-btn.unpaid { background: #dc3545; color: white; }
-        .payment-btn.unpaid:hover { background: #c82333; }
-        .delete-btn {
-            background: #ff6b6b; color: white; border: none; padding: 8px 12px;
-            border-radius: 6px; cursor: pointer; font-weight: 600;
-            transition: all 0.3s; font-size: 12px;
-        }
-        .delete-btn:hover { background: #ff5252; transform: scale(1.05); }
-        .empty-message { text-align: center; color: #999; padding: 40px 20px; font-size: 15px; }
-        .empty-icon { font-size: 40px; margin-bottom: 15px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; color: #555; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
-        .form-group input {
-            width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
-            font-size: 15px; transition: border-color 0.3s; font-family: inherit;
-        }
-        .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .add-btn {
-            width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 8px; font-weight: 600;
-            cursor: pointer; transition: all 0.3s;
-        }
-        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
-        .names-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .name-card {
-            background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center;
-            cursor: pointer; transition: all 0.3s; border: 3px solid transparent;
-        }
-        .name-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: #667eea; }
-        .name-card.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .name-card-text { font-weight: 700; font-size: 14px; }
-
-        @media (max-width: 600px) {
-            .header { flex-direction: column; gap: 15px; text-align: center; }
-            .nav-tabs { flex-direction: column; }
-            .sections { grid-template-columns: 1fr; }
-            .input-row { grid-template-columns: 1fr; }
-            .payment-section { flex-direction: column; }
-            .payment-buttons { width: 100%; }
-            .payment-btn { flex: 1; }
-            .note-header-item { flex-direction: column; gap: 10px; }
-            .names-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @keyframes slideIn { from { transform: translateX(400px); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
-    <!-- ===== صفحة التسجيل ===== -->
-    <div id="loginPage">
-        <div class="login-card">
-            <h1>🔐 نظام المدير</h1>
-            <p>أدخل الكود للدخول (التفاعلات والإدارة فقط)</p>
-            <div id="errorMsg" class="error-msg"></div>
-            <input type="password" id="codeInput" class="login-input" placeholder="أدخل الكود" onkeypress="if(event.key==='Enter') loginWithCode()">
-            <button class="login-btn" onclick="loginWithCode()">دخول</button>
-            <p style="margin-top: 20px; color: #999; font-size: 12px;">الأرقام المحفوظة متاحة بدون كود 📱</p>
-        </div>
+
+<!-- LOGIN -->
+<div class="login-page" id="loginPage">
+    <div class="login-card">
+        <h1>🔐 الدخول</h1>
+        <div class="error" id="loginError"></div>
+        <input type="password" id="codeInput" placeholder="أدخل الكود" onkeypress="if(event.key==='Enter') login()">
+        <button onclick="login()">دخول</button>
+        <p style="margin-top: 20px; color: #999; font-size: 12px;">كود الأدمن: 01019092631</p>
     </div>
+</div>
 
-    <!-- ===== الصفحة الرئيسية ===== -->
-    <div id="mainPage">
-        <div class="container">
-            <div class="header">
-                <h1>📱 نظام الأرقام والتفعيلات</h1>
-                <div class="user-info">
-                    <div id="userBadge" class="user-badge hidden">مستخدم عادي</div>
-                    <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">تسجيل خروج</button>
+<!-- MAIN PAGE -->
+<div class="main-page" id="mainPage">
+    <div class="container">
+        <div class="header">
+            <h1>📱 نظام التفعيلات</h1>
+            <div class="user-info">
+                <div class="badge" id="userBadge">مستخدم</div>
+                <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button class="active" onclick="showPage('activation')">⚡ التفعيلات</button>
+            <button id="adminBtn" class="hidden" onclick="showPage('admin')">🛡️ الإدارة</button>
+        </div>
+
+        <div class="page active" id="activationPage">
+            <div class="section">
+                <h2>⚡ التفعيلات</h2>
+                <div class="button-grid">
+                    <button class="btn btn-primary" onclick="openModal('split')">🔄 تطير مع التقسيم</button>
+                    <button class="btn btn-primary" onclick="openModal('nosplit')">✈️ طير بدون تقسيم</button>
+                    <button class="btn btn-primary" onclick="openModal('checkdays')">📊 كشف الحد</button>
+                    <button class="btn btn-primary" onclick="openModal('transfer')">🔀 تحويل</button>
+                    <button class="btn btn-primary" onclick="openModal('unlock')">🔓 فك اليمت</button>
                 </div>
             </div>
+        </div>
 
-            <!-- قائمة التنقل -->
-            <div class="nav-tabs" id="navTabs">
-                <button class="nav-tab active" onclick="switchPage('numbers')">📱 الأرقام المحفوظة</button>
-                <button class="nav-tab hidden" id="activationTab" onclick="switchPage('activation')">⚡ التفعيلات</button>
-                <button class="nav-tab hidden" id="adminTab" onclick="switchPage('admin')">🛡️ الإدارة</button>
-            </div>
-
-            <!-- ===== صفحة الأرقام المحفوظة ===== -->
-            <div id="numbersPage" class="page-content" style="display: block;">
-                <div class="sections">
-                    <div class="section">
-                        <div class="section-title">📝 إضافة رقم جديد</div>
-                        <form id="addNoteForm" onsubmit="addNote(event)">
-                            <div class="form-group">
-                                <label>الاسم (اختياري)</label>
-                                <input type="text" id="nameInput" placeholder="اسم الشخص (اختياري)">
-                            </div>
-                            <div class="form-group">
-                                <label>رقم الهاتف</label>
-                                <input type="tel" id="phoneInput" placeholder="مثال: 01234567890" required>
-                            </div>
-                            <div class="input-row">
-                                <div class="form-group">
-                                    <label>الجيجابايت (GB)</label>
-                                    <input type="number" id="gbInput" placeholder="0" min="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>الدقائق</label>
-                                    <input type="number" id="minutesInput" placeholder="0" min="0" required>
-                                </div>
-                            </div>
-                            <button type="submit" class="add-btn">➕ إضافة</button>
-                        </form>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🏢 اختر الاونر</div>
-                        <div class="names-grid">
-                            <div class="name-card active" onclick="selectOwner('owner7', this)">
-                                <div class="name-card-text">Owner 7</div>
-                                <div id="count-owner7" style="font-size: 12px; margin-top: 5px; opacity: 0.8;">0 أرقام</div>
-                            </div>
-                            <div class="name-card" onclick="selectOwner('owner11', this)">
-                                <div class="name-card-text">Owner 11</div>
-                                <div id="count-owner11" style="font-size: 12px; margin-top: 5px; opacity: 0.8;">0 أرقام</div>
-                            </div>
-                            <div class="name-card" onclick="selectOwner('owner25', this)">
-                                <div class="name-card-text">Owner 25</div>
-                                <div id="count-owner25" style="font-size: 12px; margin-top: 5px; opacity: 0.8;">0 أرقام</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section" style="margin-top: 25px;">
-                    <div class="section-title" id="currentOwnerTitle">الأرقام المحفوظة - Owner 7</div>
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="🔍 ابحث عن رقم أو اسم..." onkeyup="searchNotes()">
-                    </div>
-                    <div id="notesList"></div>
-                </div>
-            </div>
-
-            <!-- ===== صفحة التفعيلات ===== -->
-            <div id="activationPage" class="page-content" style="display: none;">
-                <div class="sections">
-                    <div class="section">
-                        <div class="section-title">⚡ قسم التفعيلات</div>
-                        <div class="buttons-grid">
-                            <button class="btn btn-primary" onclick="openModal('split')">🔄 تطير مع تقسيم</button>
-                            <button class="btn btn-primary" onclick="openModal('nosplit')">✈️ طير بدون تقسيم</button>
-                            <button class="btn btn-success" onclick="openModal('checkDays')">📊 كشف الحد اليومي</button>
-                            <button class="btn btn-warning" onclick="openModal('transfer')">🔀 تحويل الأرقام</button>
-                            <button class="btn btn-info" onclick="openModal('unlock')">🔓 فك اليمت</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ===== صفحة الإدارة ===== -->
-            <div id="adminPage" class="page-content" style="display: none;">
-                <div class="sections">
-                    <div class="section admin-section">
-                        <div class="section-title">🛡️ قسم الإدارة</div>
-                        <div class="buttons-grid">
-                            <button class="btn btn-danger" onclick="openModal('blockIP')">🚫 حظر الموبايل</button>
-                            <button class="btn btn-warning" onclick="openGenerateCodeModal()">🔑 استخراج كود</button>
-                            <button class="btn btn-success" onclick="toggleButtons()">👁️ إظهار/إخفاء الأزرار</button>
-                        </div>
-                    </div>
+        <div class="page" id="adminPage">
+            <div class="section" style="background: #fff3cd; border: 2px solid #ffc107;">
+                <h2>🛡️ الإدارة</h2>
+                <div class="button-grid">
+                    <button class="btn btn-danger" onclick="openModal('block')">🚫 حظر IP</button>
+                    <button class="btn btn-success" onclick="openModal('code')">🔑 إنشاء كود</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ===== Modals ===== -->
-    <div id="splitModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">🔄 تطير مع تقسيم</div>
-            <div class="info-box">يستخدم ملف gegat_Red.py</div>
-            <input type="text" class="modal-input" id="splitPhone" placeholder="رقم الهاتف">
-            <input type="number" class="modal-input" id="splitGB" placeholder="عدد الجيجابايت">
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="executeSplit()">تطير</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
-            </div>
+<!-- MODALS -->
+<div class="modal" id="splitModal">
+    <div class="modal-content">
+        <div class="modal-title">🔄 تطير مع التقسيم</div>
+        <input type="tel" id="splitPhone" class="modal-input" placeholder="رقم الهاتف" required>
+        <select id="splitPlan" class="modal-select" required>
+            <option value="">-- اختر الباقة --</option>
+            <option value="25|2500">25 GB + 2500 دقيقة</option>
+            <option value="30|3000">30 GB + 3000 دقيقة</option>
+            <option value="35|3500">35 GB + 3500 دقيقة</option>
+            <option value="40|4000">40 GB + 4000 دقيقة</option>
+            <option value="50|5000">50 GB + 5000 دقيقة</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-ok" onclick="executeSplit()">تطير</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
         </div>
     </div>
+</div>
 
-    <div id="nosplitModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">✈️ طير بدون تقسيم</div>
-            <div class="info-box">يستخدم ملف gegat2.py</div>
-            <input type="text" class="modal-input" id="nosplitPhone" placeholder="رقم الهاتف">
-            <input type="number" class="modal-input" id="nosplitGB" placeholder="عدد الجيجابايت">
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="executeNoSplit()">تطير</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('nosplit')">إلغاء</button>
-            </div>
+<div class="modal" id="nosplitModal">
+    <div class="modal-content">
+        <div class="modal-title">✈️ طير بدون تقسيم</div>
+        <input type="tel" id="nosplitPhone" class="modal-input" placeholder="رقم الهاتف" required>
+        <select id="nosplitPlan" class="modal-select" required>
+            <option value="">-- اختر الباقة --</option>
+            <option value="25|2500">25 GB + 2500 دقيقة</option>
+            <option value="30|3000">30 GB + 3000 دقيقة</option>
+            <option value="35|3500">35 GB + 3500 دقيقة</option>
+            <option value="40|4000">40 GB + 4000 دقيقة</option>
+            <option value="50|5000">50 GB + 5000 دقيقة</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-ok" onclick="executeNoSplit()">تطير</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('nosplit')">إلغاء</button>
         </div>
     </div>
+</div>
 
-    <div id="checkDaysModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">📊 كشف الحد اليومي</div>
-            <div class="info-box">أدخل بيانات الاونر</div>
-            <input type="text" class="modal-input" id="ownerPhone" placeholder="رقم الاونر">
-            <input type="password" class="modal-input" id="ownerPassword" placeholder="باسورد الاونر">
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="checkDailyLimit()">كشف</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkDays')">إلغاء</button>
-            </div>
+<div class="modal" id="checkdaysModal">
+    <div class="modal-content">
+        <div class="modal-title">📊 كشف الحد</div>
+        <input type="tel" id="checkPhone" class="modal-input" placeholder="رقم الاونر" required>
+        <input type="password" id="checkPass" class="modal-input" placeholder="الباسورد" required>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-ok" onclick="executeCheckDays()">كشف</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkdays')">إلغاء</button>
         </div>
     </div>
+</div>
 
-    <div id="transferModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">🔀 تحويل الأرقام</div>
-            <div class="info-box">يستخدم ملف تحويل_ريد.py + إشعار فعلي</div>
-            <input type="text" class="modal-input" id="transferPhone" placeholder="رقم الهاتف">
-            <input type="text" class="modal-input" id="transferNewPhone" placeholder="الرقم الجديد">
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="executeTransfer()">تحويل</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
-            </div>
+<div class="modal" id="transferModal">
+    <div class="modal-content">
+        <div class="modal-title">🔀 تحويل</div>
+        <input type="tel" id="transferFrom" class="modal-input" placeholder="من" required>
+        <input type="tel" id="transferTo" class="modal-input" placeholder="إلى" required>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-ok" onclick="executeTransfer()">تحويل</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
         </div>
     </div>
+</div>
 
-    <div id="unlockModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">🔓 فك اليمت</div>
-            <div class="info-box">أدخل بيانات الاونر والفرد</div>
-            <input type="text" class="modal-input" id="unlockOwnerPhone" placeholder="رقم الاونر">
-            <input type="password" class="modal-input" id="unlockOwnerPass" placeholder="باسورد الاونر">
-            <input type="text" class="modal-input" id="unlockUserPhone" placeholder="رقم الفرد">
-            <input type="password" class="modal-input" id="unlockUserPass" placeholder="باسورد الفرد">
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="executeUnlock()">فك</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('unlock')">إلغاء</button>
-            </div>
+<div class="modal" id="unlockModal">
+    <div class="modal-content">
+        <div class="modal-title">🔓 فك اليمت</div>
+        <input type="tel" id="ownerPhone" class="modal-input" placeholder="رقم الاونر" required>
+        <input type="password" id="ownerPass" class="modal-input" placeholder="باسورد" required>
+        <input type="tel" id="userPhone" class="modal-input" placeholder="رقم الفرد" required>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-ok" onclick="executeUnlock()">فك</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('unlock')">إلغاء</button>
         </div>
     </div>
+</div>
 
-    <div id="blockIPModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">🚫 حظر الموبايل</div>
-            <div class="info-box" id="ipDisplay">الـ IP الخاص بك: <strong id="userIP">جاري التحميل...</strong></div>
-            <input type="text" class="modal-input" id="blockIPInput" placeholder="أدخل IP للحظر">
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-confirm" onclick="blockIP()">حظر</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('blockIP')">إلغاء</button>
-            </div>
+<div class="modal" id="blockModal">
+    <div class="modal-content">
+        <div class="modal-title">🚫 حظر IP</div>
+        <input type="text" id="blockIP" class="modal-input" placeholder="IP" required>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-ok" onclick="executeBlockIP()">حظر</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('block')">إلغاء</button>
         </div>
     </div>
+</div>
 
-    <div id="generateCodeModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">🔑 استخراج كود جديد</div>
-            <div class="code-display">
-                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">الكود الجديد:</p>
-                <code id="generatedCode">XXXXXX</code>
-            </div>
-            <button class="copy-btn" onclick="copyCode()">📋 نسخ الكود</button>
-            <div class="modal-buttons" style="margin-top: 15px;">
-                <button class="modal-btn modal-btn-confirm" onclick="confirmNewCode()">تفعيل الكود</button>
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal('generateCode')">إلغاء</button>
-            </div>
+<div class="modal" id="codeModal">
+    <div class="modal-content">
+        <div class="modal-title">🔑 كود جديد</div>
+        <p id="newCode" style="text-align: center; font-size: 24px; font-weight: 700; color: #667eea; padding: 20px; background: #f0f0f0; border-radius: 8px;">انتظر...</p>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="copyCode()">📋 نسخ</button>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal('code')">إغلاق</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // ===== متغيرات عامة =====
-        const MASTER_CODE = '01019092631';
-        let isAdmin = false;
-        let currentOwner = 'owner7';
-        let blockList = [];
-        let newGeneratedCode = '';
+<script>
+const MASTER_CODE = '01019092631';
+const BACKEND_URL = 'https://01019092631.pythonanywhere.com';
 
-        // ===== التحقق من الدخول =====
-        window.addEventListener('load', () => {
-            checkLogin();
-            getIP();
-            loadBlockList();
-            updateCounts();
-            selectOwner('owner7', document.querySelector('.name-card'));
+let isAdmin = false;
+
+function login() {
+    const code = document.getElementById('codeInput').value.trim();
+    const error = document.getElementById('loginError');
+    
+    if (!code) {
+        error.textContent = '⚠️ الرجاء إدخال الكود';
+        return;
+    }
+    
+    if (code === MASTER_CODE) {
+        isAdmin = true;
+        localStorage.setItem('loggedIn', 'true');
+        showMainPage();
+        return;
+    }
+    
+    error.textContent = '❌ كود غير صحيح';
+}
+
+function logout() {
+    if (confirm('تسجيل خروج؟')) {
+        localStorage.removeItem('loggedIn');
+        location.reload();
+    }
+}
+
+function showMainPage() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('mainPage').style.display = 'block';
+    
+    if (isAdmin) {
+        document.getElementById('userBadge').textContent = '🛡️ أدمن';
+        document.getElementById('userBadge').classList.add('admin');
+        document.getElementById('adminBtn').classList.remove('hidden');
+    }
+}
+
+function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(page + 'Page').classList.add('active');
+    event.target.classList.add('active');
+}
+
+function openModal(name) {
+    if (name === 'code') executeGenerateCode();
+    document.getElementById(name + 'Modal').classList.add('show');
+}
+
+function closeModal(name) {
+    document.getElementById(name + 'Modal').classList.remove('show');
+}
+
+async function executeSplit() {
+    const phone = document.getElementById('splitPhone').value;
+    const plan = document.getElementById('splitPlan').value;
+    
+    if (!phone || !plan) {
+        notify('⚠️ الرجاء ملء جميع الحقول', 'error');
+        return;
+    }
+    
+    const [gb, minutes] = plan.split('|');
+    
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/split-transfer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone, gb, minutes })
         });
+        
+        const data = await response.json();
+        notify('✅ تم التنفيذ', 'success');
+        closeModal('split');
+    } catch (error) {
+        notify('❌ خطأ في الاتصال', 'error');
+    }
+}
+
+async function executeNoSplit() {
+    const phone = document.getElementById('nosplitPhone').value;
+    const plan = document.getElementById('nosplitPlan').value;
+    
+    if (!phone || !plan) {
+        notify('⚠️ الرجاء ملء جميع الحقول', 'error');
+        return;
+    }
+    
+    const [gb, minutes] = plan.split('|');
+    
+    try {
+        await fetch(`${BACKEND_URL}/api/nosplit-transfer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone, gb, minutes })
+        });
+        
+        notify('✅ تم التنفيذ', 'success');
+        closeModal('nosplit');
+    } catch (error) {
+        notify('❌ خطأ في الاتصال', 'error');
+    }
+}
+
+async function executeCheckDays() {
+    const phone = document.getElementById('checkPhone').value;
+    
+    try {
+        await fetch(`${BACKEND_URL}/api/check-daily-limit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ owner_phone: phone })
+        });
+        
+        notify('✅ تم', 'success');
+        closeModal('checkdays');
+    } catch (error) {
+        notify('❌ خطأ', 'error');
+    }
+}
+
+async function executeTransfer() {
+    const from = document.getElementById('transferFrom').value;
+    const to = document.getElementById('transferTo').value;
+    
+    try {
+        await fetch(`${BACKEND_URL}/api/transfer-number`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from_number: from, to_number: to })
+        });
+        
+        notify('✅ تم', 'success');
+        closeModal('transfer');
+    } catch (error) {
+        notify('❌ خطأ', 'error');
+    }
+}
+
+async function executeUnlock() {
+    const ownerPhone = document.getElementById('ownerPhone').value;
+    const userPhone = document.getElementById('userPhone').value;
+    
+    try {
+        await fetch(`${BACKEND_URL}/api/unlock-device`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ owner_phone: ownerPhone, user_phone: userPhone })
+        });
+        
+        notify('✅ تم', 'success');
+        closeModal('unlock');
+    } catch (error) {
+        notify('❌ خطأ', 'error');
+    }
+}
+
+async function executeBlockIP() {
+    const ip = document.getElementById('blockIP').value;
+    
+    try {
+        await fetch(`${BACKEND_URL}/api/block-ip`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip })
+        });
+        
+        notify('✅ تم', 'success');
+        closeModal('block');
+    } catch (error) {
+        notify('❌ خطأ', 'error');
+    }
+}
+
+async function executeGenerateCode() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/generate-code`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        
+        const data = await response.json();
+        document.getElementById('newCode').textContent = data.code;
+    } catch (error) {
+        notify('❌ خطأ', 'error');
+    }
+}
+
+function copyCode() {
+    const code = document.getElementById('newCode').textContent;
+    navigator.clipboard.writeText(code);
+    notify('✅ تم النسخ', 'success');
+}
+
+function notify(msg, type) {
+    const div = document.createElement('div');
+    div.className = `notification ${type}`;
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+
+window.addEventListener('load', () => {
+    const loggedIn = localStorage.getItem('loggedIn');
+    if (loggedIn) {
+        isAdmin = true;
+        showMainPage();
+    }
+});
+</script>
 
-        function checkLogin() {
-            const isLoggedIn = localStorage.getItem('loggedIn');
-            const userCode = localStorage.getItem('userCode');
-            
-            if (isLoggedIn) {
-                showMainPage();
-                if (userCode === MASTER_CODE) {
-                    isAdmin = true;
-                    showAdminSection();
-                } else {
-                    // مستخدم عادي: يرى التفعيلات فقط إذا كان الأدمن قد أظهرها
-                    const showActivation = localStorage.getItem('showActivation') === 'true';
-                    if (showActivation) {
-                        document.getElementById('activationTab').classList.remove('hidden');
-                    } else {
-                        document.getElementById('activationTab').classList.add('hidden');
-                    }
-                }
-            } else {
-                showLoginPage();
-            }
-        }
-
-        function loginWithCode() {
-            const code = document.getElementById('codeInput').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-
-            if (!code) {
-                errorMsg.textContent = '⚠️ الرجاء إدخال الكود';
-                return;
-            }
-
-            if (code === MASTER_CODE) {
-                isAdmin = true;
-                localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('userCode', code);
-                showNotification('✅ مرحباً أدمن!', 'success');
-                showMainPage();
-                showAdminSection();
-                return;
-            }
-
-            const savedCodes = JSON.parse(localStorage.getItem('accessCodes') || '[]');
-            if (savedCodes.includes(code)) {
-                isAdmin = false;
-                localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('userCode', code);
-                showNotification('✅ مرحباً!', 'success');
-                showMainPage();
-                
-                // إظهار التفعيلات للمستخدم العادي فقط إذا كان الأدمن قد فعلها
-                const showActivation = localStorage.getItem('showActivation') === 'true';
-                if (showActivation) {
-                    document.getElementById('activationTab').classList.remove('hidden');
-                } else {
-                    document.getElementById('activationTab').classList.add('hidden');
-                }
-                return;
-            }
-
-            errorMsg.textContent = '❌ كود غير صحيح';
-        }
-
-        function showLoginPage() {
-            document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('mainPage').style.display = 'none';
-        }
-
-        function showMainPage() {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainPage').style.display = 'block';
-            updateUserBadge();
-        }
-
-        function updateUserBadge() {
-            const badge = document.getElementById('userBadge');
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            if (isAdmin) {
-                badge.textContent = '🛡️ أدمن';
-                badge.classList.add('admin');
-                badge.classList.remove('hidden');
-                logoutBtn.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-                logoutBtn.classList.add('hidden');
-            }
-        }
-
-        function showAdminSection() {
-            document.getElementById('activationTab').classList.remove('hidden');
-            document.getElementById('adminTab').classList.remove('hidden');
-        }
-
-        function logout() {
-            if (confirm('هل تريد تسجيل الخروج؟')) {
-                localStorage.removeItem('loggedIn');
-                localStorage.removeItem('userCode');
-                isAdmin = false;
-                showLoginPage();
-                document.getElementById('codeInput').value = '';
-                showNotification('👋 تم تسجيل الخروج', 'info');
-            }
-        }
-
-        // ===== التنقل بين الصفحات (باستخدام style.display لضمان العمل) =====
-        function switchPage(page) {
-            // إخفاء جميع الصفحات
-            document.getElementById('numbersPage').style.display = 'none';
-            document.getElementById('activationPage').style.display = 'none';
-            document.getElementById('adminPage').style.display = 'none';
-            
-            // إزالة active من جميع التبويبات
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            
-            // إظهار الصفحة المختارة وتفعيل التبويب
-            if (page === 'numbers') {
-                document.getElementById('numbersPage').style.display = 'block';
-                document.querySelectorAll('.nav-tab')[0].classList.add('active');
-            } else if (page === 'activation') {
-                document.getElementById('activationPage').style.display = 'block';
-                document.getElementById('activationTab').classList.add('active');
-            } else if (page === 'admin') {
-                document.getElementById('adminPage').style.display = 'block';
-                document.getElementById('adminTab').classList.add('active');
-            }
-        }
-
-        // ===== الأرقام المحفوظة =====
-        function selectOwner(owner, element) {
-            currentOwner = owner;
-            document.querySelectorAll('.name-card').forEach(card => card.classList.remove('active'));
-            element.classList.add('active');
-            document.getElementById('currentOwnerTitle').textContent = `الأرقام المحفوظة - ${owner.replace('owner', 'Owner ')}`;
-            renderNotes();
-        }
-
-        function addNote(e) {
-            e.preventDefault();
-
-            let name = document.getElementById('nameInput').value.trim();
-            const phone = document.getElementById('phoneInput').value.trim();
-            const gb = parseFloat(document.getElementById('gbInput').value) || 0;
-            const minutes = parseFloat(document.getElementById('minutesInput').value) || 0;
-
-            if (!phone) {
-                showNotification('⚠️ الرجاء إدخال رقم الهاتف', 'error');
-                return;
-            }
-
-            if (!name) {
-                name = 'بدون اسم';
-            }
-
-            let data = [];
-            const existing = localStorage.getItem(currentOwner);
-            if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
-            }
-
-            const newNote = {
-                id: Date.now(),
-                name: name,
-                phone: phone,
-                gb: gb,
-                minutes: minutes,
-                paid: false,
-                waitingDays: 0
-            };
-
-            data.push(newNote);
-            localStorage.setItem(currentOwner, JSON.stringify(data));
-
-            renderNotes();
-            document.getElementById('addNoteForm').reset();
-            updateCounts();
-            showNotification('✅ تم إضافة الرقم بنجاح', 'success');
-        }
-
-        function deleteNote(id) {
-            if (!confirm('هل تريد حذف هذا الرقم؟')) {
-                return;
-            }
-
-            let data = [];
-            const existing = localStorage.getItem(currentOwner);
-            if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
-            }
-
-            data = data.filter(item => item.id !== id);
-
-            if (data.length === 0) {
-                localStorage.removeItem(currentOwner);
-            } else {
-                localStorage.setItem(currentOwner, JSON.stringify(data));
-            }
-
-            renderNotes();
-            updateCounts();
-        }
-
-        function togglePayment(id, status) {
-            let data = [];
-            const existing = localStorage.getItem(currentOwner);
-            if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
-            }
-
-            const item = data.find(i => i.id === id);
-            if (item) {
-                if (status === 'paid') {
-                    item.paid = true;
-                    item.waitingDays = 0;
-                } else if (status === 'unpaid') {
-                    const days = prompt('كم يوم انتظرت؟');
-                    if (days && parseInt(days) > 0) {
-                        item.paid = false;
-                        item.waitingDays = parseInt(days);
-                    } else {
-                        return;
-                    }
-                }
-            }
-
-            localStorage.setItem(currentOwner, JSON.stringify(data));
-            renderNotes();
-        }
-
-        function renderNotes() {
-            let data = [];
-            const existing = localStorage.getItem(currentOwner);
-            if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
-            }
-
-            const notesList = document.getElementById('notesList');
-            document.getElementById('searchInput').value = '';
-
-            if (!data || data.length === 0) {
-                notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">📭</div>لا توجد أرقام محفوظة</div>';
-                return;
-            }
-
-            notesList.innerHTML = data.map((item, index) => `
-                <div class="note-item">
-                    <div class="note-header-item">
-                        <div style="display: flex; align-items: start; flex: 1; gap: 10px;">
-                            <div class="note-number">${index + 1}</div>
-                            <div class="note-info">
-                                <div class="note-name-item">${item.name}</div>
-                                <div class="note-phone">${item.phone}</div>
-                                <div class="note-details">
-                                    <div class="detail-item">
-                                        <span class="detail-label">💾 GB:</span>
-                                        <span>${item.gb} GB</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">⏱️ دقائق:</span>
-                                        <span>${item.minutes}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
-                    </div>
-                    
-                    <div class="payment-section">
-                        <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
-                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ ${item.waitingDays} أيام` : '❌ لم يتم'}
-                        </div>
-                        <div class="payment-buttons">
-                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅</button>
-                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function searchNotes() {
-            const searchValue = document.getElementById('searchInput').value.trim();
-            
-            let data = [];
-            const existing = localStorage.getItem(currentOwner);
-            if (existing) {
-                try {
-                    data = JSON.parse(existing);
-                } catch (e) {
-                    data = [];
-                }
-            }
-
-            const notesList = document.getElementById('notesList');
-
-            if (!searchValue) {
-                renderNotes();
-                return;
-            }
-
-            const filteredData = data.filter(item => {
-                const phoneMatch = (item.phone && item.phone.toString().includes(searchValue));
-                const nameMatch = (item.name && item.name.toLowerCase().includes(searchValue.toLowerCase()));
-                return phoneMatch || nameMatch;
-            });
-
-            if (filteredData.length === 0) {
-                notesList.innerHTML = '<div class="empty-message"><div class="empty-icon">🔍</div>لم يتم العثور على أرقام</div>';
-                return;
-            }
-
-            notesList.innerHTML = filteredData.map((item, index) => `
-                <div class="note-item">
-                    <div class="note-header-item">
-                        <div style="display: flex; align-items: start; flex: 1; gap: 10px;">
-                            <div class="note-number">${index + 1}</div>
-                            <div class="note-info">
-                                <div class="note-name-item">${item.name}</div>
-                                <div class="note-phone">${item.phone}</div>
-                                <div class="note-details">
-                                    <div class="detail-item">
-                                        <span class="detail-label">💾 GB:</span>
-                                        <span>${item.gb} GB</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">⏱️ دقائق:</span>
-                                        <span>${item.minutes}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="delete-btn" onclick="deleteNote(${item.id})">🗑️ حذف</button>
-                    </div>
-                    
-                    <div class="payment-section">
-                        <div class="payment-status ${item.paid ? 'paid' : 'unpaid'}">
-                            ${item.paid ? '✅ تم الدفع' : item.waitingDays > 0 ? `⏳ ${item.waitingDays} أيام` : '❌ لم يتم'}
-                        </div>
-                        <div class="payment-buttons">
-                            <button type="button" class="payment-btn paid" onclick="togglePayment(${item.id}, 'paid')">✅</button>
-                            <button type="button" class="payment-btn unpaid" onclick="togglePayment(${item.id}, 'unpaid')">❌</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function updateCounts() {
-            const owners = ['owner7', 'owner11', 'owner25'];
-            owners.forEach(owner => {
-                let data = [];
-                const existing = localStorage.getItem(owner);
-                if (existing) {
-                    try {
-                        data = JSON.parse(existing);
-                    } catch (e) {
-                        data = [];
-                    }
-                }
-                const count = data.length;
-                document.getElementById(`count-${owner}`).textContent = `${count} ${count === 1 ? 'رقم' : 'أرقام'}`;
-            });
-        }
-
-        // ===== التفعيلات =====
-        function openModal(type) {
-            document.getElementById(type + 'Modal').style.display = 'block';
-        }
-
-        function closeModal(type) {
-            document.getElementById(type + 'Modal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-
-        function executeSplit() {
-            const phone = document.getElementById('splitPhone').value;
-            const gb = document.getElementById('splitGB').value;
-
-            if (!phone || !gb) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
-            showNotification('⏳ جاري المعالجة...', 'info');
-            setTimeout(() => {
-                showNotification(`✅ تم تطير ${gb} GB للرقم ${phone} مع التقسيم`, 'success');
-                closeModal('split');
-                document.getElementById('splitPhone').value = '';
-                document.getElementById('splitGB').value = '';
-            }, 2000);
-        }
-
-        function executeNoSplit() {
-            const phone = document.getElementById('nosplitPhone').value;
-            const gb = document.getElementById('nosplitGB').value;
-
-            if (!phone || !gb) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
-            showNotification('⏳ جاري المعالجة...', 'info');
-            setTimeout(() => {
-                showNotification(`✅ تم تطير ${gb} GB للرقم ${phone} بدون تقسيم`, 'success');
-                closeModal('nosplit');
-                document.getElementById('nosplitPhone').value = '';
-                document.getElementById('nosplitGB').value = '';
-            }, 2000);
-        }
-
-        function checkDailyLimit() {
-            const ownerPhone = document.getElementById('ownerPhone').value;
-            const ownerPassword = document.getElementById('ownerPassword').value;
-
-            if (!ownerPhone || !ownerPassword) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
-            showNotification('⏳ جاري الكشف...', 'info');
-            setTimeout(() => {
-                const dailyLimit = Math.floor(Math.random() * 50) + 10;
-                showNotification(`📊 الحد اليومي: ${dailyLimit} GB`, 'success');
-                closeModal('checkDays');
-                document.getElementById('ownerPhone').value = '';
-                document.getElementById('ownerPassword').value = '';
-            }, 2000);
-        }
-
-        function executeTransfer() {
-            const phone = document.getElementById('transferPhone').value;
-            const newPhone = document.getElementById('transferNewPhone').value;
-
-            if (!phone || !newPhone) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
-            showNotification('⏳ جاري التحويل...', 'info');
-            setTimeout(() => {
-                sendNotification(`تحويل رقم: تم تحويل الرقم ${phone} إلى ${newPhone}`);
-                showNotification(`✅ تم التحويل مع إشعار فعلي`, 'success');
-                closeModal('transfer');
-                document.getElementById('transferPhone').value = '';
-                document.getElementById('transferNewPhone').value = '';
-            }, 2000);
-        }
-
-        function executeUnlock() {
-            const ownerPhone = document.getElementById('unlockOwnerPhone').value;
-            const ownerPass = document.getElementById('unlockOwnerPass').value;
-            const userPhone = document.getElementById('unlockUserPhone').value;
-            const userPass = document.getElementById('unlockUserPass').value;
-
-            if (!ownerPhone || !ownerPass || !userPhone || !userPass) {
-                showNotification('⚠️ الرجاء ملء جميع الحقول', 'error');
-                return;
-            }
-
-            showNotification('⏳ جاري المعالجة...', 'info');
-            
-            setTimeout(() => {
-                showNotification('📝 تم التسجيل، الانتظار 3 دقائق...', 'info');
-
-                setTimeout(() => {
-                    showNotification('⏳ جاري الحذف من الاونر...', 'info');
-
-                    setTimeout(() => {
-                        showNotification('✅ تم فك اليمت بنجاح', 'success');
-                        closeModal('unlock');
-                        document.getElementById('unlockOwnerPhone').value = '';
-                        document.getElementById('unlockOwnerPass').value = '';
-                        document.getElementById('unlockUserPhone').value = '';
-                        document.getElementById('unlockUserPass').value = '';
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }
-
-        // ===== الإدارة =====
-        function getIP() {
-            fetch('https://api.ipify.org?format=json')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('userIP').textContent = data.ip;
-                })
-                .catch(() => {
-                    document.getElementById('userIP').textContent = 'غير متاح';
-                });
-        }
-
-        function blockIP() {
-            if (!isAdmin) {
-                showNotification('❌ ليس لديك صلاحيات', 'error');
-                return;
-            }
-
-            const ip = document.getElementById('blockIPInput').value;
-            if (!ip) {
-                showNotification('⚠️ الرجاء إدخال IP', 'error');
-                return;
-            }
-
-            blockList.push(ip);
-            localStorage.setItem('blockList', JSON.stringify(blockList));
-            showNotification(`✅ تم حظر IP: ${ip}`, 'success');
-            closeModal('blockIP');
-            document.getElementById('blockIPInput').value = '';
-        }
-
-        function loadBlockList() {
-            blockList = JSON.parse(localStorage.getItem('blockList') || '[]');
-        }
-
-        function generateRandomCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 6; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
-
-        function openGenerateCodeModal() {
-            newGeneratedCode = generateRandomCode();
-            document.getElementById('generatedCode').textContent = newGeneratedCode;
-            openModal('generateCode');
-        }
-
-        function copyCode() {
-            navigator.clipboard.writeText(newGeneratedCode);
-            showNotification('📋 تم نسخ الكود', 'success');
-        }
-
-        function confirmNewCode() {
-            const savedCodes = JSON.parse(localStorage.getItem('accessCodes') || '[]');
-            savedCodes.push(newGeneratedCode);
-            localStorage.setItem('accessCodes', JSON.stringify(savedCodes));
-            showNotification(`✅ تم إنشاء الكود: ${newGeneratedCode}`, 'success');
-            closeModal('generateCode');
-        }
-
-        // ===== إظهار/إخفاء أزرار التفعيلات (للمستخدمين) =====
-        function toggleButtons() {
-            if (!isAdmin) {
-                showNotification('❌ ليس لديك صلاحيات', 'error');
-                return;
-            }
-            
-            const currentState = localStorage.getItem('showActivation') === 'true';
-            const newState = !currentState;
-            localStorage.setItem('showActivation', newState.toString());
-            
-            if (newState) {
-                showNotification('👁️ تم إظهار التفعيلات للمستخدمين', 'success');
-            } else {
-                showNotification('🙈 تم إخفاء التفعيلات عن المستخدمين', 'success');
-            }
-        }
-
-        // ===== الإشعارات =====
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 4000);
-        }
-
-        function sendNotification(message) {
-            console.log('📲 إشعار:', message);
-            if (Notification.permission === 'granted') {
-                new Notification('نظام التفعيلات', {
-                    body: message,
-                    icon: '📱'
-                });
-            }
-        }
-
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
-    </script>
 </body>
 </html>
