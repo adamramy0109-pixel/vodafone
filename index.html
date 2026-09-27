@@ -311,8 +311,12 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 
 <script>
-const BACKEND_URL = 'https://regional-attitudes-mass-nutten.trycloudflare.com';
-const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
+const BACKEND_URL = 'https://dining-professor-synthetic-ottawa.trycloudflare.com';
+let SESSION_ID = localStorage.getItem('sessionId');
+if (!SESSION_ID) {
+    SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('sessionId', SESSION_ID);
+}
 const PACKAGES = [{gb:25,min:2500},{gb:30,min:3000},{gb:35,min:3500},{gb:40,min:4000},{gb:45,min:4500},{gb:50,min:5000},{gb:55,min:5500},{gb:60,min:6000},{gb:65,min:6500},{gb:70,min:7000},{gb:75,min:7500},{gb:80,min:8000},{gb:85,min:8500}];
 const PERCENT_OPTIONS = [10, 20, 40];
 
@@ -378,7 +382,8 @@ loadOwners(); renderSavedNumbers(); renderManualSaved();
 await applyButtonsConfig();
 checkNotifStatus();
 startRunningTasksPolling();
-checkPendingNotifications();
+// فتح التريمنال تلقائياً بعد الدخول
+setTimeout(() => openTerminal(), 1000);
 }
 
 function checkNotifStatus() {
@@ -424,17 +429,12 @@ const sub = await reg.pushManager.subscribe({
 userVisibleOnly: true,
 applicationServerKey: urlBase64ToUint8Array(vapidData.publicKey)
 });
-const resp = await fetch(BACKEND_URL + '/api/subscribe-push', {
+await fetch(BACKEND_URL + '/api/subscribe-push', {
 method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ subscription: sub })
 });
-const data = await resp.json();
-if (data.status === 'success') {
 console.log('Push subscribed');
-} else {
-notify('⚠️ فشل تسجيل Push', 'error');
-}
-} catch(e) { console.error('Push subscribe error:', e); notify('❌ Push: ' + e.message, 'error'); }
+} catch(e) { console.error('Push subscribe error:', e); }
 }
 
 function urlBase64ToUint8Array(base64String) {
@@ -444,16 +444,6 @@ const raw = window.atob(base64);
 const out = new Uint8Array(raw.length);
 for (let i = 0; i < raw.length; ++i) out[i] = raw.charCodeAt(i);
 return out;
-}
-
-async function checkPendingNotifications() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/notifications/' + SESSION_ID);
-const data = await resp.json();
-if (data.notifications && data.notifications.length > 0) {
-data.notifications.forEach(n => notify(n, 'info'));
-}
-} catch(e) {}
 }
 
 function startRunningTasksPolling() {
@@ -466,15 +456,9 @@ async function loadRunningTasks() {
 try {
 const resp = await fetch(BACKEND_URL + '/api/monitoring-tasks');
 const data = await resp.json();
-if (!data.tasks || data.tasks.length === 0) {
-document.getElementById('runningSection').style.display = 'none';
-return;
-}
+if (!data.tasks || data.tasks.length === 0) { document.getElementById('runningSection').style.display = 'none'; return; }
 const running = data.tasks.filter(t => t.status === 'running');
-if (running.length === 0) {
-document.getElementById('runningSection').style.display = 'none';
-return;
-}
+if (running.length === 0) { document.getElementById('runningSection').style.display = 'none'; return; }
 document.getElementById('runningSection').style.display = 'block';
 const container = document.getElementById('runningTasks');
 container.innerHTML = '';
