@@ -311,7 +311,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 
 <script>
-const BACKEND_URL = 'https://protect-mutual-verde-benefits.trycloudflare.com';
+const BACKEND_URL = 'https://exists-vampire-mistakes-strange.trycloudflare.com';
 let SESSION_ID = localStorage.getItem('sessionId');
 if (!SESSION_ID) {
     SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
@@ -826,7 +826,6 @@ if (logPollingInterval) clearInterval(logPollingInterval);
 }
 function clearTerminal() {
 document.getElementById('terminalBody').innerHTML = '';
-// امسح اللوجز من السيرفر
 fetch(BACKEND_URL + '/api/logs/' + SESSION_ID, { method: 'DELETE' }).catch(() => {});
 lastLogCount = 0;
 }
