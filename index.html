@@ -194,7 +194,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- المودالات -->
 <div class="modal" id="splitModal"><div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
 <label class="form-label">👤 الأونر</label>
@@ -335,7 +334,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://jane-cardiac-encouraged-traveller.trycloudflare.com';
+const BACKEND_URL = 'https://apartments-wisconsin-ideal-treasures.trycloudflare.com';
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -345,7 +344,6 @@ const PACKAGES = [
 ];
 const PERCENT_OPTIONS = [10, 20, 40];
 
-// session_id ثابت لكل عملية في localStorage
 let SESSION_IDS = {};
 try { SESSION_IDS = JSON.parse(localStorage.getItem('sessionIds') || '{}'); } catch(e) { SESSION_IDS = {}; }
 ['split', 'nosplit', 'checkdays', 'transfer', 'checkmember'].forEach(op => {
@@ -419,6 +417,15 @@ checkNotifStatus();
 startRunningTasksPolling();
 loadSavedNumbers();
 resubscribeIfNeeded();
+// فتح التريمنالات اللي كانت مفتوحة
+try {
+const saved = JSON.parse(localStorage.getItem('openTerminals') || '{}');
+Object.keys(saved).forEach(k => {
+if (saved[k] && document.getElementById('term_' + k)) {
+showOpTerminal(k);
+}
+});
+} catch(e) {}
 }
 
 function checkNotifStatus() {
@@ -552,15 +559,12 @@ loadRunningTasks();
 }
 
 async function showTaskTerminal(taskId, sessionId, owner, type) {
-// افتح تريمنال تحت الزرار المناسب
 let opKey = type;
 if (!['split','nosplit','checkdays','transfer','checkmember'].includes(opKey)) opKey = 'transfer';
 if (!OPEN_TERMINALS[opKey]) {
     showOpTerminal(opKey);
 }
-// لو الـ session مختلفة، اعرض من الـ session الخاصة بالعملية
 if (sessionId && sessionId !== SESSION_IDS[opKey]) {
-    // اعرض اللوجز من الـ session الخاصة بالعملية
     await loadTaskLogs(taskId, opKey);
 }
 }
@@ -730,7 +734,6 @@ if (!response.ok) throw new Error(data.message || 'Server Error');
 return data;
 }
 
-// ==================== التريمنال ====================
 function showOpTerminal(opKey) {
 const term = document.getElementById('term_' + opKey);
 term.classList.add('show');
@@ -793,7 +796,6 @@ body.appendChild(line); body.scrollTop = body.scrollHeight;
 }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-// ==================== العمليات ====================
 async function executeSplit() {
 const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('splitPhone').value.trim();
@@ -971,19 +973,9 @@ if (localStorage.getItem('loggedIn')) {
 currentRole = localStorage.getItem('role') || 'user';
 currentCode = localStorage.getItem('code') || '';
 showMainPage();
-// استئناف فتح التريمنالات اللي كانت مفتوحة
-try {
-const saved = JSON.parse(localStorage.getItem('openTerminals') || '{}');
-Object.keys(saved).forEach(k => {
-if (saved[k] && document.getElementById('term_' + k)) {
-showOpTerminal(k);
-}
-});
-} catch(e) {}
 }
 });
 
-// حفظ حالة التريمنالات المفتوحة
 setInterval(() => {
 try { localStorage.setItem('openTerminals', JSON.stringify(OPEN_TERMINALS)); } catch(e) {}
 }, 2000);
