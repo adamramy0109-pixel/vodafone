@@ -74,7 +74,12 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .notif-banner { background: #ffa94d; color: white; padding: 12px 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; }
 .notif-banner button { background: white; color: #ffa94d; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; }
-.running-badge { background: #51cf66; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-right: 5px; animation: pulse 2s infinite; }
+.running-row { display: flex; align-items: center; gap: 8px; padding: 12px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px; font-size: 13px; border-left: 4px solid #51cf66; }
+.running-row .info { flex: 1; }
+.running-row .info strong { display: block; color: #333; }
+.running-row .info small { color: #888; font-size: 11px; }
+.running-row .btn-stop { background: #ff6b6b; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; }
+.running-row .btn-show { background: #74c0fc; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 5px; }
 </style>
 </head>
 <body>
@@ -189,6 +194,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
+<!-- المودالات -->
 <div class="modal" id="splitModal"><div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
 <label class="form-label">👤 الأونر</label>
@@ -329,7 +335,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://texts-todd-monday-frog.trycloudflare.com';
+const BACKEND_URL = 'https://jane-cardiac-encouraged-traveller.trycloudflare.com';
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -339,18 +345,19 @@ const PACKAGES = [
 ];
 const PERCENT_OPTIONS = [10, 20, 40];
 
-// session_id منفصل لكل عملية
-const SESSION_IDS = {
-    split: 'split_' + Math.random().toString(36).substr(2, 9),
-    nosplit: 'nosplit_' + Math.random().toString(36).substr(2, 9),
-    checkdays: 'checkdays_' + Math.random().toString(36).substr(2, 9),
-    transfer: 'transfer_' + Math.random().toString(36).substr(2, 9),
-    checkmember: 'checkmember_' + Math.random().toString(36).substr(2, 9)
-};
+// session_id ثابت لكل عملية في localStorage
+let SESSION_IDS = {};
+try { SESSION_IDS = JSON.parse(localStorage.getItem('sessionIds') || '{}'); } catch(e) { SESSION_IDS = {}; }
+['split', 'nosplit', 'checkdays', 'transfer', 'checkmember'].forEach(op => {
+    if (!SESSION_IDS[op]) {
+        SESSION_IDS[op] = op + '_' + Math.random().toString(36).substr(2, 9);
+    }
+});
+localStorage.setItem('sessionIds', JSON.stringify(SESSION_IDS));
 
-// polling لكل عملية
 const POLLING_INTERVALS = {};
 const LAST_LOG_COUNTS = {};
+const OPEN_TERMINALS = {};
 
 let currentRole = null, currentCode = null, codeTimerInterval = null, runningInterval = null;
 
@@ -516,17 +523,57 @@ try {
 const resp = await fetch(BACKEND_URL + '/api/monitoring-tasks');
 const data = await resp.json();
 if (!data.tasks || data.tasks.length === 0) { document.getElementById('runningSection').style.display = 'none'; return; }
-const running = data.tasks.filter(t => t.status === 'running');
+const running = data.tasks.filter(t => t.status === 'running' || t.status === 'stopped');
 if (running.length === 0) { document.getElementById('runningSection').style.display = 'none'; return; }
 document.getElementById('runningSection').style.display = 'block';
 const container = document.getElementById('runningTasks');
 container.innerHTML = '';
 running.forEach(t => {
+const isStopped = t.status === 'stopped';
 const div = document.createElement('div');
-div.className = 'owner-row';
-div.innerHTML = `<div class="owner-info"><strong>👤 ${t.owner}</strong><small>${t.members.length} فرد | بدأت: ${t.started}</small></div><span class="running-badge">شغالة</span>`;
+div.className = 'running-row';
+div.style.borderLeftColor = isStopped ? '#ff6b6b' : '#51cf66';
+div.innerHTML = `<div class="info"><strong>👤 ${t.owner} ${isStopped ? '🛑 (موقوفة)' : ''}</strong><small>${t.members ? t.members.length : 0} فرد | بدأت: ${t.started || ''}</small></div>
+<button class="btn-show" onclick="showTaskTerminal('${t.id}', '${t.session_id || ''}', '${t.owner}', '${t.type || 'transfer'}')">👁️ عرض</button>
+${!isStopped ? `<button class="btn-stop" onclick="stopTask('${t.id}')">🛑 إيقاف</button>` : ''}`;
 container.appendChild(div);
 });
+} catch(e) {}
+}
+
+async function stopTask(taskId) {
+if (!confirm('تأكيد إيقاف العملية؟')) return;
+try {
+const resp = await fetch(BACKEND_URL + '/api/stop-task/' + taskId, { method: 'POST' });
+const data = await resp.json();
+notify('✅ ' + (data.message || 'تم الإيقاف'), 'success');
+loadRunningTasks();
+} catch(e) { notify('❌ فشل الإيقاف', 'error'); }
+}
+
+async function showTaskTerminal(taskId, sessionId, owner, type) {
+// افتح تريمنال تحت الزرار المناسب
+let opKey = type;
+if (!['split','nosplit','checkdays','transfer','checkmember'].includes(opKey)) opKey = 'transfer';
+if (!OPEN_TERMINALS[opKey]) {
+    showOpTerminal(opKey);
+}
+// لو الـ session مختلفة، اعرض من الـ session الخاصة بالعملية
+if (sessionId && sessionId !== SESSION_IDS[opKey]) {
+    // اعرض اللوجز من الـ session الخاصة بالعملية
+    await loadTaskLogs(taskId, opKey);
+}
+}
+
+async function loadTaskLogs(taskId, opKey) {
+try {
+const resp = await fetch(BACKEND_URL + '/api/task-logs/' + taskId);
+const data = await resp.json();
+if (data.status === 'success' && data.logs) {
+const body = document.getElementById('body_' + opKey);
+body.innerHTML = '';
+data.logs.forEach(msg => addOpTermLine(opKey, msg));
+}
 } catch(e) {}
 }
 
@@ -687,11 +734,13 @@ return data;
 function showOpTerminal(opKey) {
 const term = document.getElementById('term_' + opKey);
 term.classList.add('show');
+OPEN_TERMINALS[opKey] = true;
 startOpTerminalPolling(opKey);
 }
 function hideOpTerminal(opKey) {
 const term = document.getElementById('term_' + opKey);
 term.classList.remove('show');
+OPEN_TERMINALS[opKey] = false;
 if (POLLING_INTERVALS[opKey]) {
 clearInterval(POLLING_INTERVALS[opKey]);
 POLLING_INTERVALS[opKey] = null;
@@ -736,6 +785,7 @@ let cls = 'term-default';
 if (msg.includes('❌') || msg.includes('خطأ') || msg.includes('فشل')) cls = 'term-error';
 else if (msg.includes('✅')) cls = 'term-success';
 else if (msg.includes('⚠️')) cls = 'term-warn';
+else if (msg.includes('🛑')) cls = 'term-error';
 else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦') || msg.includes('🚨') || msg.includes('🔍') || msg.includes('🔎')) cls = 'term-info';
 const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
@@ -755,6 +805,7 @@ closeModal('split');
 showOpTerminal('split');
 try {
 await apiCall('/api/split-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.split);
+startRunningTasksPolling();
 } catch(e) { addOpTermLine('split', '❌ ' + e.message); }
 }
 
@@ -769,6 +820,7 @@ closeModal('nosplit');
 showOpTerminal('nosplit');
 try {
 await apiCall('/api/nosplit-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.nosplit);
+startRunningTasksPolling();
 } catch(e) { addOpTermLine('nosplit', '❌ ' + e.message); }
 }
 
@@ -913,14 +965,28 @@ document.body.appendChild(div);
 setTimeout(() => div.remove(), 3500);
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
 fillPackages();
 if (localStorage.getItem('loggedIn')) {
 currentRole = localStorage.getItem('role') || 'user';
 currentCode = localStorage.getItem('code') || '';
 showMainPage();
+// استئناف فتح التريمنالات اللي كانت مفتوحة
+try {
+const saved = JSON.parse(localStorage.getItem('openTerminals') || '{}');
+Object.keys(saved).forEach(k => {
+if (saved[k] && document.getElementById('term_' + k)) {
+showOpTerminal(k);
 }
 });
+} catch(e) {}
+}
+});
+
+// حفظ حالة التريمنالات المفتوحة
+setInterval(() => {
+try { localStorage.setItem('openTerminals', JSON.stringify(OPEN_TERMINALS)); } catch(e) {}
+}, 2000);
 </script>
 </body>
 </html>
