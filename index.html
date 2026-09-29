@@ -36,7 +36,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .btn-danger { background: #ff6b6b; color: white; }
 .btn-warning { background: #ffa94d; color: white; }
 .btn-info { background: #74c0fc; color: white; }
-
 .op-block { margin-bottom: 15px; }
 .op-block .op-btn { width: 100%; padding: 15px; font-size: 15px; }
 .op-terminal { margin-top: 8px; background: #0d1117; border-radius: 10px; overflow: hidden; display: none; flex-direction: column; max-height: 350px; }
@@ -49,7 +48,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .op-terminal-body { padding: 10px 12px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; direction: ltr; text-align: left; line-height: 1.5; min-height: 100px; max-height: 280px; }
 .term-line { margin-bottom: 2px; word-wrap: break-word; }
 .term-info { color: #74c0fc; } .term-success { color: #51cf66; } .term-error { color: #ff6b6b; } .term-warn { color: #ffd43b; } .term-default { color: #8b949e; } .term-time { color: #6e7681; margin-right: 8px; }
-
 .modal { display: none; position: fixed; z-index: 999; inset: 0; background: rgba(0,0,0,0.6); padding: 20px; overflow-y: auto; }
 .modal.show { display: block; }
 .modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -110,6 +108,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="active" onclick="showPage('activation', this)">⚡ التفعيلات</button>
 <button onclick="showPage('owners', this)">👥 الأونرز</button>
 <button id="savedBtn" onclick="showPage('saved', this)">💾 الأرقام المستهدفة</button>
+<button id="rejectedBtn" onclick="showPage('rejected', this)">🚫 الأرقام المرفوضة</button>
 <button id="adminBtn" class="hidden" onclick="showPage('admin', this)">🛡️ الإدارة</button>
 </div>
 
@@ -174,6 +173,15 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <p style="color:#666; font-size:13px; margin-bottom:15px;">الأرقام اللي اتحولت للنظام المستهدف.</p>
 <button class="btn btn-danger" style="width:100%; margin-bottom:15px;" onclick="clearSavedNumbers()">🗑️ مسح القايمة</button>
 <div id="savedNumbersList"></div>
+</div>
+</div>
+
+<div class="page" id="rejectedPage">
+<div class="section">
+<h2>🚫 الأرقام المرفوضة</h2>
+<p style="color:#666; font-size:13px; margin-bottom:15px;">الأرقام اللي خلصت 20 فحص من غير ما تتحول للنظام المستهدف.</p>
+<button class="btn btn-danger" style="width:100%; margin-bottom:15px;" onclick="clearRejectedNumbers()">🗑️ مسح القايمة</button>
+<div id="rejectedNumbersList"></div>
 </div>
 </div>
 
@@ -334,7 +342,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://apartments-wisconsin-ideal-treasures.trycloudflare.com';
+const BACKEND_URL = 'https://mercury-industrial-lunch-career.trycloudflare.com';
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -416,8 +424,8 @@ await applyButtonsConfig();
 checkNotifStatus();
 startRunningTasksPolling();
 loadSavedNumbers();
+loadRejectedNumbers();
 resubscribeIfNeeded();
-// فتح التريمنالات اللي كانت مفتوحة
 try {
 const saved = JSON.parse(localStorage.getItem('openTerminals') || '{}');
 Object.keys(saved).forEach(k => {
@@ -623,6 +631,7 @@ document.getElementById(page + 'Page').classList.add('active');
 if (btn) btn.classList.add('active');
 if (page === 'owners') renderOwners();
 if (page === 'saved') loadSavedNumbers();
+if (page === 'rejected') loadRejectedNumbers();
 }
 
 function loadOwners() {
@@ -693,6 +702,34 @@ if (!confirm('مسح كل الأرقام المستهدفة؟')) return;
 try {
 await fetch(BACKEND_URL + '/api/saved-numbers', { method: 'DELETE' });
 loadSavedNumbers();
+notify('🗑️ تم المسح', 'success');
+} catch(e) { notify('❌ فشل', 'error'); }
+}
+
+async function loadRejectedNumbers() {
+try {
+const resp = await fetch(BACKEND_URL + '/api/rejected-numbers');
+const data = await resp.json();
+const list = document.getElementById('rejectedNumbersList');
+if (!data.numbers || !data.numbers.length) {
+list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مرفوضة</p>';
+return;
+}
+list.innerHTML = '';
+data.numbers.forEach(n => {
+const row = document.createElement('div');
+row.className = 'saved-row';
+row.innerHTML = `<div class="saved-info"><strong>📱 ${n.phone}</strong><small>👤 ${n.owner}</small><small>📝 ${n.reason || ''}</small><small>📅 ${n.time}</small></div>`;
+list.appendChild(row);
+});
+} catch(e) {}
+}
+
+async function clearRejectedNumbers() {
+if (!confirm('مسح كل الأرقام المرفوضة؟')) return;
+try {
+await fetch(BACKEND_URL + '/api/rejected-numbers', { method: 'DELETE' });
+loadRejectedNumbers();
 notify('🗑️ تم المسح', 'success');
 } catch(e) { notify('❌ فشل', 'error'); }
 }
@@ -788,7 +825,7 @@ let cls = 'term-default';
 if (msg.includes('❌') || msg.includes('خطأ') || msg.includes('فشل')) cls = 'term-error';
 else if (msg.includes('✅')) cls = 'term-success';
 else if (msg.includes('⚠️')) cls = 'term-warn';
-else if (msg.includes('🛑')) cls = 'term-error';
+else if (msg.includes('🛑') || msg.includes('🔚')) cls = 'term-error';
 else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦') || msg.includes('🚨') || msg.includes('🔍') || msg.includes('🔎')) cls = 'term-info';
 const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
 line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
