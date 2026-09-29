@@ -154,6 +154,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <button class="btn btn-warning" onclick="openModal('buttonsConfig')">👁️ إخفاء/إظهار الأزرار</button>
 <button class="btn btn-danger" onclick="openModal('blockip')">🚫 حظر IP</button>
 <button class="btn btn-primary" onclick="openModal('unblockip')">🔓 فك حظر IP</button>
+<button class="btn btn-primary" onclick="testPush()" style="background:#9c27b0;">🔔 اختبار الإشعارات</button>
 </div>
 </div>
 </div>
@@ -311,7 +312,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 
 <script>
-const BACKEND_URL = 'https://poet-annually-significance-utilize.trycloudflare.com';
+const BACKEND_URL = 'https://carpet-expired-investigate-breaking.trycloudflare.com';
 let SESSION_ID = localStorage.getItem('sessionId');
 if (!SESSION_ID) {
     SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9);
@@ -384,6 +385,8 @@ await applyButtonsConfig();
 checkNotifStatus();
 startRunningTasksPolling();
 setTimeout(() => openTerminal(), 1000);
+// لو الإشعارات مفعلة من قبل، أعد تسجيل الـ Subscription
+resubscribeIfNeeded();
 }
 
 function checkNotifStatus() {
@@ -391,50 +394,99 @@ if (!('Notification' in window)) return;
 if (Notification.permission === 'default') {
 setTimeout(() => requestNotifPermission(), 2000);
 } else if (Notification.permission === 'denied') {
-document.getElementById('notifBanner').classList.remove('hidden');
+const banner = document.getElementById('notifBanner');
+banner.classList.remove('hidden');
+banner.innerHTML = '<span>🔔 الإشعارات مرفوضة. افتح إعدادات Chrome → إعدادات المواقع → الإشعارات → اسمح لـ adamramy0109-pixel.github.io</span>';
+} else if (Notification.permission === 'granted') {
+// الإذن موجود، سجل الـ SW
+registerServiceWorker();
 }
+}
+
+async function resubscribeIfNeeded() {
+if (!('serviceWorker' in navigator)) return;
+if (Notification.permission !== 'granted') return;
+try {
+const reg = await navigator.serviceWorker.getRegistration('./sw.js');
+if (!reg) return;
+const sub = await reg.pushManager.getSubscription();
+if (sub) {
+await fetch(BACKEND_URL + '/api/subscribe-push', {
+method: 'POST', headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ subscription: sub })
+});
+console.log('✅ Re-subscribed on server');
+}
+} catch(e) { console.error('Re-subscribe error:', e); }
 }
 
 async function requestNotifPermission() {
 if (!('Notification' in window)) { notify('❌ المتصفح لا يدعم الإشعارات', 'error'); return; }
+if (Notification.permission === 'denied') {
+notify('❌ الإشعارات مرفوضة - افتح إعدادات Chrome', 'error');
+return;
+}
 try {
 const perm = await Notification.requestPermission();
 if (perm === 'granted') {
 document.getElementById('notifBanner').classList.add('hidden');
 await registerServiceWorker();
-notify('✅ تم تفعيل الإشعارات', 'success');
 } else {
-document.getElementById('notifBanner').classList.remove('hidden');
-notify('⚠️ تم رفض الإشعارات', 'error');
+const banner = document.getElementById('notifBanner');
+banner.classList.remove('hidden');
+banner.innerHTML = '<span>🔔 الإشعارات مرفوضة. افتح إعدادات Chrome → إعدادات المواقع → الإشعارات → اسمح لـ adamramy0109-pixel.github.io</span>';
 }
 } catch(e) { notify('❌ خطأ: ' + e.message, 'error'); }
 }
 
 async function registerServiceWorker() {
 if (!('serviceWorker' in navigator)) { notify('❌ المتصفح لا يدعم SW', 'error'); return; }
+if (!('PushManager' in window)) { notify('❌ المتصفح لا يدعم Push', 'error'); return; }
 try {
 const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
 console.log('SW registered:', reg);
-await new Promise(r => setTimeout(r, 1000));
-await subscribePush(reg);
-} catch(e) { console.error('SW error:', e); notify('❌ SW: ' + e.message, 'error'); }
+// استنى الـ SW يبقى ready
+const readyReg = await navigator.serviceWorker.ready;
+console.log('SW ready');
+await subscribePush(readyReg);
+} catch(e) {
+console.error('SW error:', e);
+notify('❌ SW: ' + e.message, 'error');
+}
 }
 
 async function subscribePush(reg) {
 try {
+let sub = await reg.pushManager.getSubscription();
+if (!sub) {
 const vapidResp = await fetch(BACKEND_URL + '/api/vapid-public-key');
 const vapidData = await vapidResp.json();
 if (vapidData.status !== 'success') { notify('❌ فشل جلب VAPID', 'error'); return; }
-const sub = await reg.pushManager.subscribe({
+console.log('VAPID:', vapidData.publicKey.substring(0, 20) + '...');
+sub = await reg.pushManager.subscribe({
 userVisibleOnly: true,
 applicationServerKey: urlBase64ToUint8Array(vapidData.publicKey)
 });
-await fetch(BACKEND_URL + '/api/subscribe-push', {
+console.log('New subscription:', sub.endpoint.substring(0, 50) + '...');
+} else {
+console.log('Existing subscription:', sub.endpoint.substring(0, 50) + '...');
+}
+const resp = await fetch(BACKEND_URL + '/api/subscribe-push', {
 method: 'POST', headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ subscription: sub })
 });
-console.log('Push subscribed');
-} catch(e) { console.error('Push subscribe error:', e); }
+const data = await resp.json();
+if (data.status === 'success') {
+console.log('✅ Push subscribed on server');
+notify('✅ تم تفعيل الإشعارات', 'success');
+} else {
+console.error('Server rejected:', data);
+notify('❌ السيرفر رفض الاشتراك', 'error');
+}
+} catch(e) {
+console.error('Push subscribe error:', e);
+notify('❌ Push: ' + e.message, 'error');
+}
 }
 
 function urlBase64ToUint8Array(base64String) {
@@ -444,6 +496,14 @@ const raw = window.atob(base64);
 const out = new Uint8Array(raw.length);
 for (let i = 0; i < raw.length; ++i) out[i] = raw.charCodeAt(i);
 return out;
+}
+
+async function testPush() {
+try {
+const resp = await fetch(BACKEND_URL + '/api/test-push', { method: 'POST' });
+const data = await resp.json();
+notify('✅ تم إرسال الإشعار التجريبي (' + (data.total_subs || 0) + ' اشتراك)', 'success');
+} catch(e) { notify('❌ فشل الاختبار', 'error'); }
 }
 
 function startRunningTasksPolling() {
