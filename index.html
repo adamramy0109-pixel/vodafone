@@ -239,10 +239,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <label class="form-label">📞 الدقايق</label>
 <input type="number" id="redVoice" class="modal-input" value="1" min="1">
 </div>
-<div style="flex:1;">
-<label class="form-label">✉️ SMS</label>
-<input type="number" id="redSMS" class="modal-input" value="1" min="1">
-</div>
 </div>
 <label class="form-label">🔢 عدد جولات الفحص</label>
 <input type="number" id="redMaxAttempts" class="modal-input" value="20" min="1">
@@ -285,10 +281,10 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 <div id="checkOwnerFields" class="hidden">
 <label class="form-label">👤 الأونر</label>
-<select class="modal-select" id="checkOwnerSelect" onchange="onOwnerSelect('checkowner')"></select>
-<div id="checkOwnerManual" class="hidden">
-<input type="tel" id="checkOwnerPhone" class="modal-input" placeholder="رقم الأونر">
-<input type="password" id="checkOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+<select class="modal-select" id="checkownerOwnerSelect" onchange="onOwnerSelect('checkowner')"></select>
+<div id="checkownerOwnerManual" class="hidden">
+<input type="tel" id="checkownerOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="checkownerOwnerPass" class="modal-input" placeholder="باسورد الأونر">
 </div>
 </div>
 <div class="modal-buttons">
@@ -340,10 +336,10 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="modal" id="checkdaysModal"><div class="modal-content">
 <div class="modal-title">📊 كشف الحد اليومي</div>
 <label class="form-label">👤 الأونر</label>
-<select class="modal-select" id="checkOwnerSelect2" onchange="onOwnerSelect('check')"></select>
-<div id="checkOwnerManual2" class="hidden">
-<input type="tel" id="checkOwnerPhone2" class="modal-input" placeholder="رقم الأونر">
-<input type="password" id="checkOwnerPass2" class="modal-input" placeholder="باسورد الأونر">
+<select class="modal-select" id="checkOwnerSelect" onchange="onOwnerSelect('check')"></select>
+<div id="checkOwnerManual" class="hidden">
+<input type="tel" id="checkOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="checkOwnerPass" class="modal-input" placeholder="باسورد الأونر">
 </div>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeCheckDays()">كشف</button>
@@ -408,7 +404,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://chancellor-symposium-require-madonna.trycloudflare.com';
+const BACKEND_URL = 'https://harbour-naturals-ink-airplane.trycloudflare.com';
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -696,7 +692,7 @@ if (page === 'rejected') loadRejectedNumbers();
 
 function loadOwners() {
 const owners = getOwners();
-['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','checkOwnerSelect2','transferOwnerSelect','redOwnerSelect','checkOwnerSelect'].forEach(id => {
+['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','transferOwnerSelect','redOwnerSelect','checkownerOwnerSelect'].forEach(id => {
 const sel = document.getElementById(id); if (!sel) return;
 sel.innerHTML = '<option value="">-- اختر الأونر --</option>';
 owners.forEach((o, i) => {
@@ -940,17 +936,16 @@ members.push({ phone, password: pass });
 }
 const mi = parseInt(document.getElementById('redMI').value) || 1;
 const voice = parseInt(document.getElementById('redVoice').value) || 1;
-const sms = parseInt(document.getElementById('redSMS').value) || 1;
 const max_attempts = parseInt(document.getElementById('redMaxAttempts').value) || 20;
 closeModal('red');
 showOpTerminal('transfer');
 try {
-await apiCall('/api/red-transfer', { owner_phone: owner.phone, owner_password: owner.password, members, mi, voice, sms, max_attempts }, SESSION_IDS.transfer);
+await apiCall('/api/red-transfer', { owner_phone: owner.phone, owner_password: owner.password, members, mi, voice, sms: 200, max_attempts }, SESSION_IDS.transfer);
 startRunningTasksPolling();
 } catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
 }
 
-// ==================== Flex (القديم) ====================
+// ==================== Flex ====================
 function renderMemberInputs() {
 const count = parseInt(document.getElementById('membersCount').value) || 0;
 const container = document.getElementById('membersInputs');
@@ -993,7 +988,7 @@ function openTransferModal() {
 openModal('type');
 }
 
-// ==================== الباقي (زي القديم) ====================
+// ==================== الباقي ====================
 async function executeSplit() {
 const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('splitPhone').value.trim();
