@@ -78,6 +78,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 .running-row .info small { color: #888; font-size: 11px; }
 .running-row .btn-stop { background: #ff6b6b; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; }
 .running-row .btn-show { background: #74c0fc; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 5px; }
+.type-btn { padding: 12px; border: 2px solid #ddd; background: white; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; font-size: 14px; }
+.type-btn.active { background: #51cf66; color: white; border-color: #51cf66; }
 </style>
 </head>
 <body>
@@ -145,9 +147,9 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 <div class="op-block" data-op="checkmember">
-<button class="btn btn-warning op-btn" onclick="openModal('checkmember')">🔍 كشف الفرد</button>
+<button class="btn btn-warning op-btn" onclick="openModal('checkmember')">🔍 كشف الفرد / الأونر</button>
 <div class="op-terminal" id="term_checkmember">
-<div class="op-terminal-header"><div class="title"><span class="dot"></span> 💻 كشف الفرد</div><div class="actions"><button onclick="clearOpTerminal('checkmember')">🗑️</button><button onclick="hideOpTerminal('checkmember')">✖️</button></div></div>
+<div class="op-terminal-header"><div class="title"><span class="dot"></span> 💻 كشف الفرد / الأونر</div><div class="actions"><button onclick="clearOpTerminal('checkmember')">🗑️</button><button onclick="hideOpTerminal('checkmember')">✖️</button></div></div>
 <div class="op-terminal-body" id="body_checkmember"></div>
 </div>
 </div>
@@ -179,7 +181,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="page" id="rejectedPage">
 <div class="section">
 <h2>🚫 الأرقام المرفوضة</h2>
-<p style="color:#666; font-size:13px; margin-bottom:15px;">الأرقام اللي خلصت 20 فحص من غير ما تتحول للنظام المستهدف.</p>
+<p style="color:#666; font-size:13px; margin-bottom:15px;">الأرقام اللي خلصت كل الفحوصات من غير ما تتحول للنظام المستهدف.</p>
 <button class="btn btn-danger" style="width:100%; margin-bottom:15px;" onclick="clearRejectedNumbers()">🗑️ مسح القايمة</button>
 <div id="rejectedNumbersList"></div>
 </div>
@@ -201,6 +203,99 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 
 </div>
 </div>
+
+<!-- مودال اختيار النوع (ريد / فليكس) -->
+<div class="modal" id="typeModal"><div class="modal-content">
+<div class="modal-title">📱 نوع الأونر</div>
+<p style="color:#666; font-size:13px; margin-bottom:15px;">اختار نوع الأونر</p>
+<div style="display:flex; gap:10px;">
+<button class="type-btn active" id="typeBtnRed" onclick="selectType('red')">Red</button>
+<button class="type-btn" id="typeBtnFlex" onclick="selectType('flex')">Flex</button>
+</div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="confirmType()">التالي</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('type')">إلغاء</button>
+</div>
+</div></div>
+
+<!-- مودال تحويل Red -->
+<div class="modal" id="redModal"><div class="modal-content">
+<div class="modal-title">🔀 تحويل الأرقام (Red)</div>
+<label class="form-label">👤 الأونر</label>
+<select class="modal-select" id="redOwnerSelect" onchange="onOwnerSelect('red')"></select>
+<div id="redOwnerManual" class="hidden">
+<input type="tel" id="redOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="redOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+</div>
+<label class="form-label">👥 عدد الأفراد</label>
+<input type="number" id="redMembersCount" class="modal-input" placeholder="مثلاً 4" min="1" max="20" oninput="renderRedMemberInputs()">
+<div id="redMembersInputs"></div>
+<div style="display:flex; gap:10px;">
+<div style="flex:1;">
+<label class="form-label">📊 الميجا</label>
+<input type="number" id="redMI" class="modal-input" value="1" min="1">
+</div>
+<div style="flex:1;">
+<label class="form-label">📞 الدقايق</label>
+<input type="number" id="redVoice" class="modal-input" value="1" min="1">
+</div>
+<div style="flex:1;">
+<label class="form-label">✉️ SMS</label>
+<input type="number" id="redSMS" class="modal-input" value="1" min="1">
+</div>
+</div>
+<label class="form-label">🔢 عدد جولات الفحص</label>
+<input type="number" id="redMaxAttempts" class="modal-input" value="20" min="1">
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="executeRedTransfer()">🚀 بدء التحويل</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('red')">إلغاء</button>
+</div>
+</div></div>
+
+<!-- مودال تحويل Flex (القديم) -->
+<div class="modal" id="transferModal"><div class="modal-content">
+<div class="modal-title">🔀 تحويل الأرقام (Flex)</div>
+<label class="form-label">👤 الأونر</label>
+<select class="modal-select" id="transferOwnerSelect" onchange="onOwnerSelect('transfer')"></select>
+<div id="transferOwnerManual" class="hidden">
+<input type="tel" id="transferOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="transferOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+</div>
+<label class="form-label">👥 عدد الأفراد</label>
+<input type="number" id="membersCount" class="modal-input" placeholder="مثلاً 4" min="1" max="20" oninput="renderMemberInputs()">
+<div id="membersInputs"></div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="executeMultiTransfer()">🚀 بدء التحويل</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
+</div>
+</div></div>
+
+<!-- مودال كشف الفرد / الأونر -->
+<div class="modal" id="checkmemberModal"><div class="modal-content">
+<div class="modal-title">🔍 كشف الفرد / الأونر</div>
+<div style="display:flex; gap:10px; margin-bottom:15px;">
+<button class="type-btn active" id="checkTypeMember" onclick="selectCheckType('member')">فرد</button>
+<button class="type-btn" id="checkTypeOwner" onclick="selectCheckType('owner')">أونر</button>
+</div>
+<div id="checkMemberFields">
+<label class="form-label">📱 رقم الفرد</label>
+<input type="tel" id="checkMemberPhone" class="modal-input" placeholder="رقم الفرد">
+<label class="form-label">🔑 باسورد الفرد</label>
+<input type="password" id="checkMemberPass" class="modal-input" placeholder="باسورد الفرد">
+</div>
+<div id="checkOwnerFields" class="hidden">
+<label class="form-label">👤 الأونر</label>
+<select class="modal-select" id="checkOwnerSelect" onchange="onOwnerSelect('checkowner')"></select>
+<div id="checkOwnerManual" class="hidden">
+<input type="tel" id="checkOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="checkOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+</div>
+</div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="executeCheck()">كشف</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('checkmember')">إلغاء</button>
+</div>
+</div></div>
 
 <div class="modal" id="splitModal"><div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
@@ -245,43 +340,14 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="modal" id="checkdaysModal"><div class="modal-content">
 <div class="modal-title">📊 كشف الحد اليومي</div>
 <label class="form-label">👤 الأونر</label>
-<select class="modal-select" id="checkOwnerSelect" onchange="onOwnerSelect('check')"></select>
-<div id="checkOwnerManual" class="hidden">
-<input type="tel" id="checkOwnerPhone" class="modal-input" placeholder="رقم الأونر">
-<input type="password" id="checkOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+<select class="modal-select" id="checkOwnerSelect2" onchange="onOwnerSelect('check')"></select>
+<div id="checkOwnerManual2" class="hidden">
+<input type="tel" id="checkOwnerPhone2" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="checkOwnerPass2" class="modal-input" placeholder="باسورد الأونر">
 </div>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeCheckDays()">كشف</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('checkdays')">إلغاء</button>
-</div>
-</div></div>
-
-<div class="modal" id="transferModal"><div class="modal-content">
-<div class="modal-title">🔀 تحويل الأرقام المتعدد</div>
-<label class="form-label">👤 الأونر</label>
-<select class="modal-select" id="transferOwnerSelect" onchange="onOwnerSelect('transfer')"></select>
-<div id="transferOwnerManual" class="hidden">
-<input type="tel" id="transferOwnerPhone" class="modal-input" placeholder="رقم الأونر">
-<input type="password" id="transferOwnerPass" class="modal-input" placeholder="باسورد الأونر">
-</div>
-<label class="form-label">👥 عدد الأفراد</label>
-<input type="number" id="membersCount" class="modal-input" placeholder="مثلاً 4" min="1" max="20" oninput="renderMemberInputs()">
-<div id="membersInputs"></div>
-<div class="modal-buttons">
-<button class="modal-btn modal-btn-ok" onclick="executeMultiTransfer()">🚀 بدء التحويل</button>
-<button class="modal-btn modal-btn-cancel" onclick="closeModal('transfer')">إلغاء</button>
-</div>
-</div></div>
-
-<div class="modal" id="checkmemberModal"><div class="modal-content">
-<div class="modal-title">🔍 كشف الفرد</div>
-<label class="form-label">📱 رقم الفرد</label>
-<input type="tel" id="checkMemberPhone" class="modal-input" placeholder="رقم الفرد">
-<label class="form-label">🔑 باسورد الفرد</label>
-<input type="password" id="checkMemberPass" class="modal-input" placeholder="باسورد الفرد">
-<div class="modal-buttons">
-<button class="modal-btn modal-btn-ok" onclick="executeCheckMember()">كشف</button>
-<button class="modal-btn modal-btn-cancel" onclick="closeModal('checkmember')">إلغاء</button>
 </div>
 </div></div>
 
@@ -342,7 +408,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://replaced-covering-build-portion.trycloudflare.com';
+const BACKEND_URL = 'https://chancellor-symposium-require-madonna.trycloudflare.com';
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -354,7 +420,7 @@ const PERCENT_OPTIONS = [10, 20, 40];
 
 let SESSION_IDS = {};
 try { SESSION_IDS = JSON.parse(localStorage.getItem('sessionIds') || '{}'); } catch(e) { SESSION_IDS = {}; }
-['split', 'nosplit', 'checkdays', 'transfer', 'checkmember'].forEach(op => {
+['split', 'nosplit', 'checkdays', 'transfer', 'checkmember', 'red'].forEach(op => {
     if (!SESSION_IDS[op]) {
         SESSION_IDS[op] = op + '_' + Math.random().toString(36).substr(2, 9);
     }
@@ -364,6 +430,8 @@ localStorage.setItem('sessionIds', JSON.stringify(SESSION_IDS));
 const POLLING_INTERVALS = {};
 const LAST_LOG_COUNTS = {};
 const OPEN_TERMINALS = {};
+let selectedType = 'red';
+let selectedCheckType = 'member';
 
 let currentRole = null, currentCode = null, codeTimerInterval = null, runningInterval = null;
 
@@ -549,7 +617,7 @@ const div = document.createElement('div');
 div.className = 'running-row';
 div.style.borderLeftColor = isStopped ? '#ff6b6b' : '#51cf66';
 div.innerHTML = `<div class="info"><strong>👤 ${t.owner} ${isStopped ? '🛑 (موقوفة)' : ''}</strong><small>${t.members ? t.members.length : 0} فرد | بدأت: ${t.started || ''}</small></div>
-<button class="btn-show" onclick="showTaskTerminal('${t.id}', '${t.session_id || ''}', '${t.owner}', '${t.type || 'transfer'}')">👁️ عرض</button>
+<button class="btn-show" onclick="showTaskTerminal('${t.id}', '${t.session_id || ''}')">👁️ عرض</button>
 ${!isStopped ? `<button class="btn-stop" onclick="stopTask('${t.id}')">🛑 إيقاف</button>` : ''}`;
 container.appendChild(div);
 });
@@ -566,27 +634,19 @@ loadRunningTasks();
 } catch(e) { notify('❌ فشل الإيقاف', 'error'); }
 }
 
-async function showTaskTerminal(taskId, sessionId, owner, type) {
-let opKey = type;
-if (!['split','nosplit','checkdays','transfer','checkmember'].includes(opKey)) opKey = 'transfer';
-if (!OPEN_TERMINALS[opKey]) {
-    showOpTerminal(opKey);
-}
-if (sessionId && sessionId !== SESSION_IDS[opKey]) {
-    await loadTaskLogs(taskId, opKey);
-}
-}
-
-async function loadTaskLogs(taskId, opKey) {
+async function showTaskTerminal(taskId, sessionId) {
+showOpTerminal('transfer');
+if (sessionId) {
 try {
 const resp = await fetch(BACKEND_URL + '/api/task-logs/' + taskId);
 const data = await resp.json();
 if (data.status === 'success' && data.logs) {
-const body = document.getElementById('body_' + opKey);
+const body = document.getElementById('body_transfer');
 body.innerHTML = '';
-data.logs.forEach(msg => addOpTermLine(opKey, msg));
+data.logs.forEach(msg => addOpTermLine('transfer', msg));
 }
 } catch(e) {}
+}
 }
 
 async function applyButtonsConfig() {
@@ -603,7 +663,7 @@ if (block) block.classList.add('hidden');
 }
 
 function renderButtonsConfig() {
-const btns = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'nosplit',name:'✈️ تطير بدون تقسيم'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل الأرقام'},{key:'checkmember',name:'🔍 كشف الفرد'}];
+const btns = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'nosplit',name:'✈️ تطير بدون تقسيم'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل الأرقام'},{key:'checkmember',name:'🔍 كشف الفرد / الأونر'}];
 fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(data => {
 const hidden = data.hidden || [];
 const list = document.getElementById('buttonsConfigList');
@@ -636,7 +696,7 @@ if (page === 'rejected') loadRejectedNumbers();
 
 function loadOwners() {
 const owners = getOwners();
-['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','transferOwnerSelect'].forEach(id => {
+['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','checkOwnerSelect2','transferOwnerSelect','redOwnerSelect','checkOwnerSelect'].forEach(id => {
 const sel = document.getElementById(id); if (!sel) return;
 sel.innerHTML = '<option value="">-- اختر الأونر --</option>';
 owners.forEach((o, i) => {
@@ -683,10 +743,7 @@ try {
 const resp = await fetch(BACKEND_URL + '/api/saved-numbers');
 const data = await resp.json();
 const list = document.getElementById('savedNumbersList');
-if (!data.numbers || !data.numbers.length) {
-list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مستهدفة</p>';
-return;
-}
+if (!data.numbers || !data.numbers.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مستهدفة</p>'; return; }
 list.innerHTML = '';
 data.numbers.forEach(n => {
 const row = document.createElement('div');
@@ -699,11 +756,8 @@ list.appendChild(row);
 
 async function clearSavedNumbers() {
 if (!confirm('مسح كل الأرقام المستهدفة؟')) return;
-try {
-await fetch(BACKEND_URL + '/api/saved-numbers', { method: 'DELETE' });
-loadSavedNumbers();
-notify('🗑️ تم المسح', 'success');
-} catch(e) { notify('❌ فشل', 'error'); }
+try { await fetch(BACKEND_URL + '/api/saved-numbers', { method: 'DELETE' }); loadSavedNumbers(); notify('🗑️ تم المسح', 'success'); }
+catch(e) { notify('❌ فشل', 'error'); }
 }
 
 async function loadRejectedNumbers() {
@@ -711,10 +765,7 @@ try {
 const resp = await fetch(BACKEND_URL + '/api/rejected-numbers');
 const data = await resp.json();
 const list = document.getElementById('rejectedNumbersList');
-if (!data.numbers || !data.numbers.length) {
-list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مرفوضة</p>';
-return;
-}
+if (!data.numbers || !data.numbers.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مرفوضة</p>'; return; }
 list.innerHTML = '';
 data.numbers.forEach(n => {
 const row = document.createElement('div');
@@ -727,11 +778,8 @@ list.appendChild(row);
 
 async function clearRejectedNumbers() {
 if (!confirm('مسح كل الأرقام المرفوضة؟')) return;
-try {
-await fetch(BACKEND_URL + '/api/rejected-numbers', { method: 'DELETE' });
-loadRejectedNumbers();
-notify('🗑️ تم المسح', 'success');
-} catch(e) { notify('❌ فشل', 'error'); }
+try { await fetch(BACKEND_URL + '/api/rejected-numbers', { method: 'DELETE' }); loadRejectedNumbers(); notify('🗑️ تم المسح', 'success'); }
+catch(e) { notify('❌ فشل', 'error'); }
 }
 
 function onOwnerSelect(prefix) {
@@ -781,10 +829,7 @@ function hideOpTerminal(opKey) {
 const term = document.getElementById('term_' + opKey);
 term.classList.remove('show');
 OPEN_TERMINALS[opKey] = false;
-if (POLLING_INTERVALS[opKey]) {
-clearInterval(POLLING_INTERVALS[opKey]);
-POLLING_INTERVALS[opKey] = null;
-}
+if (POLLING_INTERVALS[opKey]) { clearInterval(POLLING_INTERVALS[opKey]); POLLING_INTERVALS[opKey] = null; }
 }
 function clearOpTerminal(opKey) {
 document.getElementById('body_' + opKey).innerHTML = '';
@@ -795,13 +840,8 @@ function startOpTerminalPolling(opKey) {
 if (POLLING_INTERVALS[opKey]) clearInterval(POLLING_INTERVALS[opKey]);
 LAST_LOG_COUNTS[opKey] = 0;
 const sessionId = SESSION_IDS[opKey];
-fetch(BACKEND_URL + '/api/logs/' + sessionId)
-.then(r => r.json())
-.then(data => {
-if (data.logs) {
-data.logs.forEach(msg => addOpTermLine(opKey, msg));
-LAST_LOG_COUNTS[opKey] = data.logs.length;
-}
+fetch(BACKEND_URL + '/api/logs/' + sessionId).then(r => r.json()).then(data => {
+if (data.logs) { data.logs.forEach(msg => addOpTermLine(opKey, msg)); LAST_LOG_COUNTS[opKey] = data.logs.length; }
 }).catch(() => {});
 POLLING_INTERVALS[opKey] = setInterval(async () => {
 try {
@@ -833,60 +873,84 @@ body.appendChild(line); body.scrollTop = body.scrollHeight;
 }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-async function executeSplit() {
-const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-const phone = document.getElementById('splitPhone').value.trim();
-const pass = document.getElementById('splitPass').value.trim();
-const plan = document.getElementById('splitPlan').value;
-if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
-const [gb, minutes] = plan.split('|');
-closeModal('split');
-showOpTerminal('split');
-try {
-await apiCall('/api/split-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.split);
-startRunningTasksPolling();
-} catch(e) { addOpTermLine('split', '❌ ' + e.message); }
+// ==================== اختيار النوع ====================
+function selectType(t) {
+selectedType = t;
+document.getElementById('typeBtnRed').classList.toggle('active', t === 'red');
+document.getElementById('typeBtnFlex').classList.toggle('active', t === 'flex');
+}
+function confirmType() {
+closeModal('type');
+if (selectedType === 'red') { openModal('red'); renderRedMemberInputs(); }
+else { openModal('transfer'); renderMemberInputs(); }
 }
 
-async function executeNoSplit() {
-const owner = getOwnerData('nosplit'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-const phone = document.getElementById('nosplitPhone').value.trim();
-const pass = document.getElementById('nosplitPass').value.trim();
-const plan = document.getElementById('nosplitPlan').value;
-if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
-const [gb, minutes] = plan.split('|');
-closeModal('nosplit');
-showOpTerminal('nosplit');
-try {
-await apiCall('/api/nosplit-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.nosplit);
-startRunningTasksPolling();
-} catch(e) { addOpTermLine('nosplit', '❌ ' + e.message); }
+// ==================== كشف الفرد / الأونر ====================
+function selectCheckType(t) {
+selectedCheckType = t;
+document.getElementById('checkTypeMember').classList.toggle('active', t === 'member');
+document.getElementById('checkTypeOwner').classList.toggle('active', t === 'owner');
+document.getElementById('checkMemberFields').classList.toggle('hidden', t !== 'member');
+document.getElementById('checkOwnerFields').classList.toggle('hidden', t !== 'owner');
 }
 
-async function executeCheckDays() {
-const owner = getOwnerData('check'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-closeModal('checkdays');
-showOpTerminal('checkdays');
-try { await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.checkdays); }
-catch(e) { addOpTermLine('checkdays', '❌ ' + e.message); }
-}
-
-async function executeCheckMember() {
+async function executeCheck() {
+showOpTerminal('checkmember');
+if (selectedCheckType === 'member') {
 const phone = document.getElementById('checkMemberPhone').value.trim();
 const pass = document.getElementById('checkMemberPass').value.trim();
 if (!phone || !pass) { notify('⚠️ املأ الحقول', 'error'); return; }
 closeModal('checkmember');
-showOpTerminal('checkmember');
+try { await apiCall('/api/check-member', { phone, password: pass, check_type: 'member' }, SESSION_IDS.checkmember); }
+catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); }
+} else {
+const owner = getOwnerData('checkowner');
+if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+closeModal('checkmember');
+try { await apiCall('/api/check-member', { phone: owner.phone, password: owner.password, check_type: 'owner' }, SESSION_IDS.checkmember); }
+catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); }
+}
+}
+
+// ==================== Red ====================
+function renderRedMemberInputs() {
+const count = parseInt(document.getElementById('redMembersCount').value) || 0;
+const container = document.getElementById('redMembersInputs');
+container.innerHTML = '';
+for (let i = 0; i < count; i++) {
+const div = document.createElement('div');
+div.className = 'member-block';
+div.innerHTML = `<h4>👤 الفرد #${i+1}</h4>
+<input type="tel" id="red_member_phone_${i}" class="modal-input" placeholder="رقم الفرد">
+<input type="password" id="red_member_pass_${i}" class="modal-input" placeholder="باسورد الفرد">`;
+container.appendChild(div);
+}
+}
+
+async function executeRedTransfer() {
+const owner = getOwnerData('red'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const count = parseInt(document.getElementById('redMembersCount').value) || 0;
+if (count < 1) { notify('⚠️ أدخل عدد الأفراد', 'error'); return; }
+const members = [];
+for (let i = 0; i < count; i++) {
+const phone = document.getElementById('red_member_phone_' + i).value.trim();
+const pass = document.getElementById('red_member_pass_' + i).value.trim();
+if (!phone || !pass) { notify(`⚠️ الفرد #${i+1} ناقص`, 'error'); return; }
+members.push({ phone, password: pass });
+}
+const mi = parseInt(document.getElementById('redMI').value) || 1;
+const voice = parseInt(document.getElementById('redVoice').value) || 1;
+const sms = parseInt(document.getElementById('redSMS').value) || 1;
+const max_attempts = parseInt(document.getElementById('redMaxAttempts').value) || 20;
+closeModal('red');
+showOpTerminal('transfer');
 try {
-await apiCall('/api/check-member', { phone, password: pass }, SESSION_IDS.checkmember);
-} catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); }
+await apiCall('/api/red-transfer', { owner_phone: owner.phone, owner_password: owner.password, members, mi, voice, sms, max_attempts }, SESSION_IDS.transfer);
+startRunningTasksPolling();
+} catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
 }
 
-function openTransferModal() {
-openModal('transfer');
-renderMemberInputs();
-}
-
+// ==================== Flex (القديم) ====================
 function renderMemberInputs() {
 const count = parseInt(document.getElementById('membersCount').value) || 0;
 const container = document.getElementById('membersInputs');
@@ -923,6 +987,49 @@ try {
 await apiCall('/api/transfer-number', { owner_phone: owner.phone, owner_password: owner.password, members }, SESSION_IDS.transfer);
 startRunningTasksPolling();
 } catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
+}
+
+function openTransferModal() {
+openModal('type');
+}
+
+// ==================== الباقي (زي القديم) ====================
+async function executeSplit() {
+const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const phone = document.getElementById('splitPhone').value.trim();
+const pass = document.getElementById('splitPass').value.trim();
+const plan = document.getElementById('splitPlan').value;
+if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
+const [gb, minutes] = plan.split('|');
+closeModal('split');
+showOpTerminal('split');
+try {
+await apiCall('/api/split-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.split);
+startRunningTasksPolling();
+} catch(e) { addOpTermLine('split', '❌ ' + e.message); }
+}
+
+async function executeNoSplit() {
+const owner = getOwnerData('nosplit'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const phone = document.getElementById('nosplitPhone').value.trim();
+const pass = document.getElementById('nosplitPass').value.trim();
+const plan = document.getElementById('nosplitPlan').value;
+if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
+const [gb, minutes] = plan.split('|');
+closeModal('nosplit');
+showOpTerminal('nosplit');
+try {
+await apiCall('/api/nosplit-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.nosplit);
+startRunningTasksPolling();
+} catch(e) { addOpTermLine('nosplit', '❌ ' + e.message); }
+}
+
+async function executeCheckDays() {
+const owner = getOwnerData('check'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+closeModal('checkdays');
+showOpTerminal('checkdays');
+try { await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.checkdays); }
+catch(e) { addOpTermLine('checkdays', '❌ ' + e.message); }
 }
 
 async function generateCode() {
