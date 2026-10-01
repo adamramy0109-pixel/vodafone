@@ -204,7 +204,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- مودال اختيار النوع (ريد / فليكس) -->
+<!-- مودالات -->
 <div class="modal" id="typeModal"><div class="modal-content">
 <div class="modal-title">📱 نوع الأونر</div>
 <p style="color:#666; font-size:13px; margin-bottom:15px;">اختار نوع الأونر</p>
@@ -218,7 +218,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div></div>
 
-<!-- مودال تحويل Red -->
 <div class="modal" id="redModal"><div class="modal-content">
 <div class="modal-title">🔀 تحويل الأرقام (Red)</div>
 <label class="form-label">👤 الأونر</label>
@@ -231,14 +230,8 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <input type="number" id="redMembersCount" class="modal-input" placeholder="مثلاً 4" min="1" max="20" oninput="renderRedMemberInputs()">
 <div id="redMembersInputs"></div>
 <div style="display:flex; gap:10px;">
-<div style="flex:1;">
-<label class="form-label">📊 الميجا</label>
-<input type="number" id="redMI" class="modal-input" value="1" min="1">
-</div>
-<div style="flex:1;">
-<label class="form-label">📞 الدقايق</label>
-<input type="number" id="redVoice" class="modal-input" value="1" min="1">
-</div>
+<div style="flex:1;"><label class="form-label">📊 الميجا</label><input type="number" id="redMI" class="modal-input" value="1" min="1"></div>
+<div style="flex:1;"><label class="form-label">📞 الدقايق</label><input type="number" id="redVoice" class="modal-input" value="1" min="1"></div>
 </div>
 <label class="form-label">🔢 عدد جولات الفحص</label>
 <input type="number" id="redMaxAttempts" class="modal-input" value="20" min="1">
@@ -248,7 +241,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div></div>
 
-<!-- مودال تحويل Flex (القديم) -->
 <div class="modal" id="transferModal"><div class="modal-content">
 <div class="modal-title">🔀 تحويل الأرقام (Flex)</div>
 <label class="form-label">👤 الأونر</label>
@@ -266,7 +258,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div></div>
 
-<!-- مودال كشف الفرد / الأونر -->
 <div class="modal" id="checkmemberModal"><div class="modal-content">
 <div class="modal-title">🔍 كشف الفرد / الأونر</div>
 <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -404,7 +395,23 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://raid-commitments-mini-suggesting.trycloudflare.com';
+// ==================== تحميل اللينك من GitHub ====================
+let BACKEND_URL = '';
+const BACKEND_JSON_URL = 'https://raw.githubusercontent.com/adamramy0109-pixel/vodafone/main/backend.json';
+
+async function loadBackendUrl() {
+try {
+const r = await fetch(BACKEND_JSON_URL + '?t=' + Date.now());
+const d = await r.json();
+BACKEND_URL = d.url;
+console.log('✅ Backend URL loaded:', BACKEND_URL);
+return true;
+} catch(e) {
+console.error('❌ Failed to load backend URL:', e);
+return false;
+}
+}
+
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -449,6 +456,7 @@ sel.appendChild(o);
 }
 
 async function login() {
+if (!BACKEND_URL) { const ok = await loadBackendUrl(); if (!ok) { document.getElementById('loginError').textContent = '❌ فشل تحميل اللينك'; return; } }
 const code = document.getElementById('codeInput').value.trim().toUpperCase();
 const error = document.getElementById('loginError');
 if (!code) { error.textContent = '⚠️ أدخل الكود'; return; }
@@ -492,25 +500,15 @@ loadRejectedNumbers();
 resubscribeIfNeeded();
 try {
 const saved = JSON.parse(localStorage.getItem('openTerminals') || '{}');
-Object.keys(saved).forEach(k => {
-if (saved[k] && document.getElementById('term_' + k)) {
-showOpTerminal(k);
-}
-});
+Object.keys(saved).forEach(k => { if (saved[k] && document.getElementById('term_' + k)) showOpTerminal(k); });
 } catch(e) {}
 }
 
 function checkNotifStatus() {
 if (!('Notification' in window)) return;
-if (Notification.permission === 'default') {
-setTimeout(() => requestNotifPermission(), 2000);
-} else if (Notification.permission === 'denied') {
-const banner = document.getElementById('notifBanner');
-banner.classList.remove('hidden');
-banner.innerHTML = '<span>🔔 الإشعارات مرفوضة. افتح إعدادات Chrome → الإشعارات → اسمح للموقع</span>';
-} else if (Notification.permission === 'granted') {
-registerServiceWorker();
-}
+if (Notification.permission === 'default') setTimeout(() => requestNotifPermission(), 2000);
+else if (Notification.permission === 'denied') { const b = document.getElementById('notifBanner'); b.classList.remove('hidden'); b.innerHTML = '<span>🔔 الإشعارات مرفوضة. افتح إعدادات Chrome</span>'; }
+else if (Notification.permission === 'granted') registerServiceWorker();
 }
 
 async function resubscribeIfNeeded() {
@@ -520,586 +518,157 @@ try {
 const reg = await navigator.serviceWorker.getRegistration('./sw.js');
 if (!reg) return;
 const sub = await reg.pushManager.getSubscription();
-if (sub) {
-await fetch(BACKEND_URL + '/api/subscribe-push', {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ subscription: sub })
-});
-}
+if (sub) await fetch(BACKEND_URL + '/api/subscribe-push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub }) });
 } catch(e) {}
 }
 
 async function requestNotifPermission() {
-if (!('Notification' in window)) { notify('❌ المتصفح لا يدعم الإشعارات', 'error'); return; }
-if (Notification.permission === 'denied') { notify('❌ مرفوضة - افتح إعدادات Chrome', 'error'); return; }
-try {
-const perm = await Notification.requestPermission();
-if (perm === 'granted') {
-document.getElementById('notifBanner').classList.add('hidden');
-await registerServiceWorker();
-} else {
-const banner = document.getElementById('notifBanner');
-banner.classList.remove('hidden');
-banner.innerHTML = '<span>🔔 الإشعارات مرفوضة. افتح إعدادات Chrome → الإشعارات → اسمح للموقع</span>';
-}
-} catch(e) {}
+if (!('Notification' in window)) return;
+if (Notification.permission === 'denied') return;
+try { const p = await Notification.requestPermission(); if (p === 'granted') { document.getElementById('notifBanner').classList.add('hidden'); await registerServiceWorker(); } } catch(e) {}
 }
 
 async function registerServiceWorker() {
 if (!('serviceWorker' in navigator)) return;
 if (!('PushManager' in window)) return;
-try {
-const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-const readyReg = await navigator.serviceWorker.ready;
-await subscribePush(readyReg);
-} catch(e) {}
+try { const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' }); const rr = await navigator.serviceWorker.ready; await subscribePush(rr); } catch(e) {}
 }
 
 async function subscribePush(reg) {
 try {
 let sub = await reg.pushManager.getSubscription();
 if (!sub) {
-const vapidResp = await fetch(BACKEND_URL + '/api/vapid-public-key');
-const vapidData = await vapidResp.json();
-if (vapidData.status !== 'success') return;
-sub = await reg.pushManager.subscribe({
-userVisibleOnly: true,
-applicationServerKey: urlBase64ToUint8Array(vapidData.publicKey)
-});
+const vr = await fetch(BACKEND_URL + '/api/vapid-public-key');
+const vd = await vr.json();
+if (vd.status !== 'success') return;
+sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(vd.publicKey) });
 }
-await fetch(BACKEND_URL + '/api/subscribe-push', {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ subscription: sub })
-});
+await fetch(BACKEND_URL + '/api/subscribe-push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub }) });
 } catch(e) {}
 }
 
-function urlBase64ToUint8Array(base64String) {
-const padding = '='.repeat((4 - base64String.length % 4) % 4);
-const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-const raw = window.atob(base64);
-const out = new Uint8Array(raw.length);
-for (let i = 0; i < raw.length; ++i) out[i] = raw.charCodeAt(i);
-return out;
-}
+function urlBase64ToUint8Array(b) { const p = '='.repeat((4 - b.length % 4) % 4); const s = (b + p).replace(/-/g, '+').replace(/_/g, '/'); const r = window.atob(s); const o = new Uint8Array(r.length); for (let i = 0; i < r.length; ++i) o[i] = r.charCodeAt(i); return o; }
 
-async function testPush() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/test-push', { method: 'POST' });
-const data = await resp.json();
-notify('✅ تم إرسال الإشعار (' + (data.total_subs || 0) + ' اشتراك)', 'success');
-} catch(e) { notify('❌ فشل', 'error'); }
-}
+async function testPush() { try { const r = await fetch(BACKEND_URL + '/api/test-push', { method: 'POST' }); const d = await r.json(); notify('✅ تم إرسال الإشعار', 'success'); } catch(e) { notify('❌ فشل', 'error'); } }
 
-function startRunningTasksPolling() {
-if (runningInterval) clearInterval(runningInterval);
-runningInterval = setInterval(loadRunningTasks, 5000);
-loadRunningTasks();
-}
+function startRunningTasksPolling() { if (runningInterval) clearInterval(runningInterval); runningInterval = setInterval(loadRunningTasks, 5000); loadRunningTasks(); }
 
 async function loadRunningTasks() {
 try {
-const resp = await fetch(BACKEND_URL + '/api/monitoring-tasks');
-const data = await resp.json();
-if (!data.tasks || data.tasks.length === 0) { document.getElementById('runningSection').style.display = 'none'; return; }
-const running = data.tasks.filter(t => t.status === 'running' || t.status === 'stopped');
-if (running.length === 0) { document.getElementById('runningSection').style.display = 'none'; return; }
+const r = await fetch(BACKEND_URL + '/api/monitoring-tasks');
+const d = await r.json();
+if (!d.tasks || !d.tasks.length) { document.getElementById('runningSection').style.display = 'none'; return; }
+const run = d.tasks.filter(t => t.status === 'running' || t.status === 'stopped');
+if (!run.length) { document.getElementById('runningSection').style.display = 'none'; return; }
 document.getElementById('runningSection').style.display = 'block';
-const container = document.getElementById('runningTasks');
-container.innerHTML = '';
-running.forEach(t => {
+const c = document.getElementById('runningTasks'); c.innerHTML = '';
+run.forEach(t => {
 const isStopped = t.status === 'stopped';
 const div = document.createElement('div');
 div.className = 'running-row';
 div.style.borderLeftColor = isStopped ? '#ff6b6b' : '#51cf66';
-div.innerHTML = `<div class="info"><strong>👤 ${t.owner} ${isStopped ? '🛑 (موقوفة)' : ''}</strong><small>${t.members ? t.members.length : 0} فرد | بدأت: ${t.started || ''}</small></div>
-<button class="btn-show" onclick="showTaskTerminal('${t.id}', '${t.session_id || ''}')">👁️ عرض</button>
-${!isStopped ? `<button class="btn-stop" onclick="stopTask('${t.id}')">🛑 إيقاف</button>` : ''}`;
-container.appendChild(div);
+div.innerHTML = `<div class="info"><strong>👤 ${t.owner} ${isStopped ? '🛑' : ''}</strong><small>${t.members ? t.members.length : 0} فرد | ${t.started || ''}</small></div><button class="btn-show" onclick="showTaskTerminal('${t.id}', '${t.session_id || ''}')">👁️</button>${!isStopped ? `<button class="btn-stop" onclick="stopTask('${t.id}')">🛑</button>` : ''}`;
+c.appendChild(div);
 });
 } catch(e) {}
 }
 
-async function stopTask(taskId) {
-if (!confirm('تأكيد إيقاف العملية؟')) return;
-try {
-const resp = await fetch(BACKEND_URL + '/api/stop-task/' + taskId, { method: 'POST' });
-const data = await resp.json();
-notify('✅ ' + (data.message || 'تم الإيقاف'), 'success');
-loadRunningTasks();
-} catch(e) { notify('❌ فشل الإيقاف', 'error'); }
-}
+async function stopTask(id) { if (!confirm('تأكيد؟')) return; try { await fetch(BACKEND_URL + '/api/stop-task/' + id, { method: 'POST' }); notify('✅ تم', 'success'); loadRunningTasks(); } catch(e) { notify('❌ فشل', 'error'); } }
 
-async function showTaskTerminal(taskId, sessionId) {
-showOpTerminal('transfer');
-if (sessionId) {
-try {
-const resp = await fetch(BACKEND_URL + '/api/task-logs/' + taskId);
-const data = await resp.json();
-if (data.status === 'success' && data.logs) {
-const body = document.getElementById('body_transfer');
-body.innerHTML = '';
-data.logs.forEach(msg => addOpTermLine('transfer', msg));
-}
-} catch(e) {}
-}
-}
+async function showTaskTerminal(id, sid) { showOpTerminal('transfer'); if (sid) { try { const r = await fetch(BACKEND_URL + '/api/task-logs/' + id); const d = await r.json(); if (d.status === 'success' && d.logs) { const b = document.getElementById('body_transfer'); b.innerHTML = ''; d.logs.forEach(m => addOpTermLine('transfer', m)); } } catch(e) {} } }
 
-async function applyButtonsConfig() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/buttons-config');
-const data = await resp.json();
-if (data.status === 'success' && currentRole !== 'admin') {
-data.hidden.forEach(k => {
-const block = document.querySelector(`.op-block[data-op="${k}"]`);
-if (block) block.classList.add('hidden');
-});
-}
-} catch(e) {}
-}
+async function applyButtonsConfig() { try { const r = await fetch(BACKEND_URL + '/api/buttons-config'); const d = await r.json(); if (d.status === 'success' && currentRole !== 'admin') { d.hidden.forEach(k => { const b = document.querySelector(`.op-block[data-op="${k}"]`); if (b) b.classList.add('hidden'); }); } } catch(e) {} }
 
-function renderButtonsConfig() {
-const btns = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'nosplit',name:'✈️ تطير بدون تقسيم'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل الأرقام'},{key:'checkmember',name:'🔍 كشف الفرد / الأونر'}];
-fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(data => {
-const hidden = data.hidden || [];
-const list = document.getElementById('buttonsConfigList');
-list.innerHTML = '';
-btns.forEach(b => {
-const row = document.createElement('div');
-row.className = 'owner-row';
-row.innerHTML = `<label style="flex:1; display:flex; align-items:center; gap:8px;"><input type="checkbox" ${hidden.includes(b.key)?'checked':''} data-key="${b.key}" style="width:18px;height:18px;"><span>${b.name}</span></label>`;
-list.appendChild(row);
-});
-});
-}
+function renderButtonsConfig() { const b = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'nosplit',name:'✈️ طير بدون'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل'},{key:'checkmember',name:'🔍 كشف فرد/أونر'}]; fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(d => { const h = d.hidden || []; const l = document.getElementById('buttonsConfigList'); l.innerHTML = ''; b.forEach(x => { const row = document.createElement('div'); row.className = 'owner-row'; row.innerHTML = `<label style="flex:1;display:flex;align-items:center;gap:8px;"><input type="checkbox" ${h.includes(x.key)?'checked':''} data-key="${x.key}" style="width:18px;height:18px;"><span>${x.name}</span></label>`; l.appendChild(row); }); }); }
 
-async function saveButtonsConfig() {
-const checked = document.querySelectorAll('#buttonsConfigList input:checked');
-const hidden = Array.from(checked).map(cb => cb.dataset.key);
-await fetch(BACKEND_URL + '/api/buttons-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({hidden}) });
-notify('✅ تم الحفظ', 'success'); closeModal('buttonsConfig');
-}
+async function saveButtonsConfig() { const c = document.querySelectorAll('#buttonsConfigList input:checked'); const h = Array.from(c).map(x => x.dataset.key); await fetch(BACKEND_URL + '/api/buttons-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({hidden:h}) }); notify('✅', 'success'); closeModal('buttonsConfig'); }
 
-function showPage(page, btn) {
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-document.getElementById(page + 'Page').classList.add('active');
-if (btn) btn.classList.add('active');
-if (page === 'owners') renderOwners();
-if (page === 'saved') loadSavedNumbers();
-if (page === 'rejected') loadRejectedNumbers();
-}
+function showPage(p, b) { document.querySelectorAll('.page').forEach(x => x.classList.remove('active')); document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active')); document.getElementById(p + 'Page').classList.add('active'); if (b) b.classList.add('active'); if (p === 'owners') renderOwners(); if (p === 'saved') loadSavedNumbers(); if (p === 'rejected') loadRejectedNumbers(); }
 
-function loadOwners() {
-const owners = getOwners();
-['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','transferOwnerSelect','redOwnerSelect','checkownerOwnerSelect'].forEach(id => {
-const sel = document.getElementById(id); if (!sel) return;
-sel.innerHTML = '<option value="">-- اختر الأونر --</option>';
-owners.forEach((o, i) => {
-const opt = document.createElement('option');
-opt.value = i; opt.textContent = (o.label || o.phone) + ' — ' + o.phone;
-sel.appendChild(opt);
-});
-const m = document.createElement('option'); m.value = 'manual'; m.textContent = '✏️ إدخال يدوي';
-sel.appendChild(m);
-});
-}
+function loadOwners() { const o = getOwners(); ['splitOwnerSelect','nosplitOwnerSelect','checkOwnerSelect','transferOwnerSelect','redOwnerSelect','checkownerOwnerSelect'].forEach(id => { const s = document.getElementById(id); if (!s) return; s.innerHTML = '<option value="">-- اختر --</option>'; o.forEach((x, i) => { const opt = document.createElement('option'); opt.value = i; opt.textContent = (x.label || x.phone) + ' — ' + x.phone; s.appendChild(opt); }); const m = document.createElement('option'); m.value = 'manual'; m.textContent = '✏️ يدوي'; s.appendChild(m); }); }
 
-function renderOwners() {
-const owners = getOwners();
-const list = document.getElementById('ownersList');
-if (!owners.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أونرز</p>'; return; }
-list.innerHTML = '';
-owners.forEach((o, i) => {
-const row = document.createElement('div');
-row.className = 'owner-row';
-row.innerHTML = `<div class="owner-info"><strong>${o.label || o.phone}</strong><small>${o.phone}</small></div><button onclick="removeOwner(${i})">🗑️ حذف</button>`;
-list.appendChild(row);
-});
-}
+function renderOwners() { const o = getOwners(); const l = document.getElementById('ownersList'); if (!o.length) { l.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش</p>'; return; } l.innerHTML = ''; o.forEach((x, i) => { const r = document.createElement('div'); r.className = 'owner-row'; r.innerHTML = `<div class="owner-info"><strong>${x.label || x.phone}</strong><small>${x.phone}</small></div><button onclick="removeOwner(${i})">🗑️</button>`; l.appendChild(r); }); }
 
-function addOwner() {
-const label = document.getElementById('newOwnerLabel').value.trim();
-const phone = document.getElementById('newOwnerPhone').value.trim();
-const pass = document.getElementById('newOwnerPass').value.trim();
-if (!phone || !pass) { notify('⚠️ مطلوب', 'error'); return; }
-const owners = getOwners();
-owners.push({ label: label || phone, phone, password: pass });
-saveOwners(owners); loadOwners(); renderOwners();
-notify('✅ تم الإضافة', 'success'); closeModal('addowner');
-document.getElementById('newOwnerLabel').value = '';
-document.getElementById('newOwnerPhone').value = '';
-document.getElementById('newOwnerPass').value = '';
-}
+function addOwner() { const l = document.getElementById('newOwnerLabel').value.trim(); const p = document.getElementById('newOwnerPhone').value.trim(); const pw = document.getElementById('newOwnerPass').value.trim(); if (!p || !pw) { notify('⚠️', 'error'); return; } const o = getOwners(); o.push({ label: l || p, phone: p, password: pw }); saveOwners(o); loadOwners(); renderOwners(); notify('✅', 'success'); closeModal('addowner'); document.getElementById('newOwnerLabel').value = ''; document.getElementById('newOwnerPhone').value = ''; document.getElementById('newOwnerPass').value = ''; }
 
 function removeOwner(i) { if (!confirm('حذف؟')) return; const o = getOwners(); o.splice(i,1); saveOwners(o); loadOwners(); renderOwners(); }
 
-async function loadSavedNumbers() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/saved-numbers');
-const data = await resp.json();
-const list = document.getElementById('savedNumbersList');
-if (!data.numbers || !data.numbers.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مستهدفة</p>'; return; }
-list.innerHTML = '';
-data.numbers.forEach(n => {
-const row = document.createElement('div');
-row.className = 'saved-row';
-row.innerHTML = `<div class="saved-info"><strong>📱 ${n.phone}</strong><small>👤 ${n.owner}</small><small>📅 ${n.time}</small></div>`;
-list.appendChild(row);
-});
-} catch(e) {}
-}
+async function loadSavedNumbers() { try { const r = await fetch(BACKEND_URL + '/api/saved-numbers'); const d = await r.json(); const l = document.getElementById('savedNumbersList'); if (!d.numbers || !d.numbers.length) { l.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش</p>'; return; } l.innerHTML = ''; d.numbers.forEach(n => { const row = document.createElement('div'); row.className = 'saved-row'; row.innerHTML = `<div class="saved-info"><strong>📱 ${n.phone}</strong><small>👤 ${n.owner}</small><small>📅 ${n.time}</small></div>`; l.appendChild(row); }); } catch(e) {} }
 
-async function clearSavedNumbers() {
-if (!confirm('مسح كل الأرقام المستهدفة؟')) return;
-try { await fetch(BACKEND_URL + '/api/saved-numbers', { method: 'DELETE' }); loadSavedNumbers(); notify('🗑️ تم المسح', 'success'); }
-catch(e) { notify('❌ فشل', 'error'); }
-}
+async function clearSavedNumbers() { if (!confirm('مسح؟')) return; await fetch(BACKEND_URL + '/api/saved-numbers', { method: 'DELETE' }); loadSavedNumbers(); }
 
-async function loadRejectedNumbers() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/rejected-numbers');
-const data = await resp.json();
-const list = document.getElementById('rejectedNumbersList');
-if (!data.numbers || !data.numbers.length) { list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش أرقام مرفوضة</p>'; return; }
-list.innerHTML = '';
-data.numbers.forEach(n => {
-const row = document.createElement('div');
-row.className = 'saved-row';
-row.innerHTML = `<div class="saved-info"><strong>📱 ${n.phone}</strong><small>👤 ${n.owner}</small><small>📝 ${n.reason || ''}</small><small>📅 ${n.time}</small></div>`;
-list.appendChild(row);
-});
-} catch(e) {}
-}
+async function loadRejectedNumbers() { try { const r = await fetch(BACKEND_URL + '/api/rejected-numbers'); const d = await r.json(); const l = document.getElementById('rejectedNumbersList'); if (!d.numbers || !d.numbers.length) { l.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش</p>'; return; } l.innerHTML = ''; d.numbers.forEach(n => { const row = document.createElement('div'); row.className = 'saved-row'; row.innerHTML = `<div class="saved-info"><strong>📱 ${n.phone}</strong><small>👤 ${n.owner}</small><small>📝 ${n.reason || ''}</small><small>📅 ${n.time}</small></div>`; l.appendChild(row); }); } catch(e) {} }
 
-async function clearRejectedNumbers() {
-if (!confirm('مسح كل الأرقام المرفوضة؟')) return;
-try { await fetch(BACKEND_URL + '/api/rejected-numbers', { method: 'DELETE' }); loadRejectedNumbers(); notify('🗑️ تم المسح', 'success'); }
-catch(e) { notify('❌ فشل', 'error'); }
-}
+async function clearRejectedNumbers() { if (!confirm('مسح؟')) return; await fetch(BACKEND_URL + '/api/rejected-numbers', { method: 'DELETE' }); loadRejectedNumbers(); }
 
-function onOwnerSelect(prefix) {
-const sel = document.getElementById(prefix + 'OwnerSelect');
-const manual = document.getElementById(prefix + 'OwnerManual');
-if (!sel || !manual) return;
-if (sel.value === 'manual') manual.classList.remove('hidden'); else manual.classList.add('hidden');
-}
+function onOwnerSelect(prefix) { const s = document.getElementById(prefix + 'OwnerSelect'); const m = document.getElementById(prefix + 'OwnerManual'); if (!s || !m) return; if (s.value === 'manual') m.classList.remove('hidden'); else m.classList.add('hidden'); }
 
-function getOwnerData(prefix) {
-const sel = document.getElementById(prefix + 'OwnerSelect'); if (!sel) return null;
-if (sel.value === 'manual') {
-const phone = document.getElementById(prefix + 'OwnerPhone').value.trim();
-const pass = document.getElementById(prefix + 'OwnerPass').value.trim();
-if (!phone || !pass) return null;
-return { phone, password: pass };
-}
-if (sel.value === '') return null;
-const owners = getOwners(); const idx = parseInt(sel.value);
-if (isNaN(idx) || !owners[idx]) return null;
-return { phone: owners[idx].phone, password: owners[idx].password };
-}
+function getOwnerData(prefix) { const s = document.getElementById(prefix + 'OwnerSelect'); if (!s) return null; if (s.value === 'manual') { const p = document.getElementById(prefix + 'OwnerPhone').value.trim(); const pw = document.getElementById(prefix + 'OwnerPass').value.trim(); if (!p || !pw) return null; return { phone: p, password: pw }; } if (s.value === '') return null; const o = getOwners(); const i = parseInt(s.value); if (isNaN(i) || !o[i]) return null; return { phone: o[i].phone, password: o[i].password }; }
 
-function openModal(name) {
-const m = document.getElementById(name + 'Modal'); if (m) m.classList.add('show');
-if (name === 'deviceLogs') loadDeviceLogs();
-if (name === 'buttonsConfig') renderButtonsConfig();
-if (name === 'blockip') loadBlockedList();
-}
-function closeModal(name) { const m = document.getElementById(name + 'Modal'); if (m) m.classList.remove('show'); }
+function openModal(n) { const m = document.getElementById(n + 'Modal'); if (m) m.classList.add('show'); if (n === 'deviceLogs') loadDeviceLogs(); if (n === 'buttonsConfig') renderButtonsConfig(); if (n === 'blockip') loadBlockedList(); }
+function closeModal(n) { const m = document.getElementById(n + 'Modal'); if (m) m.classList.remove('show'); }
 
-async function apiCall(endpoint, body, sessionId) {
-body.session_id = sessionId;
-const response = await fetch(BACKEND_URL + endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-const data = await response.json().catch(() => ({}));
-if (!response.ok) throw new Error(data.message || 'Server Error');
-return data;
-}
+async function apiCall(endpoint, body, sessionId) { body.session_id = sessionId; const r = await fetch(BACKEND_URL + endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) }); const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.message || 'Server Error'); return d; }
 
-function showOpTerminal(opKey) {
-const term = document.getElementById('term_' + opKey);
-term.classList.add('show');
-OPEN_TERMINALS[opKey] = true;
-startOpTerminalPolling(opKey);
-}
-function hideOpTerminal(opKey) {
-const term = document.getElementById('term_' + opKey);
-term.classList.remove('show');
-OPEN_TERMINALS[opKey] = false;
-if (POLLING_INTERVALS[opKey]) { clearInterval(POLLING_INTERVALS[opKey]); POLLING_INTERVALS[opKey] = null; }
-}
-function clearOpTerminal(opKey) {
-document.getElementById('body_' + opKey).innerHTML = '';
-fetch(BACKEND_URL + '/api/logs/' + SESSION_IDS[opKey], { method: 'DELETE' }).catch(() => {});
-LAST_LOG_COUNTS[opKey] = 0;
-}
+function showOpTerminal(opKey) { const t = document.getElementById('term_' + opKey); t.classList.add('show'); OPEN_TERMINALS[opKey] = true; startOpTerminalPolling(opKey); }
+function hideOpTerminal(opKey) { const t = document.getElementById('term_' + opKey); t.classList.remove('show'); OPEN_TERMINALS[opKey] = false; if (POLLING_INTERVALS[opKey]) { clearInterval(POLLING_INTERVALS[opKey]); POLLING_INTERVALS[opKey] = null; } }
+function clearOpTerminal(opKey) { document.getElementById('body_' + opKey).innerHTML = ''; fetch(BACKEND_URL + '/api/logs/' + SESSION_IDS[opKey], { method: 'DELETE' }).catch(() => {}); LAST_LOG_COUNTS[opKey] = 0; }
+
 function startOpTerminalPolling(opKey) {
 if (POLLING_INTERVALS[opKey]) clearInterval(POLLING_INTERVALS[opKey]);
 LAST_LOG_COUNTS[opKey] = 0;
-const sessionId = SESSION_IDS[opKey];
-fetch(BACKEND_URL + '/api/logs/' + sessionId).then(r => r.json()).then(data => {
-if (data.logs) { data.logs.forEach(msg => addOpTermLine(opKey, msg)); LAST_LOG_COUNTS[opKey] = data.logs.length; }
-}).catch(() => {});
-POLLING_INTERVALS[opKey] = setInterval(async () => {
-try {
-const resp = await fetch(BACKEND_URL + '/api/logs/' + sessionId);
-const data = await resp.json();
-if (data.status === 'success' && data.logs) {
-if (data.logs.length > LAST_LOG_COUNTS[opKey]) {
-const newLogs = data.logs.slice(LAST_LOG_COUNTS[opKey]);
-newLogs.forEach(msg => addOpTermLine(opKey, msg));
-LAST_LOG_COUNTS[opKey] = data.logs.length;
+const sid = SESSION_IDS[opKey];
+fetch(BACKEND_URL + '/api/logs/' + sid).then(r => r.json()).then(d => { if (d.logs) { d.logs.forEach(m => addOpTermLine(opKey, m)); LAST_LOG_COUNTS[opKey] = d.logs.length; } }).catch(() => {});
+POLLING_INTERVALS[opKey] = setInterval(async () => { try { const r = await fetch(BACKEND_URL + '/api/logs/' + sid); const d = await r.json(); if (d.status === 'success' && d.logs && d.logs.length > LAST_LOG_COUNTS[opKey]) { const n = d.logs.slice(LAST_LOG_COUNTS[opKey]); n.forEach(m => addOpTermLine(opKey, m)); LAST_LOG_COUNTS[opKey] = d.logs.length; } } catch(e) {} }, 2000);
 }
-}
-} catch(e) {}
-}, 2000);
-}
-function addOpTermLine(opKey, msg) {
-const body = document.getElementById('body_' + opKey);
-const line = document.createElement('div');
-line.className = 'term-line';
-let cls = 'term-default';
-if (msg.includes('❌') || msg.includes('خطأ') || msg.includes('فشل')) cls = 'term-error';
-else if (msg.includes('✅')) cls = 'term-success';
-else if (msg.includes('⚠️')) cls = 'term-warn';
-else if (msg.includes('🛑') || msg.includes('🔚')) cls = 'term-error';
-else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔄') || msg.includes('🔐') || msg.includes('📱') || msg.includes('📦') || msg.includes('🚨') || msg.includes('🔍') || msg.includes('🔎')) cls = 'term-info';
-const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
-line.innerHTML = `<span class="term-time">[${time}]</span><span class="${cls}">${escapeHtml(msg)}</span>`;
-body.appendChild(line); body.scrollTop = body.scrollHeight;
-}
+
+function addOpTermLine(opKey, msg) { const b = document.getElementById('body_' + opKey); const l = document.createElement('div'); l.className = 'term-line'; let cls = 'term-default'; if (msg.includes('❌') || msg.includes('فشل')) cls = 'term-error'; else if (msg.includes('✅')) cls = 'term-success'; else if (msg.includes('⚠️')) cls = 'term-warn'; else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔐') || msg.includes('📱')) cls = 'term-info'; const t = new Date().toLocaleTimeString('ar-EG', { hour12: false }); l.innerHTML = `<span class="term-time">[${t}]</span><span class="${cls}">${escapeHtml(msg)}</span>`; b.appendChild(l); b.scrollTop = b.scrollHeight; }
+
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-function selectType(t) {
-selectedType = t;
-document.getElementById('typeBtnRed').classList.toggle('active', t === 'red');
-document.getElementById('typeBtnFlex').classList.toggle('active', t === 'flex');
-}
-function confirmType() {
-closeModal('type');
-if (selectedType === 'red') { openModal('red'); renderRedMemberInputs(); }
-else { openModal('transfer'); renderMemberInputs(); }
-}
+function selectType(t) { selectedType = t; document.getElementById('typeBtnRed').classList.toggle('active', t === 'red'); document.getElementById('typeBtnFlex').classList.toggle('active', t === 'flex'); }
+function confirmType() { closeModal('type'); if (selectedType === 'red') { openModal('red'); renderRedMemberInputs(); } else { openModal('transfer'); renderMemberInputs(); } }
 
-function selectCheckType(t) {
-selectedCheckType = t;
-document.getElementById('checkTypeMember').classList.toggle('active', t === 'member');
-document.getElementById('checkTypeOwner').classList.toggle('active', t === 'owner');
-document.getElementById('checkMemberFields').classList.toggle('hidden', t !== 'member');
-document.getElementById('checkOwnerFields').classList.toggle('hidden', t !== 'owner');
-}
+function selectCheckType(t) { selectedCheckType = t; document.getElementById('checkTypeMember').classList.toggle('active', t === 'member'); document.getElementById('checkTypeOwner').classList.toggle('active', t === 'owner'); document.getElementById('checkMemberFields').classList.toggle('hidden', t !== 'member'); document.getElementById('checkOwnerFields').classList.toggle('hidden', t !== 'owner'); }
 
-async function executeCheck() {
-showOpTerminal('checkmember');
-if (selectedCheckType === 'member') {
-const phone = document.getElementById('checkMemberPhone').value.trim();
-const pass = document.getElementById('checkMemberPass').value.trim();
-if (!phone || !pass) { notify('⚠️ املأ الحقول', 'error'); return; }
-closeModal('checkmember');
-try { await apiCall('/api/check-member', { phone, password: pass, check_type: 'member' }, SESSION_IDS.checkmember); }
-catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); }
-} else {
-const owner = getOwnerData('checkowner');
-if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-closeModal('checkmember');
-try { await apiCall('/api/check-member', { phone: owner.phone, password: owner.password, check_type: 'owner' }, SESSION_IDS.checkmember); }
-catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); }
-}
-}
+async function executeCheck() { showOpTerminal('checkmember'); if (selectedCheckType === 'member') { const p = document.getElementById('checkMemberPhone').value.trim(); const pw = document.getElementById('checkMemberPass').value.trim(); if (!p || !pw) { notify('⚠️', 'error'); return; } closeModal('checkmember'); try { await apiCall('/api/check-member', { phone: p, password: pw, check_type: 'member' }, SESSION_IDS.checkmember); } catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); } } else { const o = getOwnerData('checkowner'); if (!o) { notify('⚠️', 'error'); return; } closeModal('checkmember'); try { await apiCall('/api/check-member', { phone: o.phone, password: o.password, check_type: 'owner' }, SESSION_IDS.checkmember); } catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); } } }
 
-function renderRedMemberInputs() {
-const count = parseInt(document.getElementById('redMembersCount').value) || 0;
-const container = document.getElementById('redMembersInputs');
-container.innerHTML = '';
-for (let i = 0; i < count; i++) {
-const div = document.createElement('div');
-div.className = 'member-block';
-div.innerHTML = `<h4>👤 الفرد #${i+1}</h4>
-<input type="tel" id="red_member_phone_${i}" class="modal-input" placeholder="رقم الفرد">
-<input type="password" id="red_member_pass_${i}" class="modal-input" placeholder="باسورد الفرد">`;
-container.appendChild(div);
-}
-}
+function renderRedMemberInputs() { const c = parseInt(document.getElementById('redMembersCount').value) || 0; const con = document.getElementById('redMembersInputs'); con.innerHTML = ''; for (let i = 0; i < c; i++) { const d = document.createElement('div'); d.className = 'member-block'; d.innerHTML = `<h4>👤 #${i+1}</h4><input type="tel" id="red_member_phone_${i}" class="modal-input" placeholder="رقم"><input type="password" id="red_member_pass_${i}" class="modal-input" placeholder="باسورد">`; con.appendChild(d); } }
 
-async function executeRedTransfer() {
-const owner = getOwnerData('red'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-const count = parseInt(document.getElementById('redMembersCount').value) || 0;
-if (count < 1) { notify('⚠️ أدخل عدد الأفراد', 'error'); return; }
-const members = [];
-for (let i = 0; i < count; i++) {
-const phone = document.getElementById('red_member_phone_' + i).value.trim();
-const pass = document.getElementById('red_member_pass_' + i).value.trim();
-if (!phone || !pass) { notify(`⚠️ الفرد #${i+1} ناقص`, 'error'); return; }
-members.push({ phone, password: pass });
-}
-const mi = parseInt(document.getElementById('redMI').value) || 1;
-const voice = parseInt(document.getElementById('redVoice').value) || 1;
-const max_attempts = parseInt(document.getElementById('redMaxAttempts').value) || 20;
-closeModal('red');
-showOpTerminal('transfer');
-try {
-await apiCall('/api/red-transfer', { owner_phone: owner.phone, owner_password: owner.password, members, mi, voice, sms: 200, max_attempts }, SESSION_IDS.transfer);
-startRunningTasksPolling();
-} catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
-}
+async function executeRedTransfer() { const o = getOwnerData('red'); if (!o) { notify('⚠️', 'error'); return; } const c = parseInt(document.getElementById('redMembersCount').value) || 0; if (c < 1) { notify('⚠️', 'error'); return; } const m = []; for (let i = 0; i < c; i++) { const p = document.getElementById('red_member_phone_' + i).value.trim(); const pw = document.getElementById('red_member_pass_' + i).value.trim(); if (!p || !pw) { notify(`⚠️ #${i+1}`, 'error'); return; } m.push({ phone: p, password: pw }); } const mi = parseInt(document.getElementById('redMI').value) || 1; const v = parseInt(document.getElementById('redVoice').value) || 1; const ma = parseInt(document.getElementById('redMaxAttempts').value) || 20; closeModal('red'); showOpTerminal('transfer'); try { await apiCall('/api/red-transfer', { owner_phone: o.phone, owner_password: o.password, members: m, mi, voice: v, sms: 200, max_attempts: ma }, SESSION_IDS.transfer); startRunningTasksPolling(); } catch(e) { addOpTermLine('transfer', '❌ ' + e.message); } }
 
-function renderMemberInputs() {
-const count = parseInt(document.getElementById('membersCount').value) || 0;
-const container = document.getElementById('membersInputs');
-container.innerHTML = '';
-for (let i = 0; i < count; i++) {
-const div = document.createElement('div');
-div.className = 'member-block';
-div.innerHTML = `<h4>👤 الفرد #${i+1}</h4>
-<input type="tel" id="member_phone_${i}" class="modal-input" placeholder="رقم الفرد">
-<input type="password" id="member_pass_${i}" class="modal-input" placeholder="باسورد الفرد">
-<select id="member_percent_${i}" class="modal-select">
-<option value="">-- اختر النسبة --</option>
-${PERCENT_OPTIONS.map(p => `<option value="${p}">${p}%</option>`).join('')}
-</select>`;
-container.appendChild(div);
-}
-}
+function renderMemberInputs() { const c = parseInt(document.getElementById('membersCount').value) || 0; const con = document.getElementById('membersInputs'); con.innerHTML = ''; for (let i = 0; i < c; i++) { const d = document.createElement('div'); d.className = 'member-block'; d.innerHTML = `<h4>👤 #${i+1}</h4><input type="tel" id="member_phone_${i}" class="modal-input" placeholder="رقم"><input type="password" id="member_pass_${i}" class="modal-input" placeholder="باسورد"><select id="member_percent_${i}" class="modal-select"><option value="">-- نسبة --</option>${PERCENT_OPTIONS.map(p => `<option value="${p}">${p}%</option>`).join('')}</select>`; con.appendChild(d); } }
 
-async function executeMultiTransfer() {
-const owner = getOwnerData('transfer'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-const count = parseInt(document.getElementById('membersCount').value) || 0;
-if (count < 1) { notify('⚠️ أدخل عدد الأفراد', 'error'); return; }
-const members = [];
-for (let i = 0; i < count; i++) {
-const phone = document.getElementById('member_phone_' + i).value.trim();
-const pass = document.getElementById('member_pass_' + i).value.trim();
-const percent = document.getElementById('member_percent_' + i).value;
-if (!phone || !pass || !percent) { notify(`⚠️ الفرد #${i+1} ناقص`, 'error'); return; }
-members.push({ phone, password: pass, percentage: percent });
-}
-closeModal('transfer');
-showOpTerminal('transfer');
-try {
-await apiCall('/api/transfer-number', { owner_phone: owner.phone, owner_password: owner.password, members }, SESSION_IDS.transfer);
-startRunningTasksPolling();
-} catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
-}
+async function executeMultiTransfer() { const o = getOwnerData('transfer'); if (!o) { notify('⚠️', 'error'); return; } const c = parseInt(document.getElementById('membersCount').value) || 0; if (c < 1) { notify('⚠️', 'error'); return; } const m = []; for (let i = 0; i < c; i++) { const p = document.getElementById('member_phone_' + i).value.trim(); const pw = document.getElementById('member_pass_' + i).value.trim(); const pc = document.getElementById('member_percent_' + i).value; if (!p || !pw || !pc) { notify(`⚠️ #${i+1}`, 'error'); return; } m.push({ phone: p, password: pw, percentage: pc }); } closeModal('transfer'); showOpTerminal('transfer'); try { await apiCall('/api/transfer-number', { owner_phone: o.phone, owner_password: o.password, members: m }, SESSION_IDS.transfer); startRunningTasksPolling(); } catch(e) { addOpTermLine('transfer', '❌ ' + e.message); } }
 
 function openTransferModal() { openModal('type'); }
 
-async function executeSplit() {
-const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-const phone = document.getElementById('splitPhone').value.trim();
-const pass = document.getElementById('splitPass').value.trim();
-const plan = document.getElementById('splitPlan').value;
-if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
-const [gb, minutes] = plan.split('|');
-closeModal('split');
-showOpTerminal('split');
-try {
-await apiCall('/api/split-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.split);
-startRunningTasksPolling();
-} catch(e) { addOpTermLine('split', '❌ ' + e.message); }
-}
+async function executeSplit() { const o = getOwnerData('split'); if (!o) { notify('⚠️', 'error'); return; } const p = document.getElementById('splitPhone').value.trim(); const pw = document.getElementById('splitPass').value.trim(); const pl = document.getElementById('splitPlan').value; if (!p || !pw || !pl) { notify('⚠️', 'error'); return; } const [g, m] = pl.split('|'); closeModal('split'); showOpTerminal('split'); try { await apiCall('/api/split-transfer', { phone: p, pass: pw, gb: g, minutes: m, owner_phone: o.phone, owner_password: o.password }, SESSION_IDS.split); startRunningTasksPolling(); } catch(e) { addOpTermLine('split', '❌ ' + e.message); } }
 
-async function executeNoSplit() {
-const owner = getOwnerData('nosplit'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-const phone = document.getElementById('nosplitPhone').value.trim();
-const pass = document.getElementById('nosplitPass').value.trim();
-const plan = document.getElementById('nosplitPlan').value;
-if (!phone || !pass || !plan) { notify('⚠️ املأ الحقول', 'error'); return; }
-const [gb, minutes] = plan.split('|');
-closeModal('nosplit');
-showOpTerminal('nosplit');
-try {
-await apiCall('/api/nosplit-transfer', { phone, pass, gb, minutes, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.nosplit);
-startRunningTasksPolling();
-} catch(e) { addOpTermLine('nosplit', '❌ ' + e.message); }
-}
+async function executeNoSplit() { const o = getOwnerData('nosplit'); if (!o) { notify('⚠️', 'error'); return; } const p = document.getElementById('nosplitPhone').value.trim(); const pw = document.getElementById('nosplitPass').value.trim(); const pl = document.getElementById('nosplitPlan').value; if (!p || !pw || !pl) { notify('⚠️', 'error'); return; } const [g, m] = pl.split('|'); closeModal('nosplit'); showOpTerminal('nosplit'); try { await apiCall('/api/nosplit-transfer', { phone: p, pass: pw, gb: g, minutes: m, owner_phone: o.phone, owner_password: o.password }, SESSION_IDS.nosplit); startRunningTasksPolling(); } catch(e) { addOpTermLine('nosplit', '❌ ' + e.message); } }
 
-async function executeCheckDays() {
-const owner = getOwnerData('check'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
-closeModal('checkdays');
-showOpTerminal('checkdays');
-try { await apiCall('/api/check-daily-limit', { owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.checkdays); }
-catch(e) { addOpTermLine('checkdays', '❌ ' + e.message); }
-}
+async function executeCheckDays() { const o = getOwnerData('check'); if (!o) { notify('⚠️', 'error'); return; } closeModal('checkdays'); showOpTerminal('checkdays'); try { await apiCall('/api/check-daily-limit', { owner_phone: o.phone, owner_password: o.password }, SESSION_IDS.checkdays); } catch(e) { addOpTermLine('checkdays', '❌ ' + e.message); } }
 
-async function generateCode() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/generate-code', { method:'POST' });
-const data = await resp.json();
-document.getElementById('newCode').textContent = data.code;
-openModal('code'); startCodeTimer(data.expires_in || 300);
-} catch(e) { notify('❌ فشل', 'error'); }
-}
+async function generateCode() { try { const r = await fetch(BACKEND_URL + '/api/generate-code', { method:'POST' }); const d = await r.json(); document.getElementById('newCode').textContent = d.code; openModal('code'); startCodeTimer(d.expires_in || 300); } catch(e) { notify('❌', 'error'); } }
 
-function startCodeTimer(seconds) {
-if (codeTimerInterval) clearInterval(codeTimerInterval);
-let remaining = seconds;
-const el = document.getElementById('codeTimer');
-const update = () => {
-const m = Math.floor(remaining / 60), s = remaining % 60;
-el.textContent = `⏱️ صالح لمدة ${m}:${s.toString().padStart(2,'0')}`;
-if (remaining <= 0) { el.textContent = '⌛ انتهت الصلاحية'; clearInterval(codeTimerInterval); return; }
-remaining--;
-};
-update(); codeTimerInterval = setInterval(update, 1000);
-}
+function startCodeTimer(s) { if (codeTimerInterval) clearInterval(codeTimerInterval); let r = s; const e = document.getElementById('codeTimer'); const u = () => { const m = Math.floor(r / 60), ss = r % 60; e.textContent = `⏱️ ${m}:${ss.toString().padStart(2,'0')}`; if (r <= 0) { e.textContent = '⌛'; clearInterval(codeTimerInterval); return; } r--; }; u(); codeTimerInterval = setInterval(u, 1000); }
 
-function copyCode() {
-const code = document.getElementById('newCode').textContent;
-if (navigator.clipboard) navigator.clipboard.writeText(code);
-notify('📋 تم النسخ', 'success');
-}
+function copyCode() { const c = document.getElementById('newCode').textContent; if (navigator.clipboard) navigator.clipboard.writeText(c); notify('📋', 'success'); }
 
-async function loadDeviceLogs() {
-const list = document.getElementById('deviceLogsList');
-list.innerHTML = '<p style="text-align:center;color:#999;">جاري التحميل...</p>';
-try {
-const resp = await fetch(BACKEND_URL + '/api/device-logs');
-const data = await resp.json();
-if (!data.logs || !data.logs.length) { list.innerHTML = '<p style="text-align:center;color:#999;">مفيش سجلات</p>'; return; }
-list.innerHTML = '';
-data.logs.forEach(log => {
-const row = document.createElement('div');
-row.className = 'log-row';
-row.innerHTML = `<div class="log-info"><strong>🌐 ${log.ip}</strong><small>📱 ${log.device.substring(0,60)}...</small><small>🎫 ${log.code} | ${log.role} | ${log.time}</small></div>`;
-list.appendChild(row);
-});
-} catch(e) { list.innerHTML = '<p style="text-align:center;color:#ff6b6b;">فشل</p>'; }
-}
+async function loadDeviceLogs() { const l = document.getElementById('deviceLogsList'); l.innerHTML = '...'; try { const r = await fetch(BACKEND_URL + '/api/device-logs'); const d = await r.json(); if (!d.logs || !d.logs.length) { l.innerHTML = '<p>مفيش</p>'; return; } l.innerHTML = ''; d.logs.forEach(x => { const row = document.createElement('div'); row.className = 'log-row'; row.innerHTML = `<div class="log-info"><strong>🌐 ${x.ip}</strong><small>📱 ${x.device.substring(0,50)}...</small><small>🎫 ${x.code} | ${x.time}</small></div>`; l.appendChild(row); }); } catch(e) {} }
 
 async function clearDeviceLogs() { if (!confirm('مسح؟')) return; await fetch(BACKEND_URL + '/api/device-logs', { method:'DELETE' }); loadDeviceLogs(); }
 
-async function executeBlockIP() {
-const ip = document.getElementById('blockIP').value.trim();
-if (!ip) { notify('⚠️ أدخل IP', 'error'); return; }
-try { await apiCall('/api/block-ip', { ip }, SESSION_IDS.split); notify('✅ تم الحظر', 'success'); document.getElementById('blockIP').value = ''; loadBlockedList(); }
-catch(e) { notify('❌ ' + e.message, 'error'); }
-}
+async function executeBlockIP() { const ip = document.getElementById('blockIP').value.trim(); if (!ip) { notify('⚠️', 'error'); return; } try { await apiCall('/api/block-ip', { ip }, SESSION_IDS.split); notify('✅', 'success'); document.getElementById('blockIP').value = ''; loadBlockedList(); } catch(e) { notify('❌', 'error'); } }
 
-async function executeUnblockIP() {
-const ip = document.getElementById('unblockIP').value.trim();
-if (!ip) { notify('⚠️ أدخل IP', 'error'); return; }
-try { const r = await fetch(BACKEND_URL + '/api/unblock-ip', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ip}) }); const d = await r.json(); notify('✅ ' + (d.message || 'تم'), 'success'); closeModal('unblockip'); document.getElementById('unblockIP').value = ''; }
-catch(e) { notify('❌ فشل', 'error'); }
-}
+async function executeUnblockIP() { const ip = document.getElementById('unblockIP').value.trim(); if (!ip) { notify('⚠️', 'error'); return; } try { const r = await fetch(BACKEND_URL + '/api/unblock-ip', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ip}) }); const d = await r.json(); notify('✅', 'success'); closeModal('unblockip'); document.getElementById('unblockIP').value = ''; } catch(e) {} }
 
-async function loadBlockedList() {
-try {
-const resp = await fetch(BACKEND_URL + '/api/blocked-ips');
-const data = await resp.json();
-const el = document.getElementById('blockedList');
-if (data.blocked && data.blocked.length) el.innerHTML = '<strong>المحظورين:</strong><br>' + data.blocked.join('<br>');
-else el.textContent = 'مفيش IPs محظورة';
-} catch(e) {}
-}
+async function loadBlockedList() { try { const r = await fetch(BACKEND_URL + '/api/blocked-ips'); const d = await r.json(); const e = document.getElementById('blockedList'); if (d.blocked && d.blocked.length) e.innerHTML = '<strong>المحظورين:</strong><br>' + d.blocked.join('<br>'); else e.textContent = 'مفيش'; } catch(e) {} }
 
-function notify(msg, type) {
-const div = document.createElement('div');
-div.className = 'notification ' + (type || 'info');
-div.textContent = msg;
-document.body.appendChild(div);
-setTimeout(() => div.remove(), 3500);
-}
+function notify(msg, type) { const d = document.createElement('div'); d.className = 'notification ' + (type || 'info'); d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 
 window.addEventListener('load', async () => {
+await loadBackendUrl();
 fillPackages();
 if (localStorage.getItem('loggedIn')) {
 currentRole = localStorage.getItem('role') || 'user';
@@ -1108,9 +677,7 @@ showMainPage();
 }
 });
 
-setInterval(() => {
-try { localStorage.setItem('openTerminals', JSON.stringify(OPEN_TERMINALS)); } catch(e) {}
-}, 2000);
+setInterval(() => { try { localStorage.setItem('openTerminals', JSON.stringify(OPEN_TERMINALS)); } catch(e) {} }, 2000);
 </script>
 </body>
 </html>
