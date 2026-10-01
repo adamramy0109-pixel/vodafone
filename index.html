@@ -405,6 +405,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 
 <script>
 const BACKEND_URL = 'https://noble-cologne-edited-vaccine.trycloudflare.com';
+const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
     {gb: 55000, min: 5500}, {gb: 60000, min: 6000}, {gb: 65000, min: 6500},
@@ -868,7 +869,6 @@ body.appendChild(line); body.scrollTop = body.scrollHeight;
 }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-// ==================== اختيار النوع ====================
 function selectType(t) {
 selectedType = t;
 document.getElementById('typeBtnRed').classList.toggle('active', t === 'red');
@@ -880,7 +880,6 @@ if (selectedType === 'red') { openModal('red'); renderRedMemberInputs(); }
 else { openModal('transfer'); renderMemberInputs(); }
 }
 
-// ==================== كشف الفرد / الأونر ====================
 function selectCheckType(t) {
 selectedCheckType = t;
 document.getElementById('checkTypeMember').classList.toggle('active', t === 'member');
@@ -907,7 +906,6 @@ catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); }
 }
 }
 
-// ==================== Red ====================
 function renderRedMemberInputs() {
 const count = parseInt(document.getElementById('redMembersCount').value) || 0;
 const container = document.getElementById('redMembersInputs');
@@ -944,7 +942,6 @@ startRunningTasksPolling();
 } catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
 }
 
-// ==================== Flex ====================
 function renderMemberInputs() {
 const count = parseInt(document.getElementById('membersCount').value) || 0;
 const container = document.getElementById('membersInputs');
@@ -983,11 +980,8 @@ startRunningTasksPolling();
 } catch(e) { addOpTermLine('transfer', '❌ ' + e.message); }
 }
 
-function openTransferModal() {
-openModal('type');
-}
+function openTransferModal() { openModal('type'); }
 
-// ==================== الباقي ====================
 async function executeSplit() {
 const owner = getOwnerData('split'); if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('splitPhone').value.trim();
