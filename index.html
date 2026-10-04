@@ -437,7 +437,21 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div></div>
 
 <script>
-const BACKEND_URL = 'https://noble-cologne-edited-vaccine.trycloudflare.com';
+let BACKEND_URL = '';
+const BACKEND_JSON_URL = 'https://raw.githubusercontent.com/adamramy0109-pixel/vodafone/main/backend.json';
+
+async function loadBackendUrl() {
+try {
+const r = await fetch(BACKEND_JSON_URL + '?t=' + Date.now());
+const d = await r.json();
+BACKEND_URL = d.url;
+console.log('✅ Backend URL loaded:', BACKEND_URL);
+return true;
+} catch(e) {
+console.error('❌ Failed to load backend URL:', e);
+return false;
+}
+}
 const PACKAGES = [
     {gb: 25000, min: 2500}, {gb: 30000, min: 3000}, {gb: 35000, min: 3500},
     {gb: 40000, min: 4000}, {gb: 45000, min: 4500}, {gb: 50000, min: 5000},
@@ -479,6 +493,13 @@ sel.appendChild(o);
 }
 
 async function login() {
+if (!BACKEND_URL) {
+const ok = await loadBackendUrl();
+if (!ok) {
+document.getElementById('loginError').textContent = '❌ فشل تحميل اللينك';
+return;
+}
+}
 const code = document.getElementById('codeInput').value.trim().toUpperCase();
 const error = document.getElementById('loginError');
 if (!code) { error.textContent = '⚠️ أدخل الكود'; return; }
