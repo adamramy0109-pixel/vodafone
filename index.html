@@ -125,6 +125,13 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="op-terminal-body" id="body_split"></div>
 </div>
 </div>
+<div class="op-block" data-op="enhanced">
+<button class="btn btn-primary op-btn" onclick="openModal('enhanced')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">✨ تطير مع تقسيم محسن</button>
+<div class="op-terminal" id="term_enhanced">
+<div class="op-terminal-header"><div class="title"><span class="dot"></span> 💻 تطير مع تقسيم محسن</div><div class="actions"><button onclick="clearOpTerminal('enhanced')">🗑️</button><button onclick="hideOpTerminal('enhanced')">✖️</button></div></div>
+<div class="op-terminal-body" id="body_enhanced"></div>
+</div>
+</div>
 <div class="op-block" data-op="nosplit">
 <button class="btn btn-primary op-btn" onclick="openModal('nosplit')">✈️ تطير بدون تقسيم</button>
 <div class="op-terminal" id="term_nosplit">
@@ -218,7 +225,6 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 </div>
 </div>
 
-<!-- مودالات -->
 <div class="modal" id="splitModal"><div class="modal-content">
 <div class="modal-title">🔄 تطير مع تقسيم</div>
 <label class="form-label">👤 الأونر</label>
@@ -240,6 +246,30 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeSplit()">تطير</button>
 <button class="modal-btn modal-btn-cancel" onclick="closeModal('split')">إلغاء</button>
+</div>
+</div></div>
+
+<div class="modal" id="enhancedModal"><div class="modal-content">
+<div class="modal-title">✨ تطير مع تقسيم محسن</div>
+<label class="form-label">👤 الأونر</label>
+<select class="modal-select" id="enhancedOwnerSelect" onchange="onOwnerSelect('enhanced')"></select>
+<div id="enhancedOwnerManual" class="hidden">
+<input type="tel" id="enhancedOwnerPhone" class="modal-input" placeholder="رقم الأونر">
+<input type="password" id="enhancedOwnerPass" class="modal-input" placeholder="باسورد الأونر">
+</div>
+<label class="form-label">📱 رقم العضو (ثابت)</label>
+<input type="tel" id="enhancedPhone" class="modal-input" placeholder="رقم العضو">
+<label class="form-label">🔑 باسورد العضو (ثابت)</label>
+<input type="password" id="enhancedPass" class="modal-input" placeholder="باسورد العضو">
+<label class="form-label">📤 الميجا المبدئية (send_mi)</label>
+<input type="number" id="enhancedSendMI" class="modal-input" value="1" min="1">
+<label class="form-label">📤 الدقايق المبدئية (send_voice)</label>
+<input type="number" id="enhancedSendVoice" class="modal-input" value="1" min="1">
+<label class="form-label">📦 الباقة النهائية (QuotaRedistribution)</label>
+<select id="enhancedFinalPlan" class="modal-select"></select>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-ok" onclick="executeEnhancedSplit()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">✨ تطير محسن</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeModal('enhanced')">إلغاء</button>
 </div>
 </div></div>
 
@@ -462,7 +492,7 @@ const PACKAGES = [
 
 let SESSION_IDS = {};
 try { SESSION_IDS = JSON.parse(localStorage.getItem('sessionIds') || '{}'); } catch(e) { SESSION_IDS = {}; }
-['split', 'nosplit', 'accept', 'checksystem', 'checkdays', 'transfer', 'checkmember'].forEach(op => {
+['split', 'enhanced', 'nosplit', 'accept', 'checksystem', 'checkdays', 'transfer', 'checkmember'].forEach(op => {
     if (!SESSION_IDS[op]) SESSION_IDS[op] = op + '_' + Math.random().toString(36).substr(2, 9);
 });
 localStorage.setItem('sessionIds', JSON.stringify(SESSION_IDS));
@@ -479,7 +509,7 @@ function getOwners() { try { return JSON.parse(localStorage.getItem('owners') ||
 function saveOwners(l) { localStorage.setItem('owners', JSON.stringify(l)); }
 
 function fillPackages() {
-['splitFinalPlan','nosplitPlan'].forEach(id => {
+['splitFinalPlan','nosplitPlan','enhancedFinalPlan'].forEach(id => {
 const sel = document.getElementById(id);
 if (!sel) return;
 sel.innerHTML = '<option value="">-- اختر الباقة --</option>';
@@ -618,13 +648,13 @@ async function showTaskTerminal(id, sid) { showOpTerminal('transfer'); if (sid) 
 
 async function applyButtonsConfig() { try { const r = await fetch(BACKEND_URL + '/api/buttons-config'); const d = await r.json(); if (d.status === 'success' && currentRole !== 'admin') { d.hidden.forEach(k => { const b = document.querySelector(`.op-block[data-op="${k}"]`); if (b) b.classList.add('hidden'); }); } } catch(e) {} }
 
-function renderButtonsConfig() { const b = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'nosplit',name:'✈️ تطير بدون تقسيم'},{key:'accept',name:'✅ قبول دعوة'},{key:'checksystem',name:'🔎 كشف نظام'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل'},{key:'checkmember',name:'🔍 كشف فرد/أونر'}]; fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(d => { const h = d.hidden || []; const l = document.getElementById('buttonsConfigList'); l.innerHTML = ''; b.forEach(x => { const row = document.createElement('div'); row.className = 'owner-row'; row.innerHTML = `<label style="flex:1;display:flex;align-items:center;gap:8px;"><input type="checkbox" ${h.includes(x.key)?'checked':''} data-key="${x.key}" style="width:18px;height:18px;"><span>${x.name}</span></label>`; l.appendChild(row); }); }); }
+function renderButtonsConfig() { const b = [{key:'split',name:'🔄 تطير مع تقسيم'},{key:'enhanced',name:'✨ تطير مع تقسيم محسن'},{key:'nosplit',name:'✈️ تطير بدون تقسيم'},{key:'accept',name:'✅ قبول دعوة'},{key:'checksystem',name:'🔎 كشف نظام'},{key:'checkdays',name:'📊 كشف الحد'},{key:'transfer',name:'🔀 تحويل'},{key:'checkmember',name:'🔍 كشف فرد/أونر'}]; fetch(BACKEND_URL + '/api/buttons-config').then(r => r.json()).then(d => { const h = d.hidden || []; const l = document.getElementById('buttonsConfigList'); l.innerHTML = ''; b.forEach(x => { const row = document.createElement('div'); row.className = 'owner-row'; row.innerHTML = `<label style="flex:1;display:flex;align-items:center;gap:8px;"><input type="checkbox" ${h.includes(x.key)?'checked':''} data-key="${x.key}" style="width:18px;height:18px;"><span>${x.name}</span></label>`; l.appendChild(row); }); }); }
 
 async function saveButtonsConfig() { const c = document.querySelectorAll('#buttonsConfigList input:checked'); const h = Array.from(c).map(x => x.dataset.key); await fetch(BACKEND_URL + '/api/buttons-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({hidden:h}) }); notify('✅', 'success'); closeModal('buttonsConfig'); }
 
 function showPage(p, b) { document.querySelectorAll('.page').forEach(x => x.classList.remove('active')); document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active')); document.getElementById(p + 'Page').classList.add('active'); if (b) b.classList.add('active'); if (p === 'owners') renderOwners(); if (p === 'saved') loadSavedNumbers(); if (p === 'rejected') loadRejectedNumbers(); }
 
-function loadOwners() { const o = getOwners(); ['splitOwnerSelect','nosplitOwnerSelect','acceptOwnerSelect','checkOwnerSelect','transferOwnerSelect','checkownerOwnerSelect'].forEach(id => { const s = document.getElementById(id); if (!s) return; s.innerHTML = '<option value="">-- اختر --</option>'; o.forEach((x, i) => { const opt = document.createElement('option'); opt.value = i; opt.textContent = (x.label || x.phone) + ' — ' + x.phone; s.appendChild(opt); }); const m = document.createElement('option'); m.value = 'manual'; m.textContent = '✏️ يدوي'; s.appendChild(m); }); }
+function loadOwners() { const o = getOwners(); ['splitOwnerSelect','nosplitOwnerSelect','acceptOwnerSelect','checkOwnerSelect','transferOwnerSelect','checkownerOwnerSelect','enhancedOwnerSelect'].forEach(id => { const s = document.getElementById(id); if (!s) return; s.innerHTML = '<option value="">-- اختر --</option>'; o.forEach((x, i) => { const opt = document.createElement('option'); opt.value = i; opt.textContent = (x.label || x.phone) + ' — ' + x.phone; s.appendChild(opt); }); const m = document.createElement('option'); m.value = 'manual'; m.textContent = '✏️ يدوي'; s.appendChild(m); }); }
 
 function renderOwners() { const o = getOwners(); const l = document.getElementById('ownersList'); if (!o.length) { l.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">مفيش</p>'; return; } l.innerHTML = ''; o.forEach((x, i) => { const r = document.createElement('div'); r.className = 'owner-row'; r.innerHTML = `<div class="owner-info"><strong>${x.label || x.phone}</strong><small>${x.phone}</small></div><button onclick="removeOwner(${i})">🗑️</button>`; l.appendChild(r); }); }
 
@@ -661,7 +691,7 @@ fetch(BACKEND_URL + '/api/logs/' + sid).then(r => r.json()).then(d => { if (d.lo
 POLLING_INTERVALS[opKey] = setInterval(async () => { try { const r = await fetch(BACKEND_URL + '/api/logs/' + sid); const d = await r.json(); if (d.status === 'success' && d.logs && d.logs.length > LAST_LOG_COUNTS[opKey]) { const n = d.logs.slice(LAST_LOG_COUNTS[opKey]); n.forEach(m => addOpTermLine(opKey, m)); LAST_LOG_COUNTS[opKey] = d.logs.length; } } catch(e) {} }, 2000);
 }
 
-function addOpTermLine(opKey, msg) { const b = document.getElementById('body_' + opKey); const l = document.createElement('div'); l.className = 'term-line'; let cls = 'term-default'; if (msg.includes('❌') || msg.includes('فشل')) cls = 'term-error'; else if (msg.includes('✅')) cls = 'term-success'; else if (msg.includes('⚠️')) cls = 'term-warn'; else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔐') || msg.includes('📱')) cls = 'term-info'; const t = new Date().toLocaleTimeString('ar-EG', { hour12: false }); l.innerHTML = `<span class="term-time">[${t}]</span><span class="${cls}">${escapeHtml(msg)}</span>`; b.appendChild(l); b.scrollTop = b.scrollHeight; }
+function addOpTermLine(opKey, msg) { const b = document.getElementById('body_' + opKey); const l = document.createElement('div'); l.className = 'term-line'; let cls = 'term-default'; if (msg.includes('❌') || msg.includes('فشل')) cls = 'term-error'; else if (msg.includes('✅')) cls = 'term-success'; else if (msg.includes('⚠️')) cls = 'term-warn'; else if (msg.includes('🚀') || msg.includes('📊') || msg.includes('🔐') || msg.includes('📱') || msg.includes('✨') || msg.includes('🎲')) cls = 'term-info'; const t = new Date().toLocaleTimeString('ar-EG', { hour12: false }); l.innerHTML = `<span class="term-time">[${t}]</span><span class="${cls}">${escapeHtml(msg)}</span>`; b.appendChild(l); b.scrollTop = b.scrollHeight; }
 
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
@@ -670,6 +700,8 @@ function selectType(t) { selectedType = t; document.getElementById('typeBtnRed')
 function selectCheckType(t) { selectedCheckType = t; document.getElementById('checkTypeMember').classList.toggle('active', t === 'member'); document.getElementById('checkTypeOwner').classList.toggle('active', t === 'owner'); document.getElementById('checkMemberFields').classList.toggle('hidden', t !== 'member'); document.getElementById('checkOwnerFields').classList.toggle('hidden', t !== 'owner'); }
 
 function onCheckSystemModeChange() { const m = document.getElementById('checkSystemMode').value; document.getElementById('checkSystemRoundsFields').classList.toggle('hidden', m !== 'rounds'); }
+
+function openTransferModal() { openModal('transfer'); selectType('red'); }
 
 async function executeCheck() { showOpTerminal('checkmember'); if (selectedCheckType === 'member') { const p = document.getElementById('checkMemberPhone').value.trim(); const pw = document.getElementById('checkMemberPass').value.trim(); if (!p || !pw) { notify('⚠️', 'error'); return; } closeModal('checkmember'); try { await apiCall('/api/check-member', { phone: p, password: pw, check_type: 'member' }, SESSION_IDS.checkmember); } catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); } } else { const o = getOwnerData('checkowner'); if (!o) { notify('⚠️', 'error'); return; } closeModal('checkmember'); try { await apiCall('/api/check-member', { phone: o.phone, password: o.password, check_type: 'owner' }, SESSION_IDS.checkmember); } catch(e) { addOpTermLine('checkmember', '❌ ' + e.message); } } }
 
@@ -714,6 +746,22 @@ closeModal('split');
 showOpTerminal('split');
 try { await apiCall('/api/split-transfer', { phone, pass, send_mi: sendMI, send_voice: sendVoice, final_mi: finalMI, final_voice: finalVoice, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.split); }
 catch(e) { addOpTermLine('split', '❌ ' + e.message); }
+}
+
+async function executeEnhancedSplit() {
+const owner = getOwnerData('enhanced');
+if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
+const phone = document.getElementById('enhancedPhone').value.trim();
+const pass = document.getElementById('enhancedPass').value.trim();
+const sendMI = parseInt(document.getElementById('enhancedSendMI').value) || 1;
+const sendVoice = parseInt(document.getElementById('enhancedSendVoice').value) || 1;
+const finalPlan = document.getElementById('enhancedFinalPlan').value;
+if (!phone || !pass || !finalPlan) { notify('⚠️ املأ الحقول', 'error'); return; }
+const [finalMI, finalVoice] = finalPlan.split('|');
+closeModal('enhanced');
+showOpTerminal('enhanced');
+try { await apiCall('/api/enhanced-split-transfer', { phone, pass, send_mi: sendMI, send_voice: sendVoice, final_mi: finalMI, final_voice: finalVoice, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.enhanced); }
+catch(e) { addOpTermLine('enhanced', '❌ ' + e.message); }
 }
 
 async function executeNoSplit() {
