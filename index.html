@@ -257,10 +257,12 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <input type="tel" id="enhancedOwnerPhone" class="modal-input" placeholder="رقم الأونر">
 <input type="password" id="enhancedOwnerPass" class="modal-input" placeholder="باسورد الأونر">
 </div>
-<label class="form-label">📱 رقم العضو (ثابت)</label>
-<input type="tel" id="enhancedPhone" class="modal-input" placeholder="رقم العضو">
-<label class="form-label">🔑 باسورد العضو (ثابت)</label>
-<input type="password" id="enhancedPass" class="modal-input" placeholder="باسورد العضو">
+<label class="form-label">📱 رقم الفرد الطاير</label>
+<input type="tel" id="enhancedPhone" class="modal-input" placeholder="رقم الفرد الطاير">
+<label class="form-label">🔑 باسورد الفرد الطاير</label>
+<input type="password" id="enhancedPass" class="modal-input" placeholder="باسورد الفرد الطاير">
+<label class="form-label">📌 رقم الفرد الثابت (بدون باسورد)</label>
+<input type="tel" id="enhancedFixedPhone" class="modal-input" placeholder="رقم الفرد الثابت">
 <label class="form-label">📤 الميجا المبدئية (send_mi)</label>
 <input type="number" id="enhancedSendMI" class="modal-input" value="1" min="1">
 <label class="form-label">📤 الدقايق المبدئية (send_voice)</label>
@@ -753,6 +755,7 @@ const owner = getOwnerData('enhanced');
 if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('enhancedPhone').value.trim();
 const pass = document.getElementById('enhancedPass').value.trim();
+const fixedPhone = document.getElementById('enhancedFixedPhone').value.trim();
 const sendMI = parseInt(document.getElementById('enhancedSendMI').value) || 1;
 const sendVoice = parseInt(document.getElementById('enhancedSendVoice').value) || 1;
 const finalPlan = document.getElementById('enhancedFinalPlan').value;
@@ -760,7 +763,15 @@ if (!phone || !pass || !finalPlan) { notify('⚠️ املأ الحقول', 'err
 const [finalMI, finalVoice] = finalPlan.split('|');
 closeModal('enhanced');
 showOpTerminal('enhanced');
-try { await apiCall('/api/enhanced-split-transfer', { phone, pass, send_mi: sendMI, send_voice: sendVoice, final_mi: finalMI, final_voice: finalVoice, owner_phone: owner.phone, owner_password: owner.password }, SESSION_IDS.enhanced); }
+try { 
+    await apiCall('/api/enhanced-split-transfer', { 
+        phone, pass, 
+        fixed_phone: fixedPhone,
+        send_mi: sendMI, send_voice: sendVoice, 
+        final_mi: finalMI, final_voice: finalVoice, 
+        owner_phone: owner.phone, owner_password: owner.password 
+    }, SESSION_IDS.enhanced); 
+}
 catch(e) { addOpTermLine('enhanced', '❌ ' + e.message); }
 }
 
