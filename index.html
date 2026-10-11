@@ -263,11 +263,7 @@ body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667e
 <input type="password" id="enhancedPass" class="modal-input" placeholder="باسورد الفرد الطاير">
 <label class="form-label">📌 رقم الفرد الثابت (بدون باسورد)</label>
 <input type="tel" id="enhancedFixedPhone" class="modal-input" placeholder="رقم الفرد الثابت">
-<label class="form-label">📤 الميجا المبدئية (send_mi)</label>
-<input type="number" id="enhancedSendMI" class="modal-input" value="1" min="1">
-<label class="form-label">📤 الدقايق المبدئية (send_voice)</label>
-<input type="number" id="enhancedSendVoice" class="modal-input" value="1" min="1">
-<label class="form-label">📦 الباقة النهائية (QuotaRedistribution)</label>
+<label class="form-label">📦 الباقة (اللي هتتبعت في الدعوة)</label>
 <select id="enhancedFinalPlan" class="modal-select"></select>
 <div class="modal-buttons">
 <button class="modal-btn modal-btn-ok" onclick="executeEnhancedSplit()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">✨ تطير محسن</button>
@@ -756,11 +752,9 @@ if (!owner) { notify('⚠️ اختر أونر', 'error'); return; }
 const phone = document.getElementById('enhancedPhone').value.trim();
 const pass = document.getElementById('enhancedPass').value.trim();
 const fixedPhone = document.getElementById('enhancedFixedPhone').value.trim();
-const sendMI = parseInt(document.getElementById('enhancedSendMI').value) || 1;
-const sendVoice = parseInt(document.getElementById('enhancedSendVoice').value) || 1;
 const finalPlan = document.getElementById('enhancedFinalPlan').value;
 if (!phone || !pass || !finalPlan) { notify('⚠️ املأ الحقول', 'error'); return; }
-const [finalMI, finalVoice] = finalPlan.split('|');
+const [sendMI, sendVoice] = finalPlan.split('|');
 closeModal('enhanced');
 showOpTerminal('enhanced');
 try { 
@@ -768,7 +762,7 @@ try {
         phone, pass, 
         fixed_phone: fixedPhone,
         send_mi: sendMI, send_voice: sendVoice, 
-        final_mi: finalMI, final_voice: finalVoice, 
+        final_mi: sendMI, final_voice: sendVoice, 
         owner_phone: owner.phone, owner_password: owner.password 
     }, SESSION_IDS.enhanced); 
 }
