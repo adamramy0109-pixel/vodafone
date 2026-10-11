@@ -757,14 +757,14 @@ if (!phone || !pass || !finalPlan) { notify('⚠️ املأ الحقول', 'err
 const [sendMI, sendVoice] = finalPlan.split('|');
 closeModal('enhanced');
 showOpTerminal('enhanced');
-try { 
-    await apiCall('/api/enhanced-split-transfer', { 
-        phone, pass, 
+try {
+    await apiCall('/api/enhanced-split-transfer', {
+        phone, pass,
         fixed_phone: fixedPhone,
-        send_mi: sendMI, send_voice: sendVoice, 
-        final_mi: sendMI, final_voice: sendVoice, 
-        owner_phone: owner.phone, owner_password: owner.password 
-    }, SESSION_IDS.enhanced); 
+        send_mi: sendMI, send_voice: sendVoice,
+        final_mi: sendMI, final_voice: sendVoice,
+        owner_phone: owner.phone, owner_password: owner.password
+    }, SESSION_IDS.enhanced);
 }
 catch(e) { addOpTermLine('enhanced', '❌ ' + e.message); }
 }
